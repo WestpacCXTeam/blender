@@ -31,9 +31,9 @@ var App = (function Application() {
 		DEBUG: [Debug], //debugging infos
 		GELRURL: 'http://gel.westpacgroup.com.au/',
 		GUIRURL: 'http://gel.westpacgroup.com.au/' + 'GUI/',
-		GUIPATH: Path.normalize(__dirname + '/../GUI-source-master/'),
+		GUIPATH: Path.normalize(__dirname + '/../../GUI-source-master/'),
 		TEMPPATH: Path.normalize(__dirname + '/._template/'),
-		GELPATH: Path.normalize(__dirname + '/../../'),
+		GELPATH: Path.normalize(__dirname + '/../../../'),
 		JQUERYPATH: '_javascript-helpers/1.0.1/_core/js/010-jquery.js',
 		SLACKURL: 'https://hooks.slack.com/services/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',
 		SLACKICON: 'http://gel.westpacgroup.com.au/GUI/blender/assets/img/blender-icon.png',
@@ -66,7 +66,7 @@ var App = (function Application() {
 		init: function Init() {
 			if( App.DEBUG ) App.debugging( ' DEBUGGING| INFORMATION', 'headline' );
 
-			App.GUI = JSON.parse( Fs.readFileSync( App.GUIPATH + '/GUI.json', 'utf8') );
+			App.GUI = JSON.parse( Fs.readFileSync( App.GUIPATH + 'GUI.json', 'utf8') );
 			var blender = Express();
 
 			//starting server
