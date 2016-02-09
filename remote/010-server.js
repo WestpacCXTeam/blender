@@ -34,9 +34,9 @@ var App = (function Application() {
 		GUIPATH: Path.normalize(__dirname + '/../GUI-source-master/'),
 		TEMPPATH: Path.normalize(__dirname + '/._template/'),
 		GELPATH: Path.normalize(__dirname + '/../../'),
-		JQUERYPATH: '_javascript-helpers/1.0.0/_core/js/010-jquery.js',
+		JQUERYPATH: '_javascript-helpers/1.0.1/_core/js/010-jquery.js',
 		SLACKURL: 'https://hooks.slack.com/services/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',
-		SLACKICON: 'http://gel.westpacgroup.com.au/GUI/WBC/assets/img/blender-icon.png',
+		SLACKICON: 'http://gel.westpacgroup.com.au/GUI/blender/assets/img/blender-icon.png',
 		LOG: Path.normalize(__dirname + '/blender.log'),
 		FUNKY: [
 			{
@@ -61,16 +61,16 @@ var App = (function Application() {
 
 
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// Initiate app
+		// Initiate blender
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		init: function Init() {
 			if( App.DEBUG ) App.debugging( ' DEBUGGING| INFORMATION', 'headline' );
 
 			App.GUI = JSON.parse( Fs.readFileSync( App.GUIPATH + '/GUI.json', 'utf8') );
-			var app = Express();
+			var blender = Express();
 
 			//starting server
-			app
+			blender
 				.use( BodyParser.urlencoded({ extended: false }) )
 
 				.listen(8080, function PortListener() {
@@ -78,13 +78,13 @@ var App = (function Application() {
 				});
 
 
-			app.get('*', function GetListener(request, response) {
+			blender.get('*', function GetListener(request, response) {
 				response.redirect(301, App.GUIRURL);
 			});
 
 
 			//listening to post request
-			app.post('/blender', function PostListener(request, response) {
+			blender.post('/blender', function PostListener(request, response) {
 				App.IP = request.connection.remoteAddress;
 
 				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + App.IP );
@@ -178,5 +178,5 @@ var App = (function Application() {
 }());
 
 
-//run app
+//run blender
 App.init();
