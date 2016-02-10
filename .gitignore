@@ -12,3 +12,4 @@ _site
 validation-report.json
 validation-status.json
 jekyll/
+blender.log
