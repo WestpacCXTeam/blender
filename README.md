@@ -26,6 +26,7 @@ BLENDER
 
 ### Release History
 
+* v0.0.2 - Added grunt build to download
 * v0.0.1 - Initial file server system setup
 
 **[⬆ back to top](#content)**

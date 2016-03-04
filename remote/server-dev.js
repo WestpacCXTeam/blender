@@ -1,4 +1,4 @@
-/*! blender - v0.0.1 */
+/*! blender - v0.0.2 */
 /***************************************************************************************************************************************************************
  *
  * Westpac GUI file server
@@ -31,6 +31,7 @@ var App = (function Application() {
 		DEBUG: true, //debugging infos
 		GELRURL: 'http://gel.westpacgroup.com.au/',
 		GUIRURL: 'http://gel.westpacgroup.com.au/' + 'GUI/',
+		// GUIPATH: Path.normalize(__dirname + '/../../GUI-docs/GUI-source-master/'), //debug only
 		GUIPATH: Path.normalize(__dirname + '/../../GUI-source-master/'),
 		TEMPPATH: Path.normalize(__dirname + '/._template/'),
 		GELPATH: Path.normalize(__dirname + '/../../../'),
@@ -217,6 +218,7 @@ var Less = require('less');
 			App.zip.queuing('js', true);
 		}
 		App.zip.queuing('assets', true);
+		App.zip.queuing('build', true);
 
 		App.zip.queuing('funky', true);
 
@@ -228,6 +230,7 @@ var Less = require('less');
 			App.js.get();
 		}
 
+		App.build.get();
 		App.html.get();
 		App.assets.get();
 		App.funky.get();
@@ -574,6 +577,58 @@ var Less = require('less');
 
 
 	App.html = module;
+
+
+}(App));
+/***************************************************************************************************************************************************************
+ *
+ * Insert build tool
+ *
+ **************************************************************************************************************************************************************/
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Dependencies
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+(function BuildApp(App) {
+
+	var module = {};
+
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------
+	// Module init method
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------
+	module.init = function BuildInit() {
+		App.debugging( 'Build: Initiating', 'report' );
+	};
+
+
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------
+	// Returns json object of a specific module.json
+	//
+	// @param   module  [sting]  ID of module
+	//
+	// @return  [object]  Json object of module.json
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------
+	module.get = function BuildGet() {
+		App.debugging( 'Build: Getting build', 'report' );
+
+		var _includeOriginalLess  = App.selectedModules.includeLess;
+		var _includeOriginalJS  = App.selectedModules.includeUnminifiedJS;
+
+		if( _includeOriginalLess || _includeOriginalJS) {
+			App.zip.queuing('build', false); //build queue is done
+
+			App.zip.addBulk( App.TEMPPATH, ['Gruntfile.js', 'package.json'], '/' );
+		}
+		else {
+			App.zip.queuing('build', false); //build queue is done
+		}
+	};
+
+
+	App.build = module;
 
 
 }(App));
