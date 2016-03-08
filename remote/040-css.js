@@ -38,7 +38,7 @@
 		App.selectedModules.core.forEach(function CssIterateCore( module ) {
 			var lessContent = App.branding.replace(
 				Fs.readFileSync(App.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
-				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand']]
+				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand'] + ' ']
 			);
 
 			lessContent = App.branding.replace( lessContent, [ 'Brand', POST['brand'] ] );
