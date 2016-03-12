@@ -1,0 +1,36 @@
+{
+	"brands": [
+		"BOM",
+		"BSA",
+		"STG",
+		"WBC",
+		"WBG",
+		"BT"
+	],
+	"colors": {
+		"BOM": {
+			"Color-Text": "#20262d",
+			"Color-Muted": "#69727E"
+		},
+		"BSA": {
+			"Color-Text": "#333",
+			"Color-Muted": "#707070"
+		},
+		"STG": {
+			"Color-Text": "#004833",
+			"Color-Muted": "#757463"
+		},
+		"WBC": {
+			"Color-Text": "#2d373e",
+			"Color-Muted": "#575F65"
+		},
+		"WBG": {
+			"Color-Text": "rebeccapurple",
+			"Color-Muted": "rebeccapurple"
+		},
+		"BT": {
+			"Color-Text": "rebeccapurple",
+			"Color-Muted": "rebeccapurple"
+		}
+	}
+}
