@@ -186,6 +186,7 @@ module.exports = function(grunt) {
 				files: [
 					'<%= SETTINGS.folder.fileserver %>/*.js',
 					'!<%= SETTINGS.folder.fileserver %>/server.js',
+					'!<%= SETTINGS.folder.fileserver %>/server-dev.js',
 				],
 				tasks: [
 					'_buildNode',
