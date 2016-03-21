@@ -90,7 +90,7 @@
 								<li>
 									<p>
 										On the very top: <strong>Conditional &lt;html&gt; tag with "no-js" class.</strong><br>
-										<small>This is so our CSS can select older IE versions. The "no-js" class is replaced with "js" as soon as js runs.</small>
+										<small>This is so our CSS can select older IE versions. The "<code>no-js</code>" class is replaced with "js" as soon as js runs.</small>
 									</p>
 								</li>
 								<li>
@@ -105,7 +105,7 @@
 										Inside the header: <strong>The grunticon stylesheet loader.</strong><br>
 										<small>
 											To allow us to SVGs in the GUI we need some smarts to load the appropriate stylesheet.
-											To use your icons now include them like so: &lt;span class="icon icon-size-sm icon-face-happy"&gt;&lt;/span&gt;
+											To use your icons now include them like so: <code>&lt;span class="icon icon-size-sm icon-face-happy"&gt;&lt;/span&gt;</code>
 											<a href="http://www.grunticon.com/" target="_blank">Read more about this technique</a>.
 										</small>
 									</p>
@@ -114,7 +114,7 @@
 								<li>
 									<p>
 										Inside the header: <strong>A minified inline script.</strong><br>
-										<small>We remove the aformentioned "no-js" class here to avoid any flashes of styling.</small>
+										<small>We remove the aformentioned "<code>no-js</code>" class here to avoid any flashes of styling.</small>
 									</p>
 								</li>
 								<li>
@@ -132,13 +132,13 @@
 <% if( _hasJS ) { %>
 								<li>
 									<p>
-										Right after the opening &lt;body&gt; tag: <strong>A conditional noscript block.</strong><br>
+										Right after the opening <code>&lt;body&gt;</code> tag: <strong>A conditional noscript block.</strong><br>
 										<small>This informs screenreaders and visitors in general that javaScript is turned off and that it is needed for this page.</small>
 									</p>
 								</li>
 								<li>
 									<p>
-										Before the closing &lt;/body&gt; tag: <strong>The gui.min.js file.</strong><br>
+										Before the closing <code>&lt;/body&gt;</code> tag: <strong>The gui.min.js file.</strong><br>
 										<small>Your GUI-blend script.</small>
 									</p>
 								</li>
@@ -170,9 +170,38 @@
 								<li><a href="<%= blendURLWBC %>" target="_blank">Westpac</a></li>
 <% } %>
 							</ul>
-						</ul>
 						</div>
 					</div>
+
+<% if( _hasBuild ) { %>
+					<div class="row">
+						<div class="col-sm-12">
+							<hr>
+							<h2 class="body-font">Running the build</h2>
+						</div>
+
+						<div class="col-sm-6">
+							<p>
+								We have included a small grunt build in your blend so you can get started with building right away.
+							</p>
+							<p>
+								To get started install all dependencies with: <code>npm i</code>.<br>
+								<small>You need to have node and grunt installed.</small>
+							</p>
+						</div>
+
+						<div class="col-sm-6">
+							<p>
+								Running <code>grunt</code> will build all files in the <code>/source</code> folder and output them into the <code>/source</code> folder.
+								Grunt will also watch for changes in your source folder and build what you have changed.
+							</p>
+							<p>
+								If you want to add custom SVGs to your blend, all you have to do is add the SVGs into the <code>/source/svgs/</code> folder and grunt will
+								build them and add them to your GUI svgs.
+							</p>
+						</div>
+					</div>
+<% } %>
 
 				</main>
 

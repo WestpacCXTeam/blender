@@ -30,10 +30,18 @@
 
 		var POST = App.POST;
 		var index = Fs.readFileSync( App.TEMPPATH + 'index.html', 'utf8');
+		var _includeOriginalLess  = App.selectedModules.includeLess;
+		var _includeOriginalJS  = App.selectedModules.includeUnminifiedJS;
+		var _hasBuild = false;
+
+		if( _includeOriginalLess || _includeOriginalJS) {
+			_hasBuild = true;
+		}
 
 		index = _.template( index )({ //render the index template
 			_hasJS: App.selectedModules.js,
 			_hasSVG: App.selectedModules.svg,
+			_hasBuild: _hasBuild,
 			Brand: POST['brand'],
 			blendURL: App.banner.getBlendURL( App.selectedModules.brand ),
 			blendURLBOM: App.banner.getBlendURL( 'BOM' ),
