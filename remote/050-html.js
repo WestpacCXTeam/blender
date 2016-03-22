@@ -38,18 +38,22 @@
 			_hasBuild = true;
 		}
 
-		index = _.template( index )({ //render the index template
+		var options = { //options for underscore template
 			_hasJS: App.selectedModules.js,
 			_hasSVG: App.selectedModules.svg,
 			_hasBuild: _hasBuild,
 			Brand: POST['brand'],
 			blendURL: App.banner.getBlendURL( App.selectedModules.brand ),
-			blendURLBOM: App.banner.getBlendURL( 'BOM' ),
-			blendURLBSA: App.banner.getBlendURL( 'BSA' ),
-			blendURLSTG: App.banner.getBlendURL( 'STG' ),
-			blendURLWBC: App.banner.getBlendURL( 'WBC' ),
 			GUIRURL: App.GUIRURL + App.selectedModules.brand + '/blender/',
+		}
+
+		var guiconfig = JSON.parse( Fs.readFileSync( '../.guiconfig', 'utf8') ); //getting guiconfig for brands
+
+		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for each brand
+			options[ 'blendURL' + brand ] = App.banner.getBlendURL( brand );
 		});
+
+		index = _.template( index )( options ); //render the index template
 
 		App.zip.queuing('html', false); //html queue is done
 		App.zip.addFile( index, '/index.html' );
