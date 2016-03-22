@@ -473,7 +473,7 @@ var Less = require('less');
 
 			lessContent = App.branding.replace( lessContent, [ 'Brand', POST['brand'] ] );
 
-			if( _includeOriginal ) {
+			if( _includeOriginal && module.less ) {
 				lessIndex += '@import \'' + module.ID + '.less\';' + "\n";
 				App.zip.addFile( lessContent, '/source/less/' + module.ID + '.less' );
 			}
