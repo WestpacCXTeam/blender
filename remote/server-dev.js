@@ -74,8 +74,8 @@ var App = (function Application() {
 			blender
 				.use( BodyParser.urlencoded({ extended: false }) )
 
-				.listen(8080, function PortListener() {
-					App.debugging( 'Server started on port 8080', 'report' );
+				.listen(1337, function PortListener() {
+					App.debugging( 'Server started on port 1337', 'report' );
 				});
 
 
