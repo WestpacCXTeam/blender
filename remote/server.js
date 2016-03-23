@@ -1,4 +1,4 @@
-/*! blender - v0.0.2 */
+/*! blender - v0.0.3 */
 /***************************************************************************************************************************************************************
  *
  * Westpac GUI file server
@@ -74,8 +74,8 @@ var App = (function Application() {
 			blender
 				.use( BodyParser.urlencoded({ extended: false }) )
 
-				.listen(8080, function PortListener() {
-					App.debugging( 'Server started on port 8080', 'report' );
+				.listen(1337, function PortListener() {
+					App.debugging( 'Server started on port 1337', 'report' );
 				});
 
 
@@ -473,7 +473,7 @@ var Less = require('less');
 
 			lessContent = App.branding.replace( lessContent, [ 'Brand', POST['brand'] ] );
 
-			if( _includeOriginal ) {
+			if( _includeOriginal && module.less ) {
 				lessIndex += '@import \'' + module.ID + '.less\';' + "\n";
 				App.zip.addFile( lessContent, '/source/less/' + module.ID + '.less' );
 			}
@@ -565,18 +565,22 @@ var Less = require('less');
 			_hasBuild = true;
 		}
 
-		index = _.template( index )({ //render the index template
+		var options = { //options for underscore template
 			_hasJS: App.selectedModules.js,
 			_hasSVG: App.selectedModules.svg,
 			_hasBuild: _hasBuild,
 			Brand: POST['brand'],
 			blendURL: App.banner.getBlendURL( App.selectedModules.brand ),
-			blendURLBOM: App.banner.getBlendURL( 'BOM' ),
-			blendURLBSA: App.banner.getBlendURL( 'BSA' ),
-			blendURLSTG: App.banner.getBlendURL( 'STG' ),
-			blendURLWBC: App.banner.getBlendURL( 'WBC' ),
 			GUIRURL: App.GUIRURL + App.selectedModules.brand + '/blender/',
+		}
+
+		var guiconfig = JSON.parse( Fs.readFileSync( '../.guiconfig', 'utf8') ); //getting guiconfig for brands
+
+		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for each brand
+			options[ 'blendURL' + brand ] = App.banner.getBlendURL( brand );
 		});
+
+		index = _.template( index )( options ); //render the index template
 
 		App.zip.queuing('html', false); //html queue is done
 		App.zip.addFile( index, '/index.html' );
