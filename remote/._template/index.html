@@ -157,18 +157,9 @@
 								You can find the other brands version of your GUI Blend here:
 							</p>
 							<ul>
-<% if( Brand != 'BOM' ) { %>
-								<li><a href="<%= blendURLBOM %>" target="_blank">Bank of Melbourne</a></li>
-<% } %>
-<% if( Brand != 'BSA' ) { %>
-								<li><a href="<%= blendURLBSA %>" target="_blank">Bank SA</a></li>
-<% } %>
-<% if( Brand != 'STG' ) { %>
-								<li><a href="<%= blendURLSTG %>" target="_blank">St.George</a></li>
-<% } %>
-<% if( Brand != 'WBC' ) { %>
-								<li><a href="<%= blendURLWBC %>" target="_blank">Westpac</a></li>
-<% } %>
+<% _.each(brands, function( brand ) { %>
+							<li><a href="<%= brand.url %>" target="_blank"><%= brand.name %></a></li>
+<% }); %>
 							</ul>
 						</div>
 					</div>

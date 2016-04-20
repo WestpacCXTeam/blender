@@ -560,25 +560,30 @@ var Less = require('less');
 		var _includeOriginalLess  = App.selectedModules.includeLess;
 		var _includeOriginalJS  = App.selectedModules.includeUnminifiedJS;
 		var _hasBuild = false;
+		var guiconfig = JSON.parse( Fs.readFileSync( '../.guiconfig', 'utf8') ); //getting guiconfig for brands
+		var brands = {};
 
 		if( _includeOriginalLess || _includeOriginalJS) {
 			_hasBuild = true;
 		}
+
+		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for all other brands
+			if( brand.ID !== App.selectedModules.brand ) {
+				brands[ brand.ID ] = {};
+				brands[ brand.ID ].url = App.banner.getBlendURL( brand.ID );
+				brands[ brand.ID ].name = brand.name;
+			}
+		});
 
 		var options = { //options for underscore template
 			_hasJS: App.selectedModules.js,
 			_hasSVG: App.selectedModules.svg,
 			_hasBuild: _hasBuild,
 			Brand: POST['brand'],
+			brands: brands,
 			blendURL: App.banner.getBlendURL( App.selectedModules.brand ),
 			GUIRURL: App.GUIRURL + App.selectedModules.brand + '/blender/',
 		}
-
-		var guiconfig = JSON.parse( Fs.readFileSync( '../.guiconfig', 'utf8') ); //getting guiconfig for brands
-
-		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for each brand
-			options[ 'blendURL' + brand ] = App.banner.getBlendURL( brand );
-		});
 
 		index = _.template( index )( options ); //render the index template
 
