@@ -86,7 +86,7 @@ var App = (function Application() {
 
 			//listening to post request
 			blender.post('/blender', function PostListener(request, response) {
-				App.IP = request.connection.remoteAddress;
+				App.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
 				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + App.IP );
 
