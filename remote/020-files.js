@@ -132,6 +132,11 @@ var Less = require('less');
 		fromPOST.includeUnminifiedJS = _includeUnminifiedJS;
 		fromPOST.includeLess = _includeLess;
 
+		App.log.info( '             brand: ' + POST.brand );
+		App.log.info( '             jquery: ' + _includeJquery );
+		App.log.info( '             minify JS: ' + _includeUnminifiedJS );
+		App.log.info( '             include LESS: ' + _includeLess );
+
 
 		//////////////////////////////////////////////////| SAVIG GLOBALLY
 		App.selectedModules = fromPOST;

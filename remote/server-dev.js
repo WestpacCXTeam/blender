@@ -88,7 +88,7 @@ var App = (function Application() {
 			blender.post('/blender', function PostListener(request, response) {
 				App.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
-				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + App.IP );
+				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
 
 				App.response = response;
 				App.POST = request.body;
@@ -165,11 +165,11 @@ var App = (function Application() {
 		log: {
 
 			info: function LogInfo( text ) {
-				console.log( Chalk.bold.black( 'Info ' ) + new Date().toString() + '  ' + text );
+				console.log( Chalk.bold.black( 'Info  ' ) + new Date().toString() + '  ' + text );
 			},
 
 			error: function LogError( text ) {
-				console.log( Chalk.bold.red( 'ERROR' ) + new Date().toString() + '  ' + text );
+				console.log( Chalk.bold.red( 'ERROR ' ) + new Date().toString() + '  ' + text );
 			},
 
 		},
@@ -314,6 +314,11 @@ var Less = require('less');
 		fromPOST.includeJquery = _includeJquery;
 		fromPOST.includeUnminifiedJS = _includeUnminifiedJS;
 		fromPOST.includeLess = _includeLess;
+
+		App.log.info( '             brand: ' + POST.brand );
+		App.log.info( '             jquery: ' + _includeJquery );
+		App.log.info( '             minify JS: ' + _includeUnminifiedJS );
+		App.log.info( '             include LESS: ' + _includeLess );
 
 
 		//////////////////////////////////////////////////| SAVIG GLOBALLY
@@ -1306,6 +1311,7 @@ var Slack = require('node-slack');
 
 		var POST = App.POST;
 		var funkies = 0;
+		var funkyLog = '';
 
 		for(var i = App.FUNKY.length - 1; i >= 0; i--) {
 			if( POST[ App.FUNKY[i].var ] === 'on' ) {
@@ -1328,8 +1334,11 @@ var Slack = require('node-slack');
 					var file = App.FUNKY[i].file.replace( '[Brand]', POST['brand'] ); //brand path
 
 					App.zip.addPath( file, App.FUNKY[i].zip ); //add file to zip
+					funkyLog += ' ' + App.FUNKY[i].name
 				}
 			}
+
+			App.log.info( '             include LESS:' + funkyLog );
 		}
 		else {
 			App.zip.queuing('funky', false);
@@ -1366,20 +1375,25 @@ var Slack = require('node-slack');
 
 		var counter = 0;
 
-		Fs.readFile( App.LOG , function(err, data) {
+		Fs.readFile( App.LOG , function(err, data) { //read the log file
 			if( err ) {
 				throw err;
 			}
 
-			counter = parseInt( data ) + 1;
+			counter = parseInt( data ) + 1; //add this blend
 
-			Fs.writeFile( App.LOG, counter, function(err) {
-				if( err ) {
-					throw err;
-				}
+			if(!isNaN( counter )) { //check if the number is a number
+				Fs.writeFile( App.LOG, counter, function(err) {
+					if( err ) {
+						throw err;
+					}
 
-				App.debugging( 'counter: added', 'report' );
-			});
+					App.debugging( 'counter: added', 'report' );
+				});
+			}
+			else { //throw error
+				App.log.error('             Counter number not valid ("' + counter + '"). Leaving it alone for now!');
+			}
 		});
 	};
 
