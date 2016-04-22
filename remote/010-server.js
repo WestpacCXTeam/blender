@@ -88,7 +88,7 @@ var App = (function Application() {
 			blender.post('/blender', function PostListener(request, response) {
 				App.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
-				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + App.IP );
+				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
 
 				App.response = response;
 				App.POST = request.body;
@@ -165,11 +165,11 @@ var App = (function Application() {
 		log: {
 
 			info: function LogInfo( text ) {
-				console.log( Chalk.bold.black( 'Info ' ) + new Date().toString() + '  ' + text );
+				console.log( Chalk.bold.black( 'Info  ' ) + new Date().toString() + '  ' + text );
 			},
 
 			error: function LogError( text ) {
-				console.log( Chalk.bold.red( 'ERROR' ) + new Date().toString() + '  ' + text );
+				console.log( Chalk.bold.red( 'ERROR ' ) + new Date().toString() + '  ' + text );
 			},
 
 		},

@@ -22,20 +22,25 @@
 
 		var counter = 0;
 
-		Fs.readFile( App.LOG , function(err, data) {
+		Fs.readFile( App.LOG , function(err, data) { //read the log file
 			if( err ) {
 				throw err;
 			}
 
-			counter = parseInt( data ) + 1;
+			counter = parseInt( data ) + 1; //add this blend
 
-			Fs.writeFile( App.LOG, counter, function(err) {
-				if( err ) {
-					throw err;
-				}
+			if(!isNaN( counter )) { //check if the number is a number
+				Fs.writeFile( App.LOG, counter, function(err) {
+					if( err ) {
+						throw err;
+					}
 
-				App.debugging( 'counter: added', 'report' );
-			});
+					App.debugging( 'counter: added', 'report' );
+				});
+			}
+			else { //throw error
+				App.log.error('             Counter number not valid ("' + counter + '"). Leaving it alone for now!');
+			}
 		});
 	};
 
