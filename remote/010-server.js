@@ -1,7 +1,7 @@
 /*! [Name-Version] */
 /***************************************************************************************************************************************************************
  *
- * Westpac GUI file server
+ * Westpac GUI blender
  *
  **************************************************************************************************************************************************************/
 
@@ -12,29 +12,30 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var Fs = require('fs');
-var Http = require('http');
-var Path = require('path');
-var Chalk = require('chalk');
-var _ = require("underscore");
-var CFonts = require('cfonts');
-var Express = require('express');
-var BodyParser = require('body-parser');
+const Fs = require('fs');
+const Http = require('http');
+const Path = require('path');
+const Chalk = require('chalk');
+const _ = require('underscore');
+const CFonts = require('cfonts');
+const Express = require('express');
+const BodyParser = require('body-parser');
 
 
-var App = (function Application() {
+let Blender = (function Application() {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Settings
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	return {
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// Settings
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: [Debug], //debugging infos
 		GELRURL: 'http://gel.westpacgroup.com.au/',
 		GUIRURL: 'http://gel.westpacgroup.com.au/' + 'GUI/',
-		// GUIPATH: Path.normalize(__dirname + '/../../GUI-docs/GUI-source-master/'), //debug only
-		GUIPATH: Path.normalize(__dirname + '/../../GUI-source-master/'),
+		GUIPATH: Path.normalize(__dirname + '/../../GUI-docs/GUI-source-master/'), //debug only
+		// GUIPATH: Path.normalize(__dirname + '/../../GUI-source-master/'),
 		TEMPPATH: Path.normalize(__dirname + '/._template/'),
 		GELPATH: Path.normalize(__dirname + '/../../../'),
+		GUICONFIG: Path.normalize(__dirname + '/../.guiconfig'),
 		JQUERYPATH: '_javascript-helpers/1.0.1/_core/js/010-jquery.js',
 		SLACKURL: 'https://hooks.slack.com/services/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',
 		SLACKICON: 'http://gel.westpacgroup.com.au/GUI/blender/remote/assets/img/blender-icon.png',
@@ -65,35 +66,55 @@ var App = (function Application() {
 		// Initiate blender
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		init: function Init() {
-			if( App.DEBUG ) App.debugging( ' DEBUGGING| INFORMATION', 'headline' );
+			if( Blender.DEBUG ) Blender.debugging( ' DEBUGGING| INFORMATION', 'headline' );
 
-			App.GUI = JSON.parse( Fs.readFileSync( App.GUIPATH + 'GUI.json', 'utf8') );
-			var blender = Express();
+			Blender.GUI = JSON.parse( Fs.readFileSync( Blender.GUIPATH + 'GUI.json', 'utf8') );
+			let blender = Express();
 
 			//starting server
 			blender
 				.use( BodyParser.urlencoded({ extended: false }) )
 
 				.listen(1337, function PortListener() {
-					App.debugging( 'Server started on port 1337', 'report' );
+					Blender.debugging( 'Server started on port 1337', 'report' );
 				});
 
 
 			blender.get('*', function GetListener(request, response) {
-				response.redirect(301, App.GUIRURL);
+				response.redirect(301, Blender.GUIRURL);
 			});
 
 
 			//listening to post request
 			blender.post('/blender', function PostListener(request, response) {
-				App.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+				Blender.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
-				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
+				Blender.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
 
-				App.response = response;
-				App.POST = request.body;
+				//the core needs to be in the request and the user agent should be presented
+				if(
+					typeof request.body['module-_colors'] !== 'undefined'
+					&& typeof request.body['module-_fonts'] !== 'undefined'
+					&& typeof request.body['module-_text-styling'] !== 'undefined'
+					&& typeof request.body['module-_grid'] !== 'undefined'
+					&& typeof request.body['module-_javascript-helpers'] !== 'undefined'
+					&& typeof request.headers['user-agent'] !== 'undefined'
+				) {
 
-				App.files.init();
+					//when debug mode is off disgard "stress-tester"
+					if( !Blender.DEBUG && request.headers['user-agent'] !== 'stress-tester' || Blender.DEBUG ) {
+						Blender.response = response;
+						Blender.POST = request.body;
+
+						Blender.files.init();
+					}
+					else {
+						Blender.log.info( 'Discarded for invalid user-agent (' + request.headers['user-agent'] + ')' );
+					}
+				}
+				else {
+					Blender.log.info( 'Discarded for invalid request (core not complete or user-agent empty)' );
+				}
 			});
 
 		},
@@ -119,8 +140,8 @@ var App = (function Application() {
 		debugging: function Debugging( text, code ) {
 
 			if( code === 'headline' ) {
-				if( App.DEBUG ) {
-					var fonts = new CFonts({
+				if( Blender.DEBUG ) {
+					let fonts = new CFonts({
 						'text': text,
 						'colors': ['white', 'gray'],
 						'maxLength': 12,
@@ -129,23 +150,23 @@ var App = (function Application() {
 			}
 
 			if( code === 'report' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'error' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'interaction' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'send' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'receive' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
 			}
 
 		},
@@ -180,4 +201,4 @@ var App = (function Application() {
 
 
 //run blender
-App.init();
+Blender.init();

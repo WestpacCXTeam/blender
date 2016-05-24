@@ -8,36 +8,36 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var Slack = require('node-slack');
+const Slack = require('node-slack');
 
 
-(function SlackApp(App) {
+(function SlackApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.post = function SlackPost() {
-		App.debugging( 'Slack: Posting', 'report' );
+		Blender.debugging( 'Slack: Posting', 'report' );
 
-		var slack = new Slack( App.SLACKURL );
+		var slack = new Slack( Blender.SLACKURL );
 		var funky = '';
 		var core = '';
 		var modules = '';
-		var POST = App.POST;
-		var jquery = App.selectedModules.includeJquery ? '`Yes`' : '`No`';
-		var unminJS  = App.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
-		var less  = App.selectedModules.includeLess ? '`Yes`' : '`No`';
+		var POST = Blender.POST;
+		var jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
+		var unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
+		var less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
 		var channel = '#testing';
-		if( !App.DEBUG ) {
+		if( !Blender.DEBUG ) {
 			var channel = '#blender';
 		}
 
-		for(var i = App.FUNKY.length - 1; i >= 0; i--) {
-			if( POST[ App.FUNKY[i].var ] === 'on' ) {
-				funky += '`' + App.FUNKY[i].name + '` ';
+		for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
+			if( POST[ Blender.FUNKY[i].var ] === 'on' ) {
+				funky += '`' + Blender.FUNKY[i].name + '` ';
 			}
 		}
 
@@ -45,11 +45,11 @@ var Slack = require('node-slack');
 			funky = '`none`';
 		}
 
-		App.selectedModules.core.forEach(function CssIterateCore( module ) {
+		Blender.selectedModules.core.forEach(function CssIterateCore( module ) {
 			core += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
-		App.selectedModules.modules.forEach(function SlackIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(function SlackIterateModules( module ) {
 			modules += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
@@ -68,7 +68,7 @@ var Slack = require('node-slack');
 					{
 						'title': 'Modules',
 						'value': '' +
-							'_Selected_: `' + App.selectedModules.modules.length + '`\n' +
+							'_Selected_: `' + Blender.selectedModules.modules.length + '`\n' +
 							'_Core_:\n' + core.substr(2) + '\n' +
 							'_Modules_:\n' + modules.substr(2) + '\n\n\n',
 						'short': false,
@@ -76,7 +76,7 @@ var Slack = require('node-slack');
 					{
 						'title': 'Options',
 						'value': '' +
-							'_Brand_: `' + App.selectedModules.brand + '`\n' +
+							'_Brand_: `' + Blender.selectedModules.brand + '`\n' +
 							'_jQuery_: ' + jquery + '\n' +
 							'_unmin JS_: ' + unminJS + '\n' +
 							'_Less_: ' + less + '\n' +
@@ -86,19 +86,19 @@ var Slack = require('node-slack');
 					{
 						'title': 'Client',
 						'value': '' +
-							'_IP_: `' + App.IP + '`',
+							'_IP_: `' + Blender.IP + '`',
 						'short': false,
 					}
 				],
 			}],
 			'channel': channel,
 			'username': 'The Blender',
-			'icon_url': App.SLACKICON,
+			'icon_url': Blender.SLACKICON,
 		});
 	};
 
 
-	App.slack = module;
+	Blender.slack = module;
 
 
-}(App));
+}(Blender));

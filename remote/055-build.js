@@ -10,15 +10,15 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BuildApp(App) {
+(function BuildApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function BuildInit() {
-		App.debugging( 'Build: Initiating', 'report' );
+		Blender.debugging( 'Build: Initiating', 'report' );
 	};
 
 
@@ -30,23 +30,23 @@
 	// @return  [object]  Json object of module.json
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function BuildGet() {
-		App.debugging( 'Build: Getting build', 'report' );
+		Blender.debugging( 'Build: Getting build', 'report' );
 
-		var _includeOriginalLess  = App.selectedModules.includeLess;
-		var _includeOriginalJS  = App.selectedModules.includeUnminifiedJS;
+		var _includeOriginalLess  = Blender.selectedModules.includeLess;
+		var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 
 		if( _includeOriginalLess || _includeOriginalJS) {
-			App.zip.queuing('build', false); //build queue is done
+			Blender.zip.queuing('build', false); //build queue is done
 
-			App.zip.addBulk( App.TEMPPATH, ['Gruntfile.js', 'package.json'], '/' );
+			Blender.zip.addBulk( Blender.TEMPPATH, ['Gruntfile.js', 'package.json'], '/' );
 		}
 		else {
-			App.zip.queuing('build', false); //build queue is done
+			Blender.zip.queuing('build', false); //build queue is done
 		}
 	};
 
 
-	App.build = module;
+	Blender.build = module;
 
 
-}(App));
+}(Blender));

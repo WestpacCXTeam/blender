@@ -10,19 +10,19 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function CounterApp(App) {
+(function CounterApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module add method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.add = function counterPost() {
-		App.debugging( 'counter: adding new instance', 'report' );
+		Blender.debugging( 'counter: adding new instance', 'report' );
 
 		var counter = 0;
 
-		Fs.readFile( App.LOG , function(err, data) { //read the log file
+		Fs.readFile( Blender.LOG , function(err, data) { //read the log file
 			if( err ) {
 				throw err;
 			}
@@ -30,22 +30,22 @@
 			counter = parseInt( data ) + 1; //add this blend
 
 			if(!isNaN( counter )) { //check if the number is a number
-				Fs.writeFile( App.LOG, counter, function(err) {
+				Fs.writeFile( Blender.LOG, counter, function(err) {
 					if( err ) {
 						throw err;
 					}
 
-					App.debugging( 'counter: added', 'report' );
+					Blender.debugging( 'counter: added', 'report' );
 				});
 			}
 			else { //throw error
-				App.log.error('             Counter number not valid ("' + counter + '"). Leaving it alone for now!');
+				Blender.log.error('             Counter number not valid ("' + counter + '"). Leaving it alone for now!');
 			}
 		});
 	};
 
 
-	App.counter = module;
+	Blender.counter = module;
 
 
-}(App));
+}(Blender));

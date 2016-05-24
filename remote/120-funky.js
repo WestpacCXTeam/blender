@@ -10,55 +10,55 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function FunkyApp(App) {
+(function FunkyApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module get method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function funkyPost() {
-		App.debugging( 'funky: Getting funky stuff', 'report' );
+		Blender.debugging( 'funky: Getting funky stuff', 'report' );
 
-		var POST = App.POST;
+		var POST = Blender.POST;
 		var funkies = 0;
 		var funkyLog = '';
 
-		for(var i = App.FUNKY.length - 1; i >= 0; i--) {
-			if( POST[ App.FUNKY[i].var ] === 'on' ) {
+		for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
+			if( POST[ Blender.FUNKY[i].var ] === 'on' ) {
 				funkies++; //how many funky bits have been requested?
 			}
 		}
 
 		if( funkies > 0 ) {
-			for(var i = App.FUNKY.length - 1; i >= 0; i--) {
+			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
 
-				if( POST[ App.FUNKY[i].var ] === 'on' ) {
-					App.debugging( 'funky: Getting ' + App.FUNKY[i].name + ' reference', 'report' );
+				if( POST[ Blender.FUNKY[i].var ] === 'on' ) {
+					Blender.debugging( 'funky: Getting ' + Blender.FUNKY[i].name + ' reference', 'report' );
 
 					funkies--; //counting down
 
 					if( funkies === 0 ) { //if this is the last one
-						App.zip.queuing('funky', false);
+						Blender.zip.queuing('funky', false);
 					}
 
-					var file = App.FUNKY[i].file.replace( '[Brand]', POST['brand'] ); //brand path
+					var file = Blender.FUNKY[i].file.replace( '[Brand]', POST['brand'] ); //brand path
 
-					App.zip.addPath( file, App.FUNKY[i].zip ); //add file to zip
-					funkyLog += ' ' + App.FUNKY[i].name
+					Blender.zip.addPath( file, Blender.FUNKY[i].zip ); //add file to zip
+					funkyLog += ' ' + Blender.FUNKY[i].name
 				}
 			}
 
-			App.log.info( '             include LESS:' + funkyLog );
+			Blender.log.info( '             include LESS:' + funkyLog );
 		}
 		else {
-			App.zip.queuing('funky', false);
-			App.zip.readyZip();
+			Blender.zip.queuing('funky', false);
+			Blender.zip.readyZip();
 		}
 	};
 
 
-	App.funky = module;
+	Blender.funky = module;
 
 
-}(App));
+}(Blender));

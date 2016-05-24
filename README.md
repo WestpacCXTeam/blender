@@ -1,7 +1,7 @@
 BLENDER
 =======
 
-> This is the repository in which we develop the GUI Blender.
+> This is the repository for the Westpac GUI Blender.
 
 ### Content
 
@@ -24,8 +24,10 @@ BLENDER
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-### Release History
+### Release History remote
 
+* v0.0.4 - Added stress test and priority system
+* v0.0.3 - Added dynamic branding
 * v0.0.2 - Added grunt build to download
 * v0.0.1 - Initial file server system setup
 

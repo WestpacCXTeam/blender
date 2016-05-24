@@ -10,15 +10,15 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BannerApp(App) {
+(function BannerApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function BannerInit() {
-		App.debugging( 'Banner: Initiating', 'report' );
+		Blender.debugging( 'Banner: Initiating', 'report' );
 	};
 
 
@@ -28,9 +28,9 @@
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function BannerGet() {
-		App.debugging( 'Banner: Generating banner', 'report' );
+		Blender.debugging( 'Banner: Generating banner', 'report' );
 
-		return '/* GUI blend ' + App.banner.getBlendURL( App.selectedModules.brand ) + ' */' + "\n";
+		return '/* GUI blend ' + Blender.banner.getBlendURL( Blender.selectedModules.brand ) + ' */' + "\n";
 
 	};
 
@@ -43,10 +43,10 @@
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.attach = function BannerAttach( content ) {
-		App.debugging( 'Banner: Attaching banner', 'report' );
+		Blender.debugging( 'Banner: Attaching banner', 'report' );
 
 		if( content.length > 0 ) {
-			return App.banner.get() + content;
+			return Blender.banner.get() + content;
 		}
 		else {
 			return '';
@@ -63,15 +63,15 @@
 	// @return  [string]  The URL string to this build
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getBlendURL = function BannerGetBlenderUrl( brand ) {
-		App.debugging( 'Banner: Generating blend link', 'report' );
+		Blender.debugging( 'Banner: Generating blend link', 'report' );
 
-		var url = App.GUIRURL + brand + '/blender/#';
+		var url = Blender.GUIRURL + brand + '/blender/#';
 
-		App.selectedModules.core.forEach(function BannerIterateCore( module ) { //adding core
+		Blender.selectedModules.core.forEach(function BannerIterateCore( module ) { //adding core
 			url += '/' + module.ID + ':' + module.version;
 		});
 
-		App.selectedModules.modules.forEach(function BannerIterateModules( module ) { //adding modules
+		Blender.selectedModules.modules.forEach(function BannerIterateModules( module ) { //adding modules
 			url += '/' + module.ID + ':' + module.version;
 		});
 
@@ -79,7 +79,7 @@
 	};
 
 
-	App.banner = module;
+	Blender.banner = module;
 
 
-}(App));
+}(Blender));

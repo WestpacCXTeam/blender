@@ -10,15 +10,15 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function ModulesApp(App) {
+(function ModulesApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function ModulesInit() {
-		App.debugging( 'Modules: Initiating', 'report' );
+		Blender.debugging( 'Modules: Initiating', 'report' );
 	};
 
 
@@ -30,28 +30,28 @@
 	// @return  [object]  Json object of module.json
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getJson = function ModulesGetJson( module ) {
-		App.debugging( 'Modules: Getting JSON for ' + module, 'report' );
+		Blender.debugging( 'Modules: Getting JSON for ' + module, 'report' );
 
 
-		if( App.GUImodules === undefined ) { //flatten GUI json and assign to global
+		if( Blender.GUImodules === undefined ) { //flatten GUI json and assign to global
 
-			App.GUImodules = {};
-			Object.keys( App.GUI.modules ).forEach(function ModulesIterateCategory( category ) {
+			Blender.GUImodules = {};
+			Object.keys( Blender.GUI.modules ).forEach(function ModulesIterateCategory( category ) {
 
-				Object.keys( App.GUI.modules[ category ] ).forEach(function ModulesIterateModules( mod ) {
-					App.GUImodules[ mod ] = App.GUI.modules[ category ][ mod ];
+				Object.keys( Blender.GUI.modules[ category ] ).forEach(function ModulesIterateModules( mod ) {
+					Blender.GUImodules[ mod ] = Blender.GUI.modules[ category ][ mod ];
 				});
 
 			});
 		}
 
-		return App.GUImodules[module];
-		// JSON.parse( Fs.readFileSync( App.GUIPATH + module + '/module.json', 'utf8') ); //getting from module.json if we want to have a lot of I/O (we don't)
+		return Blender.GUImodules[module];
+		// JSON.parse( Fs.readFileSync( Blender.GUIPATH + module + '/module.json', 'utf8') ); //getting from module.json if we want to have a lot of I/O (we don't)
 
 	};
 
 
-	App.modules = module;
+	Blender.modules = module;
 
 
-}(App));
+}(Blender));

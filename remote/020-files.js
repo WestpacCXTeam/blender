@@ -10,47 +10,47 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var UglifyJS = require('uglify-js');
-var Less = require('less');
+const UglifyJS = require('uglify-js');
+const Less = require('less');
 
 
-(function FilesApp(App) {
+(function FilesApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function FilesInit() {
-		App.debugging( 'Files: new query', 'report' );
+		Blender.debugging( 'Files: new query', 'report' );
 
 		//////////////////////////////////////////////////| PARSING POST
-		App.files.getPost();
+		Blender.files.getPost();
 
 		//////////////////////////////////////////////////| SETTING QUE
-		App.zip.queuing('css', true);
-		App.zip.queuing('html', true);
+		Blender.zip.queuing('css', true);
+		Blender.zip.queuing('html', true);
 
-		if( App.selectedModules.js ) {
-			App.zip.queuing('js', true);
+		if( Blender.selectedModules.js ) {
+			Blender.zip.queuing('js', true);
 		}
-		App.zip.queuing('assets', true);
-		App.zip.queuing('build', true);
+		Blender.zip.queuing('assets', true);
+		Blender.zip.queuing('build', true);
 
-		App.zip.queuing('funky', true);
+		Blender.zip.queuing('funky', true);
 
 
 		//////////////////////////////////////////////////| GENERATING FILES
-		App.css.get();
+		Blender.css.get();
 
-		if( App.selectedModules.js ) {
-			App.js.get();
+		if( Blender.selectedModules.js ) {
+			Blender.js.get();
 		}
 
-		App.build.get();
-		App.html.get();
-		App.assets.get();
-		App.funky.get();
+		Blender.build.get();
+		Blender.html.get();
+		Blender.assets.get();
+		Blender.funky.get();
 	};
 
 
@@ -58,9 +58,9 @@ var Less = require('less');
 	// Saves an array of the selected modules globally so we don't work with the raw data that comes from the client... as that could be a mess ;)
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getPost = function FilesGetPost() {
-		App.debugging( 'Files: Parsing POST', 'report' );
+		Blender.debugging( 'Files: Parsing POST', 'report' );
 
-		var POST = App.POST;
+		var POST = Blender.POST;
 		var fromPOST = {};
 		fromPOST.modules = [];
 		var _hasJS = false;
@@ -81,7 +81,7 @@ var Less = require('less');
 				POST[ moduleName ] === 'on'
 			) { //only look at enabled checkboxes
 
-				var json = App.modules.getJson( module );
+				var json = Blender.modules.getJson( module );
 				var version = POST[ 'module-' + module ];
 
 				var newObject = _.extend( json, json.versions[ version ] ); //merge version to the same level
@@ -105,8 +105,8 @@ var Less = require('less');
 		//////////////////////////////////////////////////| ADDING CORE
 		fromPOST.core = [];
 
-		Object.keys( App.GUI.modules._core ).forEach(function FilesIterateCore( moduleName ) {
-			var module = App.GUI.modules._core[moduleName];
+		Object.keys( Blender.GUI.modules._core ).forEach(function FilesIterateCore( moduleName ) {
+			var module = Blender.GUI.modules._core[moduleName];
 			var version = POST[ 'module-' + module.ID ];
 
 			var newObject = _.extend(module, module.versions[ version ]); //merge version to the same level
@@ -117,7 +117,7 @@ var Less = require('less');
 			log += ', ' + module.ID + ':' + version;
 		});
 
-		App.log.info( '             ' + log.substr(2) );
+		Blender.log.info( '             ' + log.substr(2) );
 
 
 		//////////////////////////////////////////////////| ADDING OPTIONS
@@ -132,18 +132,18 @@ var Less = require('less');
 		fromPOST.includeUnminifiedJS = _includeUnminifiedJS;
 		fromPOST.includeLess = _includeLess;
 
-		App.log.info( '             brand: ' + POST.brand );
-		App.log.info( '             jquery: ' + _includeJquery );
-		App.log.info( '             minify JS: ' + _includeUnminifiedJS );
-		App.log.info( '             include LESS: ' + _includeLess );
+		Blender.log.info( '             brand: ' + POST.brand );
+		Blender.log.info( '             jquery: ' + _includeJquery );
+		Blender.log.info( '             minify JS: ' + _includeUnminifiedJS );
+		Blender.log.info( '             include LESS: ' + _includeLess );
 
 
 		//////////////////////////////////////////////////| SAVIG GLOBALLY
-		App.selectedModules = fromPOST;
+		Blender.selectedModules = fromPOST;
 	};
 
 
-	App.files = module;
+	Blender.files = module;
 
 
-}(App));
+}(Blender));

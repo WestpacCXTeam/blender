@@ -1,7 +1,7 @@
-/*! blender - v0.0.3 */
+/*! blender-stack - v0.0.1 */
 /***************************************************************************************************************************************************************
  *
- * Westpac GUI file server
+ * Westpac GUI blender
  *
  **************************************************************************************************************************************************************/
 
@@ -12,29 +12,30 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var Fs = require('fs');
-var Http = require('http');
-var Path = require('path');
-var Chalk = require('chalk');
-var _ = require("underscore");
-var CFonts = require('cfonts');
-var Express = require('express');
-var BodyParser = require('body-parser');
+const Fs = require('fs');
+const Http = require('http');
+const Path = require('path');
+const Chalk = require('chalk');
+const _ = require('underscore');
+const CFonts = require('cfonts');
+const Express = require('express');
+const BodyParser = require('body-parser');
 
 
-var App = (function Application() {
+let Blender = (function Application() {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Settings
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	return {
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// Settings
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: false, //debugging infos
 		GELRURL: 'http://gel.westpacgroup.com.au/',
 		GUIRURL: 'http://gel.westpacgroup.com.au/' + 'GUI/',
-		// GUIPATH: Path.normalize(__dirname + '/../../GUI-docs/GUI-source-master/'), //debug only
-		GUIPATH: Path.normalize(__dirname + '/../../GUI-source-master/'),
+		GUIPATH: Path.normalize(__dirname + '/../../GUI-docs/GUI-source-master/'), //debug only
+		// GUIPATH: Path.normalize(__dirname + '/../../GUI-source-master/'),
 		TEMPPATH: Path.normalize(__dirname + '/._template/'),
 		GELPATH: Path.normalize(__dirname + '/../../../'),
+		GUICONFIG: Path.normalize(__dirname + '/../.guiconfig'),
 		JQUERYPATH: '_javascript-helpers/1.0.1/_core/js/010-jquery.js',
 		SLACKURL: 'https://hooks.slack.com/services/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',
 		SLACKICON: 'http://gel.westpacgroup.com.au/GUI/blender/remote/assets/img/blender-icon.png',
@@ -65,35 +66,55 @@ var App = (function Application() {
 		// Initiate blender
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		init: function Init() {
-			if( App.DEBUG ) App.debugging( ' DEBUGGING| INFORMATION', 'headline' );
+			if( Blender.DEBUG ) Blender.debugging( ' DEBUGGING| INFORMATION', 'headline' );
 
-			App.GUI = JSON.parse( Fs.readFileSync( App.GUIPATH + 'GUI.json', 'utf8') );
-			var blender = Express();
+			Blender.GUI = JSON.parse( Fs.readFileSync( Blender.GUIPATH + 'GUI.json', 'utf8') );
+			let blender = Express();
 
 			//starting server
 			blender
 				.use( BodyParser.urlencoded({ extended: false }) )
 
 				.listen(1337, function PortListener() {
-					App.debugging( 'Server started on port 1337', 'report' );
+					Blender.debugging( 'Server started on port 1337', 'report' );
 				});
 
 
 			blender.get('*', function GetListener(request, response) {
-				response.redirect(301, App.GUIRURL);
+				response.redirect(301, Blender.GUIRURL);
 			});
 
 
 			//listening to post request
 			blender.post('/blender', function PostListener(request, response) {
-				App.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+				Blender.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
-				App.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
+				Blender.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
 
-				App.response = response;
-				App.POST = request.body;
+				//the core needs to be in the request and the user agent should be presented
+				if(
+					typeof request.body['module-_colors'] !== 'undefined'
+					&& typeof request.body['module-_fonts'] !== 'undefined'
+					&& typeof request.body['module-_text-styling'] !== 'undefined'
+					&& typeof request.body['module-_grid'] !== 'undefined'
+					&& typeof request.body['module-_javascript-helpers'] !== 'undefined'
+					&& typeof request.headers['user-agent'] !== 'undefined'
+				) {
 
-				App.files.init();
+					//when debug mode is off disgard "stress-tester"
+					if( !Blender.DEBUG && request.headers['user-agent'] !== 'stress-tester' || Blender.DEBUG ) {
+						Blender.response = response;
+						Blender.POST = request.body;
+
+						Blender.files.init();
+					}
+					else {
+						Blender.log.info( 'Discarded for invalid user-agent (' + request.headers['user-agent'] + ')' );
+					}
+				}
+				else {
+					Blender.log.info( 'Discarded for invalid request (core not complete or user-agent empty)' );
+				}
 			});
 
 		},
@@ -119,8 +140,8 @@ var App = (function Application() {
 		debugging: function Debugging( text, code ) {
 
 			if( code === 'headline' ) {
-				if( App.DEBUG ) {
-					var fonts = new CFonts({
+				if( Blender.DEBUG ) {
+					let fonts = new CFonts({
 						'text': text,
 						'colors': ['white', 'gray'],
 						'maxLength': 12,
@@ -129,23 +150,23 @@ var App = (function Application() {
 			}
 
 			if( code === 'report' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'error' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'interaction' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'send' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
 			}
 
 			else if( code === 'receive' ) {
-				if( App.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
+				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
 			}
 
 		},
@@ -180,7 +201,7 @@ var App = (function Application() {
 
 
 //run blender
-App.init();
+Blender.init();
 /***************************************************************************************************************************************************************
  *
  * Files
@@ -193,47 +214,47 @@ App.init();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var UglifyJS = require('uglify-js');
-var Less = require('less');
+const UglifyJS = require('uglify-js');
+const Less = require('less');
 
 
-(function FilesApp(App) {
+(function FilesApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function FilesInit() {
-		App.debugging( 'Files: new query', 'report' );
+		Blender.debugging( 'Files: new query', 'report' );
 
 		//////////////////////////////////////////////////| PARSING POST
-		App.files.getPost();
+		Blender.files.getPost();
 
 		//////////////////////////////////////////////////| SETTING QUE
-		App.zip.queuing('css', true);
-		App.zip.queuing('html', true);
+		Blender.zip.queuing('css', true);
+		Blender.zip.queuing('html', true);
 
-		if( App.selectedModules.js ) {
-			App.zip.queuing('js', true);
+		if( Blender.selectedModules.js ) {
+			Blender.zip.queuing('js', true);
 		}
-		App.zip.queuing('assets', true);
-		App.zip.queuing('build', true);
+		Blender.zip.queuing('assets', true);
+		Blender.zip.queuing('build', true);
 
-		App.zip.queuing('funky', true);
+		Blender.zip.queuing('funky', true);
 
 
 		//////////////////////////////////////////////////| GENERATING FILES
-		App.css.get();
+		Blender.css.get();
 
-		if( App.selectedModules.js ) {
-			App.js.get();
+		if( Blender.selectedModules.js ) {
+			Blender.js.get();
 		}
 
-		App.build.get();
-		App.html.get();
-		App.assets.get();
-		App.funky.get();
+		Blender.build.get();
+		Blender.html.get();
+		Blender.assets.get();
+		Blender.funky.get();
 	};
 
 
@@ -241,9 +262,9 @@ var Less = require('less');
 	// Saves an array of the selected modules globally so we don't work with the raw data that comes from the client... as that could be a mess ;)
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getPost = function FilesGetPost() {
-		App.debugging( 'Files: Parsing POST', 'report' );
+		Blender.debugging( 'Files: Parsing POST', 'report' );
 
-		var POST = App.POST;
+		var POST = Blender.POST;
 		var fromPOST = {};
 		fromPOST.modules = [];
 		var _hasJS = false;
@@ -264,7 +285,7 @@ var Less = require('less');
 				POST[ moduleName ] === 'on'
 			) { //only look at enabled checkboxes
 
-				var json = App.modules.getJson( module );
+				var json = Blender.modules.getJson( module );
 				var version = POST[ 'module-' + module ];
 
 				var newObject = _.extend( json, json.versions[ version ] ); //merge version to the same level
@@ -288,8 +309,8 @@ var Less = require('less');
 		//////////////////////////////////////////////////| ADDING CORE
 		fromPOST.core = [];
 
-		Object.keys( App.GUI.modules._core ).forEach(function FilesIterateCore( moduleName ) {
-			var module = App.GUI.modules._core[moduleName];
+		Object.keys( Blender.GUI.modules._core ).forEach(function FilesIterateCore( moduleName ) {
+			var module = Blender.GUI.modules._core[moduleName];
 			var version = POST[ 'module-' + module.ID ];
 
 			var newObject = _.extend(module, module.versions[ version ]); //merge version to the same level
@@ -300,7 +321,7 @@ var Less = require('less');
 			log += ', ' + module.ID + ':' + version;
 		});
 
-		App.log.info( '             ' + log.substr(2) );
+		Blender.log.info( '             ' + log.substr(2) );
 
 
 		//////////////////////////////////////////////////| ADDING OPTIONS
@@ -315,21 +336,21 @@ var Less = require('less');
 		fromPOST.includeUnminifiedJS = _includeUnminifiedJS;
 		fromPOST.includeLess = _includeLess;
 
-		App.log.info( '             brand: ' + POST.brand );
-		App.log.info( '             jquery: ' + _includeJquery );
-		App.log.info( '             minify JS: ' + _includeUnminifiedJS );
-		App.log.info( '             include LESS: ' + _includeLess );
+		Blender.log.info( '             brand: ' + POST.brand );
+		Blender.log.info( '             jquery: ' + _includeJquery );
+		Blender.log.info( '             minify JS: ' + _includeUnminifiedJS );
+		Blender.log.info( '             include LESS: ' + _includeLess );
 
 
 		//////////////////////////////////////////////////| SAVIG GLOBALLY
-		App.selectedModules = fromPOST;
+		Blender.selectedModules = fromPOST;
 	};
 
 
-	App.files = module;
+	Blender.files = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Compile JS files
@@ -342,15 +363,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function JsApp(App) {
+(function JsApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function JsInit() {
-		App.debugging( 'JS: Initiating', 'report' );
+		Blender.debugging( 'JS: Initiating', 'report' );
 	};
 
 
@@ -358,55 +379,55 @@ var Less = require('less');
 	// Get all js files and concat them
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function JsGet() {
-		App.debugging( 'JS: Generating js', 'report' );
+		Blender.debugging( 'JS: Generating js', 'report' );
 
 		var files = [];
 		var file = '';
 		var core = '';
-		var POST = App.POST;
+		var POST = Blender.POST;
 		var jquery = '';
-		var _includeJquery = App.selectedModules.includeJquery; //POST.hasOwnProperty('jquery');
-		var _includeOriginal  = App.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty('jsunminified');
+		var _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty('jquery');
+		var _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty('jsunminified');
 
 
 		//////////////////////////////////////////////////| JQUERY
 		if( _includeJquery ) { //optional include jquery
-			jquery = Fs.readFileSync( App.GUIPATH + App.JQUERYPATH, 'utf8');
+			jquery = Fs.readFileSync( Blender.GUIPATH + Blender.JQUERYPATH, 'utf8');
 
 			if( _includeOriginal ) {
-				App.zip.addFile( jquery, '/source/js/010-jquery.js' );
+				Blender.zip.addFile( jquery, '/source/js/010-jquery.js' );
 			}
 		}
 
 
 		//////////////////////////////////////////////////| CORE
-		if( App.selectedModules.js ) {
-			core = Fs.readFileSync( App.GUIPATH + '_javascript-helpers/' + POST[ 'module-_javascript-helpers' ] + '/js/020-core.js', 'utf8');
-			core = App.branding.replace(core, ['Debug', 'false']); //remove debugging infos
+		if( Blender.selectedModules.js ) {
+			core = Fs.readFileSync( Blender.GUIPATH + '_javascript-helpers/' + POST[ 'module-_javascript-helpers' ] + '/js/020-core.js', 'utf8');
+			core = Blender.branding.replace(core, ['Debug', 'false']); //remove debugging infos
 
 			var core = UglifyJS.minify( core, { fromString: true });
 
 			if( _includeOriginal ) {
-				file = Fs.readFileSync( App.GUIPATH + '_javascript-helpers/' + POST[ 'module-_javascript-helpers' ] + '/js/020-core.js', 'utf8');
-				file = App.branding.replace(file, ['Module-Version', ' Core v' + POST[ 'module-_javascript-helpers' ] + ' ']); //name the current version
-				file = App.branding.replace(file, ['Debug', 'false']); //remove debugging infos
-				App.zip.addFile( file, '/source/js/020-core.js' );
+				file = Fs.readFileSync( Blender.GUIPATH + '_javascript-helpers/' + POST[ 'module-_javascript-helpers' ] + '/js/020-core.js', 'utf8');
+				file = Blender.branding.replace(file, ['Module-Version', ' Core v' + POST[ 'module-_javascript-helpers' ] + ' ']); //name the current version
+				file = Blender.branding.replace(file, ['Debug', 'false']); //remove debugging infos
+				Blender.zip.addFile( file, '/source/js/020-core.js' );
 			}
 		}
 
 
 		//////////////////////////////////////////////////| MODULES
-		App.selectedModules.modules.forEach(function JsIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(function JsIterateModules( module ) {
 			var _hasJS = module.js; //look if this module has js
 
 			if( _hasJS ) {
-				files.push( App.GUIPATH + module.ID + '/' + module.version + '/js/' + module.ID + '.js' ); //add js to uglify
+				files.push( Blender.GUIPATH + module.ID + '/' + module.version + '/js/' + module.ID + '.js' ); //add js to uglify
 
-				file = Fs.readFileSync( App.GUIPATH + module.ID + '/' + module.version + '/js/' + module.ID + '.js', 'utf8');
+				file = Fs.readFileSync( Blender.GUIPATH + module.ID + '/' + module.version + '/js/' + module.ID + '.js', 'utf8');
 
 				if( _includeOriginal ) {
-					file = App.branding.replace(file, ['Module-Version', ' ' + module.name + ' v' + module.version + ' ']); //name the current version
-					App.zip.addFile( file, '/source/js/' + module.ID + '.js' );
+					file = Blender.branding.replace(file, ['Module-Version', ' ' + module.name + ' v' + module.version + ' ']); //name the current version
+					Blender.zip.addFile( file, '/source/js/' + module.ID + '.js' );
 				}
 			}
 		});
@@ -421,18 +442,18 @@ var Less = require('less');
 			result.code = '';
 		}
 
-		var source = App.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
+		var source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
 
-		App.zip.queuing('js', false); //js queue is done
-		App.zip.addFile( source, '/assets/js/gui.min.js' ); //add minified file to zip
+		Blender.zip.queuing('js', false); //js queue is done
+		Blender.zip.addFile( source, '/assets/js/gui.min.js' ); //add minified file to zip
 
 	};
 
 
-	App.js = module;
+	Blender.js = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Compile CSS files
@@ -445,15 +466,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function CssApp(App) {
+(function CssApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function CssInit() {
-		App.debugging( 'CSS: Initiating', 'report' );
+		Blender.debugging( 'CSS: Initiating', 'report' );
 	};
 
 
@@ -461,26 +482,26 @@ var Less = require('less');
 	// Get all less files and compile them
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function CssGet() {
-		App.debugging( 'CSS: Generating css', 'report' );
+		Blender.debugging( 'CSS: Generating css', 'report' );
 
-		var POST = App.POST;
+		var POST = Blender.POST;
 		var lessContents = '';
 		var lessIndex = "\n\n" + '/* ---------------------------------------| MODULES |--------------------------------------- */' + "\n";
-		var _includeOriginal  = App.selectedModules.includeLess; //POST.hasOwnProperty('includeless');
+		var _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty('includeless');
 
 
 		//////////////////////////////////////////////////| CORE
-		App.selectedModules.core.forEach(function CssIterateCore( module ) {
-			var lessContent = App.branding.replace(
-				Fs.readFileSync(App.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
+		Blender.selectedModules.core.forEach(function CssIterateCore( module ) {
+			var lessContent = Blender.branding.replace(
+				Fs.readFileSync(Blender.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
 				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand'] + ' ']
 			);
 
-			lessContent = App.branding.replace( lessContent, [ 'Brand', POST['brand'] ] );
+			lessContent = Blender.branding.replace( lessContent, [ 'Brand', POST['brand'] ] );
 
 			if( _includeOriginal && module.less ) {
 				lessIndex += '@import \'' + module.ID + '.less\';' + "\n";
-				App.zip.addFile( lessContent, '/source/less/' + module.ID + '.less' );
+				Blender.zip.addFile( lessContent, '/source/less/' + module.ID + '.less' );
 			}
 
 			lessContents += lessContent;
@@ -488,24 +509,24 @@ var Less = require('less');
 
 
 		//////////////////////////////////////////////////| MODULES
-		App.selectedModules.modules.forEach(function CssIterateModules( module ) {
-			var lessContent = App.branding.replace(
-				Fs.readFileSync( App.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
+		Blender.selectedModules.modules.forEach(function CssIterateModules( module ) {
+			var lessContent = Blender.branding.replace(
+				Fs.readFileSync( Blender.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
 				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand'] + ' ']
 			);
 
-			lessContent = App.branding.replace( lessContent, [ 'Brand', POST['brand'] ] );
+			lessContent = Blender.branding.replace( lessContent, [ 'Brand', POST['brand'] ] );
 
 			if( _includeOriginal && module.less ) {
 				lessIndex += '@import \'' + module.ID + '.less\';' + "\n";
-				App.zip.addFile( lessContent, '/source/less/' + module.ID + '.less' );
+				Blender.zip.addFile( lessContent, '/source/less/' + module.ID + '.less' );
 			}
 
 			lessContents += lessContent;
 		});
 
 		if( lessIndex && _includeOriginal ) {
-			App.zip.addFile( App.banner.attach( lessIndex ), '/source/less/gui.less' );
+			Blender.zip.addFile( Blender.banner.attach( lessIndex ), '/source/less/gui.less' );
 		}
 
 		//compile less
@@ -515,20 +536,20 @@ var Less = require('less');
 		function CssRenderLess(e, output) {
 			//TODO: error handling
 
-			var source = App.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
+			var source = Blender.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
 
-			App.zip.queuing('css', false); //css queue is done
-			App.zip.addFile( source, '/assets/css/gui.min.css' );
+			Blender.zip.queuing('css', false); //css queue is done
+			Blender.zip.addFile( source, '/assets/css/gui.min.css' );
 
 		});
 
 	};
 
 
-	App.css = module;
+	Blender.css = module;
 
 
-}(App));
+}(Blender));
 
 /***************************************************************************************************************************************************************
  *
@@ -542,15 +563,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function HtmlApp(App) {
+(function HtmlApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function HtmlInit() {
-		App.debugging( 'HTML: Initiating', 'report' );
+		Blender.debugging( 'HTML: Initiating', 'report' );
 	};
 
 
@@ -558,14 +579,14 @@ var Less = require('less');
 	// Get all html files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function HtmlGet() {
-		App.debugging( 'HTML: Getting all HTML files', 'report' );
+		Blender.debugging( 'HTML: Getting all HTML files', 'report' );
 
-		var POST = App.POST;
-		var index = Fs.readFileSync( App.TEMPPATH + 'index.html', 'utf8');
-		var _includeOriginalLess  = App.selectedModules.includeLess;
-		var _includeOriginalJS  = App.selectedModules.includeUnminifiedJS;
+		var POST = Blender.POST;
+		var index = Fs.readFileSync( Blender.TEMPPATH + 'index.html', 'utf8');
+		var _includeOriginalLess  = Blender.selectedModules.includeLess;
+		var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 		var _hasBuild = false;
-		var guiconfig = JSON.parse( Fs.readFileSync( '../.guiconfig', 'utf8') ); //getting guiconfig for brands
+		var guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, 'utf8') ); //getting guiconfig for brands
 		var brands = {};
 
 		if( _includeOriginalLess || _includeOriginalJS) {
@@ -573,35 +594,35 @@ var Less = require('less');
 		}
 
 		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for all other brands
-			if( brand.ID !== App.selectedModules.brand ) {
+			if( brand.ID !== Blender.selectedModules.brand ) {
 				brands[ brand.ID ] = {};
-				brands[ brand.ID ].url = App.banner.getBlendURL( brand.ID );
+				brands[ brand.ID ].url = Blender.banner.getBlendURL( brand.ID );
 				brands[ brand.ID ].name = brand.name;
 			}
 		});
 
 		var options = { //options for underscore template
-			_hasJS: App.selectedModules.js,
-			_hasSVG: App.selectedModules.svg,
+			_hasJS: Blender.selectedModules.js,
+			_hasSVG: Blender.selectedModules.svg,
 			_hasBuild: _hasBuild,
 			Brand: POST['brand'],
 			brands: brands,
-			blendURL: App.banner.getBlendURL( App.selectedModules.brand ),
-			GUIRURL: App.GUIRURL + App.selectedModules.brand + '/blender/',
+			blendURL: Blender.banner.getBlendURL( Blender.selectedModules.brand ),
+			GUIRURL: Blender.GUIRURL + Blender.selectedModules.brand + '/blender/',
 		}
 
 		index = _.template( index )( options ); //render the index template
 
-		App.zip.queuing('html', false); //html queue is done
-		App.zip.addFile( index, '/index.html' );
+		Blender.zip.queuing('html', false); //html queue is done
+		Blender.zip.addFile( index, '/index.html' );
 
 	};
 
 
-	App.html = module;
+	Blender.html = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Insert build tool
@@ -614,15 +635,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BuildApp(App) {
+(function BuildApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function BuildInit() {
-		App.debugging( 'Build: Initiating', 'report' );
+		Blender.debugging( 'Build: Initiating', 'report' );
 	};
 
 
@@ -634,26 +655,26 @@ var Less = require('less');
 	// @return  [object]  Json object of module.json
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function BuildGet() {
-		App.debugging( 'Build: Getting build', 'report' );
+		Blender.debugging( 'Build: Getting build', 'report' );
 
-		var _includeOriginalLess  = App.selectedModules.includeLess;
-		var _includeOriginalJS  = App.selectedModules.includeUnminifiedJS;
+		var _includeOriginalLess  = Blender.selectedModules.includeLess;
+		var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 
 		if( _includeOriginalLess || _includeOriginalJS) {
-			App.zip.queuing('build', false); //build queue is done
+			Blender.zip.queuing('build', false); //build queue is done
 
-			App.zip.addBulk( App.TEMPPATH, ['Gruntfile.js', 'package.json'], '/' );
+			Blender.zip.addBulk( Blender.TEMPPATH, ['Gruntfile.js', 'package.json'], '/' );
 		}
 		else {
-			App.zip.queuing('build', false); //build queue is done
+			Blender.zip.queuing('build', false); //build queue is done
 		}
 	};
 
 
-	App.build = module;
+	Blender.build = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Compile symbole files
@@ -666,15 +687,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function AssetsApp(App) {
+(function AssetsApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function AssetsInit() {
-		App.debugging( 'Assets: Initiating', 'report' );
+		Blender.debugging( 'Assets: Initiating', 'report' );
 	};
 
 
@@ -682,45 +703,45 @@ var Less = require('less');
 	// Get all assets files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function AssetsGet() {
-		App.debugging( 'Assets: Getting all files', 'report' );
+		Blender.debugging( 'Assets: Getting all files', 'report' );
 
-		var POST = App.POST;
+		var POST = Blender.POST;
 		module.svgfiles.svg = '';
 		module.svgfiles.png = '';
 		module.svgfiles.fallback = '';
 
 
 		//////////////////////////////////////////////////| CORE
-		App.selectedModules.core.forEach(function AssetsIterateCore( module ) {
+		Blender.selectedModules.core.forEach(function AssetsIterateCore( module ) {
 			if( module.font ) {
-				App.assets.getFonts( App.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] + '/font/' );
+				Blender.assets.getFonts( Blender.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] + '/font/' );
 			}
 
 			if( module.svg ) {
-				App.assets.getSVG( App.GUIPATH + module.ID + '/' + module.version + '/tests/' + POST['brand'] + '/assets/' );
+				Blender.assets.getSVG( Blender.GUIPATH + module.ID + '/' + module.version + '/tests/' + POST['brand'] + '/assets/' );
 			}
 		});
 
 
 		//////////////////////////////////////////////////| MODULES
-		App.selectedModules.modules.forEach(function AssetsIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(function AssetsIterateModules( module ) {
 
 			if( module.font ) {
-				App.assets.getFonts( App.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] );
+				Blender.assets.getFonts( Blender.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] );
 			}
 
 			if( module.svg ) {
-				App.assets.getSVG( App.GUIPATH + module.ID + '/' + module.version + '/tests/' + POST['brand'] + '/assets/' );
+				Blender.assets.getSVG( Blender.GUIPATH + module.ID + '/' + module.version + '/tests/' + POST['brand'] + '/assets/' );
 			}
 
 		});
 
 
 		//adding files to zip
-		App.zip.addFile( App.assets.svgfiles.svg, '/assets/css/symbols.data.svg.css' );
-		App.zip.addFile( App.assets.svgfiles.png, '/assets/css/symbols.data.png.css' );
-		App.zip.queuing('assets', false); //assets queue is done
-		App.zip.addFile( App.assets.svgfiles.fallback, '/assets/css/symbols.fallback.css' );
+		Blender.zip.addFile( Blender.assets.svgfiles.svg, '/assets/css/symbols.data.svg.css' );
+		Blender.zip.addFile( Blender.assets.svgfiles.png, '/assets/css/symbols.data.png.css' );
+		Blender.zip.queuing('assets', false); //assets queue is done
+		Blender.zip.addFile( Blender.assets.svgfiles.fallback, '/assets/css/symbols.fallback.css' );
 
 	};
 
@@ -731,7 +752,7 @@ var Less = require('less');
 	// @param  [string]  Path to a folder of the font files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getFonts = function AssetsGetFonts( folder ) {
-		App.debugging( 'Assets: Getting font files', 'report' );
+		Blender.debugging( 'Assets: Getting font files', 'report' );
 
 		var files = [
 			'*.eot',
@@ -741,7 +762,7 @@ var Less = require('less');
 			'*.woff2',
 		];
 
-		App.zip.addBulk( folder, files, '/assets/font/' );
+		Blender.zip.addBulk( folder, files, '/assets/font/' );
 
 	};
 
@@ -752,15 +773,15 @@ var Less = require('less');
 	// @param  [string]  Path to a tests folder
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getSVG = function AssetsGetSvg( folder ) {
-		App.debugging( 'Assets: Getting svg files from ' + folder, 'report' );
+		Blender.debugging( 'Assets: Getting svg files from ' + folder, 'report' );
 
 		//////////////////////////////////////////////////| ADDING PNGs
-		App.zip.addBulk( folder + 'img/', [ '*.png' ], '/assets/img/' );
+		Blender.zip.addBulk( folder + 'img/', [ '*.png' ], '/assets/img/' );
 
 		//////////////////////////////////////////////////| BUILDING CSS FILES
-		App.assets.svgfiles.svg += Fs.readFileSync( folder + 'css/symbols.data.svg.css', 'utf8'); //svg
-		App.assets.svgfiles.png += Fs.readFileSync( folder + 'css/symbols.data.png.css', 'utf8'); //png
-		App.assets.svgfiles.fallback += Fs.readFileSync( folder + 'css/symbols.fallback.css', 'utf8'); //fallack
+		Blender.assets.svgfiles.svg += Fs.readFileSync( folder + 'css/symbols.data.svg.css', 'utf8'); //svg
+		Blender.assets.svgfiles.png += Fs.readFileSync( folder + 'css/symbols.data.png.css', 'utf8'); //png
+		Blender.assets.svgfiles.fallback += Fs.readFileSync( folder + 'css/symbols.fallback.css', 'utf8'); //fallack
 
 	};
 
@@ -774,10 +795,10 @@ var Less = require('less');
 	module.svgfiles.fallback = '';
 
 
-	App.assets = module;
+	Blender.assets = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Brand all content
@@ -790,15 +811,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BrandingApp(App) {
+(function BrandingApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function BrandingInit() {
-		App.debugging( 'Branding: Initiating', 'report' );
+		Blender.debugging( 'Branding: Initiating', 'report' );
 	};
 
 
@@ -811,7 +832,7 @@ var Less = require('less');
 	// @return  [string]  Finished parsed content
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.replace = function BrandingReplace( content, replace ) {
-		App.debugging( 'Branding: Replacing "' + replace[0] + '" with "' + replace[1] + '"', 'report' );
+		Blender.debugging( 'Branding: Replacing "' + replace[0] + '" with "' + replace[1] + '"', 'report' );
 
 		var pattern = new RegExp('\\[(' + replace[0] + ')\\]', 'g');
 		return content.replace(pattern, replace[1]);
@@ -819,10 +840,10 @@ var Less = require('less');
 	};
 
 
-	App.branding = module;
+	Blender.branding = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Get modules infos
@@ -835,15 +856,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function ModulesApp(App) {
+(function ModulesApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function ModulesInit() {
-		App.debugging( 'Modules: Initiating', 'report' );
+		Blender.debugging( 'Modules: Initiating', 'report' );
 	};
 
 
@@ -855,31 +876,31 @@ var Less = require('less');
 	// @return  [object]  Json object of module.json
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getJson = function ModulesGetJson( module ) {
-		App.debugging( 'Modules: Getting JSON for ' + module, 'report' );
+		Blender.debugging( 'Modules: Getting JSON for ' + module, 'report' );
 
 
-		if( App.GUImodules === undefined ) { //flatten GUI json and assign to global
+		if( Blender.GUImodules === undefined ) { //flatten GUI json and assign to global
 
-			App.GUImodules = {};
-			Object.keys( App.GUI.modules ).forEach(function ModulesIterateCategory( category ) {
+			Blender.GUImodules = {};
+			Object.keys( Blender.GUI.modules ).forEach(function ModulesIterateCategory( category ) {
 
-				Object.keys( App.GUI.modules[ category ] ).forEach(function ModulesIterateModules( mod ) {
-					App.GUImodules[ mod ] = App.GUI.modules[ category ][ mod ];
+				Object.keys( Blender.GUI.modules[ category ] ).forEach(function ModulesIterateModules( mod ) {
+					Blender.GUImodules[ mod ] = Blender.GUI.modules[ category ][ mod ];
 				});
 
 			});
 		}
 
-		return App.GUImodules[module];
-		// JSON.parse( Fs.readFileSync( App.GUIPATH + module + '/module.json', 'utf8') ); //getting from module.json if we want to have a lot of I/O (we don't)
+		return Blender.GUImodules[module];
+		// JSON.parse( Fs.readFileSync( Blender.GUIPATH + module + '/module.json', 'utf8') ); //getting from module.json if we want to have a lot of I/O (we don't)
 
 	};
 
 
-	App.modules = module;
+	Blender.modules = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Get banner infos
@@ -892,15 +913,15 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BannerApp(App) {
+(function BannerApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function BannerInit() {
-		App.debugging( 'Banner: Initiating', 'report' );
+		Blender.debugging( 'Banner: Initiating', 'report' );
 	};
 
 
@@ -910,9 +931,9 @@ var Less = require('less');
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function BannerGet() {
-		App.debugging( 'Banner: Generating banner', 'report' );
+		Blender.debugging( 'Banner: Generating banner', 'report' );
 
-		return '/* GUI blend ' + App.banner.getBlendURL( App.selectedModules.brand ) + ' */' + "\n";
+		return '/* GUI blend ' + Blender.banner.getBlendURL( Blender.selectedModules.brand ) + ' */' + "\n";
 
 	};
 
@@ -925,10 +946,10 @@ var Less = require('less');
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.attach = function BannerAttach( content ) {
-		App.debugging( 'Banner: Attaching banner', 'report' );
+		Blender.debugging( 'Banner: Attaching banner', 'report' );
 
 		if( content.length > 0 ) {
-			return App.banner.get() + content;
+			return Blender.banner.get() + content;
 		}
 		else {
 			return '';
@@ -945,15 +966,15 @@ var Less = require('less');
 	// @return  [string]  The URL string to this build
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getBlendURL = function BannerGetBlenderUrl( brand ) {
-		App.debugging( 'Banner: Generating blend link', 'report' );
+		Blender.debugging( 'Banner: Generating blend link', 'report' );
 
-		var url = App.GUIRURL + brand + '/blender/#';
+		var url = Blender.GUIRURL + brand + '/blender/#';
 
-		App.selectedModules.core.forEach(function BannerIterateCore( module ) { //adding core
+		Blender.selectedModules.core.forEach(function BannerIterateCore( module ) { //adding core
 			url += '/' + module.ID + ':' + module.version;
 		});
 
-		App.selectedModules.modules.forEach(function BannerIterateModules( module ) { //adding modules
+		Blender.selectedModules.modules.forEach(function BannerIterateModules( module ) { //adding modules
 			url += '/' + module.ID + ':' + module.version;
 		});
 
@@ -961,10 +982,10 @@ var Less = require('less');
 	};
 
 
-	App.banner = module;
+	Blender.banner = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Collect and zip all files
@@ -975,18 +996,18 @@ var Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var Archiver = require('archiver');
+const Archiver = require('archiver');
 
 
-(function ZipApp(App) {
+(function ZipApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function ZipInit() {
-		App.debugging( 'Zip: Initiating', 'report' );
+		Blender.debugging( 'Zip: Initiating', 'report' );
 	};
 
 
@@ -994,34 +1015,34 @@ var Archiver = require('archiver');
 	// Zip all files up and send to response
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getZip = function ZipGetZip() {
-		App.debugging( 'Zip: Compiling zip', 'report' );
+		Blender.debugging( 'Zip: Compiling zip', 'report' );
 
-		App.response.writeHead(200, {
+		Blender.response.writeHead(200, {
 			'Content-Type': 'application/zip',
-			'Content-disposition': 'attachment; filename=GUI-blend-' + App.selectedModules.brand + '.zip',
+			'Content-disposition': 'attachment; filename=GUI-blend-' + Blender.selectedModules.brand + '.zip',
 		});
 
-		App.zip.archive.pipe( App.response );
+		Blender.zip.archive.pipe( Blender.response );
 
 		try {
-			App.zip.archive.finalize(); //send to server
+			Blender.zip.archive.finalize(); //send to server
 
-			App.log.info( '             Zip sent!' );
+			Blender.log.info( '             Zip sent!' );
 
-			App.slack.post();
+			Blender.slack.post();
 		}
 		catch( error ) {
 
-			App.log.error( '             Zip ERROR' );
-			App.log.error( error );
+			Blender.log.error( '             Zip ERROR' );
+			Blender.log.error( error );
 		}
 
 		//add new blend to log
-		App.counter.add();
+		Blender.counter.add();
 
 		//clearning up
-		App.zip.archive = Archiver('zip'); //new archive
-		App.zip.files = []; //empty files
+		Blender.zip.archive = Archiver('zip'); //new archive
+		Blender.zip.files = []; //empty files
 		module.queue = {}; // empty queue
 	};
 
@@ -1030,15 +1051,15 @@ var Archiver = require('archiver');
 	// Check if queue is clear
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.readyZip = function ZipReadyZip() {
-		App.debugging( 'Zip: Readying zip', 'report' );
+		Blender.debugging( 'Zip: Readying zip', 'report' );
 
-		if( App.zip.isQueuingEmpty() ) { //if queue is clear, add all files to the archive
+		if( Blender.zip.isQueuingEmpty() ) { //if queue is clear, add all files to the archive
 
-			App.zip.files.forEach(function ZipIterateZipFiles( file ) {
-				App.zip.archive.append( file.content, { name: file.name } );
+			Blender.zip.files.forEach(function ZipIterateZipFiles( file ) {
+				Blender.zip.archive.append( file.content, { name: file.name } );
 			});
 
-			App.zip.getZip(); //finalize the zip
+			Blender.zip.getZip(); //finalize the zip
 		}
 
 	};
@@ -1051,21 +1072,21 @@ var Archiver = require('archiver');
 	// @param   archivePath  [string]  The path this file will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.addFile = function ZipAddFile( content, archivePath ) {
-		App.debugging( 'Zip: Adding file: ' + archivePath, 'report' );
+		Blender.debugging( 'Zip: Adding file: ' + archivePath, 'report' );
 
 		if(typeof content !== 'string') {
-			App.debugging( 'Zip: Adding file: Content can only be string, is ' + (typeof content), 'error' );
+			Blender.debugging( 'Zip: Adding file: Content can only be string, is ' + (typeof content), 'error' );
 		}
 		else {
 			if( content.length > 0 ) { //don't need no empty files ;)
-				App.zip.files.push({ //collect file for later adding
+				Blender.zip.files.push({ //collect file for later adding
 					content: content,
 					name: '/GUI-blend' + archivePath,
 				});
 			}
 		}
 
-		App.zip.readyZip();
+		Blender.zip.readyZip();
 	};
 
 
@@ -1076,14 +1097,14 @@ var Archiver = require('archiver');
 	// @param   archivePath  [string]  The path this file will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.addPath = function ZipAddPath( path, archivePath ) {
-		App.debugging( 'Zip: Adding file path: ' + path, 'report' );
+		Blender.debugging( 'Zip: Adding file path: ' + path, 'report' );
 
 		if(typeof path !== 'string') {
-			App.debugging( 'Zip: Adding file path: Path can only be string, is ' + (typeof path), 'error' );
+			Blender.debugging( 'Zip: Adding file path: Path can only be string, is ' + (typeof path), 'error' );
 		}
 		else {
 			if( path.length > 0 ) { //don't need no empty files ;)
-				App.zip.archive.file(
+				Blender.zip.archive.file(
 					path,
 					{
 						name: '/GUI-blend' + archivePath,
@@ -1092,7 +1113,7 @@ var Archiver = require('archiver');
 			}
 		}
 
-		App.zip.readyZip();
+		Blender.zip.readyZip();
 	};
 
 
@@ -1104,14 +1125,14 @@ var Archiver = require('archiver');
 	// @param  archivePath  [string]  The path these files will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.addBulk = function ZipAddBulk( cwd, files, archivePath ) {
-		App.debugging( 'Zip: Adding bluk: ' + cwd + files + ' to: ' + archivePath, 'report' );
+		Blender.debugging( 'Zip: Adding bluk: ' + cwd + files + ' to: ' + archivePath, 'report' );
 
 		if(typeof files !== 'object') {
-			App.debugging( 'Zip: Adding files: Path can only be array/object, is ' + (typeof files), 'error' );
+			Blender.debugging( 'Zip: Adding files: Path can only be array/object, is ' + (typeof files), 'error' );
 		}
 		else {
 
-			App.zip.archive.bulk({ //add them all to the archive
+			Blender.zip.archive.bulk({ //add them all to the archive
 				expand: true,
 				cwd: cwd,
 				src: files,
@@ -1121,7 +1142,7 @@ var Archiver = require('archiver');
 
 		}
 
-		App.zip.readyZip();
+		Blender.zip.readyZip();
 	};
 
 
@@ -1132,18 +1153,18 @@ var Archiver = require('archiver');
 	// @param   _isBeingAdded  [boolean]  Whether or not this type is added or removed from the queue
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.queuing = function ZipQueuing( type, _isBeingAdded ) {
-		App.debugging( 'Zip: Queuing files', 'report' );
+		Blender.debugging( 'Zip: Queuing files', 'report' );
 
 		if( _isBeingAdded ) {
-			App.debugging( 'Zip: Queue: Adding ' + type, 'report' );
+			Blender.debugging( 'Zip: Queue: Adding ' + type, 'report' );
 
-			App.zip.queue[type] = true;
+			Blender.zip.queue[type] = true;
 		}
 		else {
-			if( App.zip.queue[type] ) {
-				App.debugging( 'Zip: Queue: Removing ' + type, 'report' );
+			if( Blender.zip.queue[type] ) {
+				Blender.debugging( 'Zip: Queue: Removing ' + type, 'report' );
 
-				delete App.zip.queue[type];
+				delete Blender.zip.queue[type];
 			}
 		}
 
@@ -1156,17 +1177,17 @@ var Archiver = require('archiver');
 	// @return  [boolean]  Whether or not it is...
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.isQueuingEmpty = function ZipIsQueuingEmpty() {
-		App.debugging( 'Zip: Checking queue', 'report' );
+		Blender.debugging( 'Zip: Checking queue', 'report' );
 
-		for( var prop in App.zip.queue ) {
-			if( App.zip.queue.hasOwnProperty(prop) ) {
-				App.debugging( 'Zip: Queue: Still things in the queue', 'report' );
+		for( let prop in Blender.zip.queue ) {
+			if( Blender.zip.queue.hasOwnProperty(prop) ) {
+				Blender.debugging( 'Zip: Queue: Still things in the queue', 'report' );
 
 				return false;
 			}
 		}
 
-		App.debugging( 'Zip: Queue: Queue is empty', 'report' );
+		Blender.debugging( 'Zip: Queue: Queue is empty', 'report' );
 		return true;
 	};
 
@@ -1179,10 +1200,10 @@ var Archiver = require('archiver');
 	module.files = []; //an array of all files to be added to the archive
 
 
-	App.zip = module;
+	Blender.zip = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Post to slack
@@ -1193,36 +1214,36 @@ var Archiver = require('archiver');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var Slack = require('node-slack');
+const Slack = require('node-slack');
 
 
-(function SlackApp(App) {
+(function SlackApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.post = function SlackPost() {
-		App.debugging( 'Slack: Posting', 'report' );
+		Blender.debugging( 'Slack: Posting', 'report' );
 
-		var slack = new Slack( App.SLACKURL );
+		var slack = new Slack( Blender.SLACKURL );
 		var funky = '';
 		var core = '';
 		var modules = '';
-		var POST = App.POST;
-		var jquery = App.selectedModules.includeJquery ? '`Yes`' : '`No`';
-		var unminJS  = App.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
-		var less  = App.selectedModules.includeLess ? '`Yes`' : '`No`';
+		var POST = Blender.POST;
+		var jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
+		var unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
+		var less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
 		var channel = '#testing';
-		if( !App.DEBUG ) {
+		if( !Blender.DEBUG ) {
 			var channel = '#blender';
 		}
 
-		for(var i = App.FUNKY.length - 1; i >= 0; i--) {
-			if( POST[ App.FUNKY[i].var ] === 'on' ) {
-				funky += '`' + App.FUNKY[i].name + '` ';
+		for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
+			if( POST[ Blender.FUNKY[i].var ] === 'on' ) {
+				funky += '`' + Blender.FUNKY[i].name + '` ';
 			}
 		}
 
@@ -1230,11 +1251,11 @@ var Slack = require('node-slack');
 			funky = '`none`';
 		}
 
-		App.selectedModules.core.forEach(function CssIterateCore( module ) {
+		Blender.selectedModules.core.forEach(function CssIterateCore( module ) {
 			core += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
-		App.selectedModules.modules.forEach(function SlackIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(function SlackIterateModules( module ) {
 			modules += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
@@ -1253,7 +1274,7 @@ var Slack = require('node-slack');
 					{
 						'title': 'Modules',
 						'value': '' +
-							'_Selected_: `' + App.selectedModules.modules.length + '`\n' +
+							'_Selected_: `' + Blender.selectedModules.modules.length + '`\n' +
 							'_Core_:\n' + core.substr(2) + '\n' +
 							'_Modules_:\n' + modules.substr(2) + '\n\n\n',
 						'short': false,
@@ -1261,7 +1282,7 @@ var Slack = require('node-slack');
 					{
 						'title': 'Options',
 						'value': '' +
-							'_Brand_: `' + App.selectedModules.brand + '`\n' +
+							'_Brand_: `' + Blender.selectedModules.brand + '`\n' +
 							'_jQuery_: ' + jquery + '\n' +
 							'_unmin JS_: ' + unminJS + '\n' +
 							'_Less_: ' + less + '\n' +
@@ -1271,22 +1292,22 @@ var Slack = require('node-slack');
 					{
 						'title': 'Client',
 						'value': '' +
-							'_IP_: `' + App.IP + '`',
+							'_IP_: `' + Blender.IP + '`',
 						'short': false,
 					}
 				],
 			}],
 			'channel': channel,
 			'username': 'The Blender',
-			'icon_url': App.SLACKICON,
+			'icon_url': Blender.SLACKICON,
 		});
 	};
 
 
-	App.slack = module;
+	Blender.slack = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Funky stuff
@@ -1299,58 +1320,58 @@ var Slack = require('node-slack');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function FunkyApp(App) {
+(function FunkyApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module get method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.get = function funkyPost() {
-		App.debugging( 'funky: Getting funky stuff', 'report' );
+		Blender.debugging( 'funky: Getting funky stuff', 'report' );
 
-		var POST = App.POST;
+		var POST = Blender.POST;
 		var funkies = 0;
 		var funkyLog = '';
 
-		for(var i = App.FUNKY.length - 1; i >= 0; i--) {
-			if( POST[ App.FUNKY[i].var ] === 'on' ) {
+		for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
+			if( POST[ Blender.FUNKY[i].var ] === 'on' ) {
 				funkies++; //how many funky bits have been requested?
 			}
 		}
 
 		if( funkies > 0 ) {
-			for(var i = App.FUNKY.length - 1; i >= 0; i--) {
+			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
 
-				if( POST[ App.FUNKY[i].var ] === 'on' ) {
-					App.debugging( 'funky: Getting ' + App.FUNKY[i].name + ' reference', 'report' );
+				if( POST[ Blender.FUNKY[i].var ] === 'on' ) {
+					Blender.debugging( 'funky: Getting ' + Blender.FUNKY[i].name + ' reference', 'report' );
 
 					funkies--; //counting down
 
 					if( funkies === 0 ) { //if this is the last one
-						App.zip.queuing('funky', false);
+						Blender.zip.queuing('funky', false);
 					}
 
-					var file = App.FUNKY[i].file.replace( '[Brand]', POST['brand'] ); //brand path
+					var file = Blender.FUNKY[i].file.replace( '[Brand]', POST['brand'] ); //brand path
 
-					App.zip.addPath( file, App.FUNKY[i].zip ); //add file to zip
-					funkyLog += ' ' + App.FUNKY[i].name
+					Blender.zip.addPath( file, Blender.FUNKY[i].zip ); //add file to zip
+					funkyLog += ' ' + Blender.FUNKY[i].name
 				}
 			}
 
-			App.log.info( '             include LESS:' + funkyLog );
+			Blender.log.info( '             include LESS:' + funkyLog );
 		}
 		else {
-			App.zip.queuing('funky', false);
-			App.zip.readyZip();
+			Blender.zip.queuing('funky', false);
+			Blender.zip.readyZip();
 		}
 	};
 
 
-	App.funky = module;
+	Blender.funky = module;
 
 
-}(App));
+}(Blender));
 /***************************************************************************************************************************************************************
  *
  * Counter
@@ -1363,19 +1384,19 @@ var Slack = require('node-slack');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function CounterApp(App) {
+(function CounterApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module add method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.add = function counterPost() {
-		App.debugging( 'counter: adding new instance', 'report' );
+		Blender.debugging( 'counter: adding new instance', 'report' );
 
 		var counter = 0;
 
-		Fs.readFile( App.LOG , function(err, data) { //read the log file
+		Fs.readFile( Blender.LOG , function(err, data) { //read the log file
 			if( err ) {
 				throw err;
 			}
@@ -1383,22 +1404,22 @@ var Slack = require('node-slack');
 			counter = parseInt( data ) + 1; //add this blend
 
 			if(!isNaN( counter )) { //check if the number is a number
-				Fs.writeFile( App.LOG, counter, function(err) {
+				Fs.writeFile( Blender.LOG, counter, function(err) {
 					if( err ) {
 						throw err;
 					}
 
-					App.debugging( 'counter: added', 'report' );
+					Blender.debugging( 'counter: added', 'report' );
 				});
 			}
 			else { //throw error
-				App.log.error('             Counter number not valid ("' + counter + '"). Leaving it alone for now!');
+				Blender.log.error('             Counter number not valid ("' + counter + '"). Leaving it alone for now!');
 			}
 		});
 	};
 
 
-	App.counter = module;
+	Blender.counter = module;
 
 
-}(App));
+}(Blender));

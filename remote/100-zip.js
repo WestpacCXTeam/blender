@@ -8,18 +8,18 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-var Archiver = require('archiver');
+const Archiver = require('archiver');
 
 
-(function ZipApp(App) {
+(function ZipApp(Blender) {
 
-	var module = {};
+	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.init = function ZipInit() {
-		App.debugging( 'Zip: Initiating', 'report' );
+		Blender.debugging( 'Zip: Initiating', 'report' );
 	};
 
 
@@ -27,34 +27,34 @@ var Archiver = require('archiver');
 	// Zip all files up and send to response
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.getZip = function ZipGetZip() {
-		App.debugging( 'Zip: Compiling zip', 'report' );
+		Blender.debugging( 'Zip: Compiling zip', 'report' );
 
-		App.response.writeHead(200, {
+		Blender.response.writeHead(200, {
 			'Content-Type': 'application/zip',
-			'Content-disposition': 'attachment; filename=GUI-blend-' + App.selectedModules.brand + '.zip',
+			'Content-disposition': 'attachment; filename=GUI-blend-' + Blender.selectedModules.brand + '.zip',
 		});
 
-		App.zip.archive.pipe( App.response );
+		Blender.zip.archive.pipe( Blender.response );
 
 		try {
-			App.zip.archive.finalize(); //send to server
+			Blender.zip.archive.finalize(); //send to server
 
-			App.log.info( '             Zip sent!' );
+			Blender.log.info( '             Zip sent!' );
 
-			App.slack.post();
+			Blender.slack.post();
 		}
 		catch( error ) {
 
-			App.log.error( '             Zip ERROR' );
-			App.log.error( error );
+			Blender.log.error( '             Zip ERROR' );
+			Blender.log.error( error );
 		}
 
 		//add new blend to log
-		App.counter.add();
+		Blender.counter.add();
 
 		//clearning up
-		App.zip.archive = Archiver('zip'); //new archive
-		App.zip.files = []; //empty files
+		Blender.zip.archive = Archiver('zip'); //new archive
+		Blender.zip.files = []; //empty files
 		module.queue = {}; // empty queue
 	};
 
@@ -63,15 +63,15 @@ var Archiver = require('archiver');
 	// Check if queue is clear
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.readyZip = function ZipReadyZip() {
-		App.debugging( 'Zip: Readying zip', 'report' );
+		Blender.debugging( 'Zip: Readying zip', 'report' );
 
-		if( App.zip.isQueuingEmpty() ) { //if queue is clear, add all files to the archive
+		if( Blender.zip.isQueuingEmpty() ) { //if queue is clear, add all files to the archive
 
-			App.zip.files.forEach(function ZipIterateZipFiles( file ) {
-				App.zip.archive.append( file.content, { name: file.name } );
+			Blender.zip.files.forEach(function ZipIterateZipFiles( file ) {
+				Blender.zip.archive.append( file.content, { name: file.name } );
 			});
 
-			App.zip.getZip(); //finalize the zip
+			Blender.zip.getZip(); //finalize the zip
 		}
 
 	};
@@ -84,21 +84,21 @@ var Archiver = require('archiver');
 	// @param   archivePath  [string]  The path this file will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.addFile = function ZipAddFile( content, archivePath ) {
-		App.debugging( 'Zip: Adding file: ' + archivePath, 'report' );
+		Blender.debugging( 'Zip: Adding file: ' + archivePath, 'report' );
 
 		if(typeof content !== 'string') {
-			App.debugging( 'Zip: Adding file: Content can only be string, is ' + (typeof content), 'error' );
+			Blender.debugging( 'Zip: Adding file: Content can only be string, is ' + (typeof content), 'error' );
 		}
 		else {
 			if( content.length > 0 ) { //don't need no empty files ;)
-				App.zip.files.push({ //collect file for later adding
+				Blender.zip.files.push({ //collect file for later adding
 					content: content,
 					name: '/GUI-blend' + archivePath,
 				});
 			}
 		}
 
-		App.zip.readyZip();
+		Blender.zip.readyZip();
 	};
 
 
@@ -109,14 +109,14 @@ var Archiver = require('archiver');
 	// @param   archivePath  [string]  The path this file will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.addPath = function ZipAddPath( path, archivePath ) {
-		App.debugging( 'Zip: Adding file path: ' + path, 'report' );
+		Blender.debugging( 'Zip: Adding file path: ' + path, 'report' );
 
 		if(typeof path !== 'string') {
-			App.debugging( 'Zip: Adding file path: Path can only be string, is ' + (typeof path), 'error' );
+			Blender.debugging( 'Zip: Adding file path: Path can only be string, is ' + (typeof path), 'error' );
 		}
 		else {
 			if( path.length > 0 ) { //don't need no empty files ;)
-				App.zip.archive.file(
+				Blender.zip.archive.file(
 					path,
 					{
 						name: '/GUI-blend' + archivePath,
@@ -125,7 +125,7 @@ var Archiver = require('archiver');
 			}
 		}
 
-		App.zip.readyZip();
+		Blender.zip.readyZip();
 	};
 
 
@@ -137,14 +137,14 @@ var Archiver = require('archiver');
 	// @param  archivePath  [string]  The path these files will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.addBulk = function ZipAddBulk( cwd, files, archivePath ) {
-		App.debugging( 'Zip: Adding bluk: ' + cwd + files + ' to: ' + archivePath, 'report' );
+		Blender.debugging( 'Zip: Adding bluk: ' + cwd + files + ' to: ' + archivePath, 'report' );
 
 		if(typeof files !== 'object') {
-			App.debugging( 'Zip: Adding files: Path can only be array/object, is ' + (typeof files), 'error' );
+			Blender.debugging( 'Zip: Adding files: Path can only be array/object, is ' + (typeof files), 'error' );
 		}
 		else {
 
-			App.zip.archive.bulk({ //add them all to the archive
+			Blender.zip.archive.bulk({ //add them all to the archive
 				expand: true,
 				cwd: cwd,
 				src: files,
@@ -154,7 +154,7 @@ var Archiver = require('archiver');
 
 		}
 
-		App.zip.readyZip();
+		Blender.zip.readyZip();
 	};
 
 
@@ -165,18 +165,18 @@ var Archiver = require('archiver');
 	// @param   _isBeingAdded  [boolean]  Whether or not this type is added or removed from the queue
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.queuing = function ZipQueuing( type, _isBeingAdded ) {
-		App.debugging( 'Zip: Queuing files', 'report' );
+		Blender.debugging( 'Zip: Queuing files', 'report' );
 
 		if( _isBeingAdded ) {
-			App.debugging( 'Zip: Queue: Adding ' + type, 'report' );
+			Blender.debugging( 'Zip: Queue: Adding ' + type, 'report' );
 
-			App.zip.queue[type] = true;
+			Blender.zip.queue[type] = true;
 		}
 		else {
-			if( App.zip.queue[type] ) {
-				App.debugging( 'Zip: Queue: Removing ' + type, 'report' );
+			if( Blender.zip.queue[type] ) {
+				Blender.debugging( 'Zip: Queue: Removing ' + type, 'report' );
 
-				delete App.zip.queue[type];
+				delete Blender.zip.queue[type];
 			}
 		}
 
@@ -189,17 +189,17 @@ var Archiver = require('archiver');
 	// @return  [boolean]  Whether or not it is...
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	module.isQueuingEmpty = function ZipIsQueuingEmpty() {
-		App.debugging( 'Zip: Checking queue', 'report' );
+		Blender.debugging( 'Zip: Checking queue', 'report' );
 
-		for( var prop in App.zip.queue ) {
-			if( App.zip.queue.hasOwnProperty(prop) ) {
-				App.debugging( 'Zip: Queue: Still things in the queue', 'report' );
+		for( let prop in Blender.zip.queue ) {
+			if( Blender.zip.queue.hasOwnProperty(prop) ) {
+				Blender.debugging( 'Zip: Queue: Still things in the queue', 'report' );
 
 				return false;
 			}
 		}
 
-		App.debugging( 'Zip: Queue: Queue is empty', 'report' );
+		Blender.debugging( 'Zip: Queue: Queue is empty', 'report' );
 		return true;
 	};
 
@@ -212,7 +212,7 @@ var Archiver = require('archiver');
 	module.files = []; //an array of all files to be added to the archive
 
 
-	App.zip = module;
+	Blender.zip = module;
 
 
-}(App));
+}(Blender));
