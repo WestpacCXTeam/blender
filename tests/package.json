@@ -1,11 +1,12 @@
 {
-  "name": "GUI-server-stress-test",
-  "version": "0.0.1",
-  "private": true,
-  "dependencies": {
-    "adm-zip": "^0.4.7",
-    "cfonts": "0.0.13",
-    "chalk": "^1.0.0",
-    "request": "^2.72.0"
-  }
+	"name": "GUI-server-stress-test",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"adm-zip": "^0.4.7",
+		"cfonts": "0.0.13",
+		"chalk": "^1.0.0",
+		"request": "^2.72.0",
+		"rimraf": "^2.5.2"
+	}
 }
