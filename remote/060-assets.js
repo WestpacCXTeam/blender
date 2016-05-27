@@ -10,14 +10,14 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function AssetsApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function AssetsInit() {
+	module.init = () => {
 		Blender.debugging( 'Assets: Initiating', 'report' );
 	};
 
@@ -25,7 +25,7 @@
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all assets files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function AssetsGet() {
+	module.get = () => {
 		Blender.debugging( 'Assets: Getting all files', 'report' );
 
 		var POST = Blender.POST;
@@ -35,7 +35,7 @@
 
 
 		//////////////////////////////////////////////////| CORE
-		Blender.selectedModules.core.forEach(function AssetsIterateCore( module ) {
+		Blender.selectedModules.core.forEach(( module ) => {
 			if( module.font ) {
 				Blender.assets.getFonts( Blender.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] + '/font/' );
 			}
@@ -47,7 +47,7 @@
 
 
 		//////////////////////////////////////////////////| MODULES
-		Blender.selectedModules.modules.forEach(function AssetsIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(( module ) => {
 
 			if( module.font ) {
 				Blender.assets.getFonts( Blender.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] );
@@ -74,7 +74,7 @@
 	//
 	// @param  [string]  Path to a folder of the font files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getFonts = function AssetsGetFonts( folder ) {
+	module.getFonts = ( folder ) => {
 		Blender.debugging( 'Assets: Getting font files', 'report' );
 
 		var files = [
@@ -95,7 +95,7 @@
 	//
 	// @param  [string]  Path to a tests folder
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getSVG = function AssetsGetSvg( folder ) {
+	module.getSVG = ( folder ) => {
 		Blender.debugging( 'Assets: Getting svg files from ' + folder, 'report' );
 
 		//////////////////////////////////////////////////| ADDING PNGs
@@ -121,4 +121,4 @@
 	Blender.assets = module;
 
 
-}(Blender));
+})(Blender);

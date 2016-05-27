@@ -10,14 +10,14 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function CssApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function CssInit() {
+	module.init = () => {
 		Blender.debugging( 'CSS: Initiating', 'report' );
 	};
 
@@ -25,7 +25,7 @@
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all less files and compile them
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function CssGet() {
+	module.get = () => {
 		Blender.debugging( 'CSS: Generating css', 'report' );
 
 		var POST = Blender.POST;
@@ -35,7 +35,7 @@
 
 
 		//////////////////////////////////////////////////| CORE
-		Blender.selectedModules.core.forEach(function CssIterateCore( module ) {
+		Blender.selectedModules.core.forEach(( module ) => {
 			var lessContent = Blender.branding.replace(
 				Fs.readFileSync(Blender.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
 				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand'] + ' ']
@@ -53,7 +53,7 @@
 
 
 		//////////////////////////////////////////////////| MODULES
-		Blender.selectedModules.modules.forEach(function CssIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(( module ) => {
 			var lessContent = Blender.branding.replace(
 				Fs.readFileSync( Blender.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
 				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand'] + ' ']
@@ -77,7 +77,7 @@
 		Less.render(lessContents, {
 			compress: true
 		},
-		function CssRenderLess(e, output) {
+		(e, output) => {
 			//TODO: error handling
 
 			var source = Blender.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
@@ -93,4 +93,4 @@
 	Blender.css = module;
 
 
-}(Blender));
+})(Blender);

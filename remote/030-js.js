@@ -10,14 +10,14 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function JsApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function JsInit() {
+	module.init = () => {
 		Blender.debugging( 'JS: Initiating', 'report' );
 	};
 
@@ -25,7 +25,7 @@
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all js files and concat them
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function JsGet() {
+	module.get = () => {
 		Blender.debugging( 'JS: Generating js', 'report' );
 
 		var files = [];
@@ -64,8 +64,8 @@
 
 
 		//////////////////////////////////////////////////| MODULES
-		Blender.selectedModules.modules.forEach(function JsIterateModules( module ) {
-			var _hasJS = module.js; //look if this module has js
+		Blender.selectedModules.modules.forEach(( module ) => {
+			let _hasJS = module.js; //look if this module has js
 
 			if( _hasJS ) {
 				files.push( Blender.GUIPATH + module.ID + '/' + module.version + '/js/' + module.ID + '.js' ); //add js to uglify
@@ -100,4 +100,4 @@
 	Blender.js = module;
 
 
-}(Blender));
+})(Blender);

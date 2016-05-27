@@ -10,14 +10,14 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function ModulesApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function ModulesInit() {
+	module.init = () => {
 		Blender.debugging( 'Modules: Initiating', 'report' );
 	};
 
@@ -29,16 +29,16 @@
 	//
 	// @return  [object]  Json object of module.json
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getJson = function ModulesGetJson( module ) {
+	module.getJson = ( module ) => {
 		Blender.debugging( 'Modules: Getting JSON for ' + module, 'report' );
 
 
 		if( Blender.GUImodules === undefined ) { //flatten GUI json and assign to global
 
 			Blender.GUImodules = {};
-			Object.keys( Blender.GUI.modules ).forEach(function ModulesIterateCategory( category ) {
+			Object.keys( Blender.GUI.modules ).forEach(( category ) => {
 
-				Object.keys( Blender.GUI.modules[ category ] ).forEach(function ModulesIterateModules( mod ) {
+				Object.keys( Blender.GUI.modules[ category ] ).forEach(( mod ) => {
 					Blender.GUImodules[ mod ] = Blender.GUI.modules[ category ][ mod ];
 				});
 
@@ -54,4 +54,4 @@
 	Blender.modules = module;
 
 
-}(Blender));
+})(Blender);

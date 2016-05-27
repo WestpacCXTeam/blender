@@ -22,7 +22,7 @@ const Express = require('express');
 const BodyParser = require('body-parser');
 
 
-let Blender = (function Application() {
+let Blender = (() => {
 
 	return {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ let Blender = (function Application() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Initiate blender
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		init: function Init() {
+		init: () => {
 			if( Blender.DEBUG ) Blender.debugging( ' DEBUGGING| INFORMATION', 'headline' );
 
 			Blender.GUI = JSON.parse( Fs.readFileSync( Blender.GUIPATH + 'GUI.json', 'utf8') );
@@ -75,18 +75,18 @@ let Blender = (function Application() {
 			blender
 				.use( BodyParser.urlencoded({ extended: false }) )
 
-				.listen(1337, function PortListener() {
+				.listen(1337, () => {
 					Blender.debugging( 'Server started on port 1337', 'report' );
 				});
 
 
-			blender.get('*', function GetListener(request, response) {
+			blender.get('*', (request, response) => {
 				response.redirect(301, Blender.GUIRURL);
 			});
 
 
 			//listening to post request
-			blender.post('/blender', function PostListener(request, response) {
+			blender.post('/blender', (request, response) => {
 				Blender.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
 				Blender.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
@@ -137,36 +137,36 @@ let Blender = (function Application() {
 		//
 		// @return  [output]  console.log output
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		debugging: function Debugging( text, code ) {
+		debugging: ( text, code ) => {
 
-			if( code === 'headline' ) {
-				if( Blender.DEBUG ) {
+			if( Blender.DEBUG ) {
+				if( code === 'headline' ) {
 					let fonts = new CFonts({
 						'text': text,
 						'colors': ['white', 'gray'],
 						'maxLength': 12,
 					});
 				}
-			}
 
-			if( code === 'report' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
-			}
+				if( code === 'report' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'error' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
-			}
+				else if( code === 'error' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'interaction' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
-			}
+				else if( code === 'interaction' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'send' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
-			}
+				else if( code === 'send' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'receive' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
+				else if( code === 'receive' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
+				}
 			}
 
 		},
@@ -185,11 +185,11 @@ let Blender = (function Application() {
 		//------------------------------------------------------------------------------------------------------------------------------------------------------------
 		log: {
 
-			info: function LogInfo( text ) {
+			info: ( text ) => {
 				console.log( Chalk.bold.black( 'Info  ' ) + new Date().toString() + '  ' + text );
 			},
 
-			error: function LogError( text ) {
+			error: ( text ) => {
 				console.log( Chalk.bold.red( 'ERROR ' ) + new Date().toString() + '  ' + text );
 			},
 
@@ -197,7 +197,7 @@ let Blender = (function Application() {
 
 	}
 
-}());
+})();
 
 
 //run blender
@@ -218,14 +218,14 @@ const UglifyJS = require('uglify-js');
 const Less = require('less');
 
 
-(function FilesApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function FilesInit() {
+	module.init = () => {
 		Blender.debugging( 'Files: new query', 'report' );
 
 		//////////////////////////////////////////////////| PARSING POST
@@ -261,7 +261,7 @@ const Less = require('less');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Saves an array of the selected modules globally so we don't work with the raw data that comes from the client... as that could be a mess ;)
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getPost = function FilesGetPost() {
+	module.getPost = () => {
 		Blender.debugging( 'Files: Parsing POST', 'report' );
 
 		var POST = Blender.POST;
@@ -277,7 +277,7 @@ const Less = require('less');
 
 
 		//////////////////////////////////////////////////| ADDING MODULES
-		Object.keys( POST ).forEach(function FilesIteratePost( moduleName ) {
+		Object.keys( POST ).forEach(( moduleName ) => {
 			var module = moduleName.substr(5);
 
 			if(
@@ -309,7 +309,7 @@ const Less = require('less');
 		//////////////////////////////////////////////////| ADDING CORE
 		fromPOST.core = [];
 
-		Object.keys( Blender.GUI.modules._core ).forEach(function FilesIterateCore( moduleName ) {
+		Object.keys( Blender.GUI.modules._core ).forEach(( moduleName ) => {
 			var module = Blender.GUI.modules._core[moduleName];
 			var version = POST[ 'module-' + module.ID ];
 
@@ -350,7 +350,7 @@ const Less = require('less');
 	Blender.files = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Compile JS files
@@ -363,14 +363,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function JsApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function JsInit() {
+	module.init = () => {
 		Blender.debugging( 'JS: Initiating', 'report' );
 	};
 
@@ -378,7 +378,7 @@ const Less = require('less');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all js files and concat them
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function JsGet() {
+	module.get = () => {
 		Blender.debugging( 'JS: Generating js', 'report' );
 
 		var files = [];
@@ -417,8 +417,8 @@ const Less = require('less');
 
 
 		//////////////////////////////////////////////////| MODULES
-		Blender.selectedModules.modules.forEach(function JsIterateModules( module ) {
-			var _hasJS = module.js; //look if this module has js
+		Blender.selectedModules.modules.forEach(( module ) => {
+			let _hasJS = module.js; //look if this module has js
 
 			if( _hasJS ) {
 				files.push( Blender.GUIPATH + module.ID + '/' + module.version + '/js/' + module.ID + '.js' ); //add js to uglify
@@ -453,7 +453,7 @@ const Less = require('less');
 	Blender.js = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Compile CSS files
@@ -466,14 +466,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function CssApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function CssInit() {
+	module.init = () => {
 		Blender.debugging( 'CSS: Initiating', 'report' );
 	};
 
@@ -481,7 +481,7 @@ const Less = require('less');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all less files and compile them
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function CssGet() {
+	module.get = () => {
 		Blender.debugging( 'CSS: Generating css', 'report' );
 
 		var POST = Blender.POST;
@@ -491,7 +491,7 @@ const Less = require('less');
 
 
 		//////////////////////////////////////////////////| CORE
-		Blender.selectedModules.core.forEach(function CssIterateCore( module ) {
+		Blender.selectedModules.core.forEach(( module ) => {
 			var lessContent = Blender.branding.replace(
 				Fs.readFileSync(Blender.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
 				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand'] + ' ']
@@ -509,7 +509,7 @@ const Less = require('less');
 
 
 		//////////////////////////////////////////////////| MODULES
-		Blender.selectedModules.modules.forEach(function CssIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(( module ) => {
 			var lessContent = Blender.branding.replace(
 				Fs.readFileSync( Blender.GUIPATH + module.ID + '/' + module.version + '/less/module-mixins.less', 'utf8'),
 				['Module-Version-Brand', ' ' + module.name + ' v' + module.version + ' ' + POST['brand'] + ' ']
@@ -533,7 +533,7 @@ const Less = require('less');
 		Less.render(lessContents, {
 			compress: true
 		},
-		function CssRenderLess(e, output) {
+		(e, output) => {
 			//TODO: error handling
 
 			var source = Blender.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
@@ -549,7 +549,7 @@ const Less = require('less');
 	Blender.css = module;
 
 
-}(Blender));
+})(Blender);
 
 /***************************************************************************************************************************************************************
  *
@@ -563,14 +563,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function HtmlApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function HtmlInit() {
+	module.init = () => {
 		Blender.debugging( 'HTML: Initiating', 'report' );
 	};
 
@@ -578,7 +578,7 @@ const Less = require('less');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all html files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function HtmlGet() {
+	module.get = () => {
 		Blender.debugging( 'HTML: Getting all HTML files', 'report' );
 
 		var POST = Blender.POST;
@@ -593,7 +593,7 @@ const Less = require('less');
 			_hasBuild = true;
 		}
 
-		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for all other brands
+		guiconfig.brands.forEach(( brand ) => { //add URLs for all other brands
 			if( brand.ID !== Blender.selectedModules.brand ) {
 				brands[ brand.ID ] = {};
 				brands[ brand.ID ].url = Blender.banner.getBlendURL( brand.ID );
@@ -622,7 +622,7 @@ const Less = require('less');
 	Blender.html = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Insert build tool
@@ -635,14 +635,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BuildApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function BuildInit() {
+	module.init = () => {
 		Blender.debugging( 'Build: Initiating', 'report' );
 	};
 
@@ -654,7 +654,7 @@ const Less = require('less');
 	//
 	// @return  [object]  Json object of module.json
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function BuildGet() {
+	module.get = () => {
 		Blender.debugging( 'Build: Getting build', 'report' );
 
 		var _includeOriginalLess  = Blender.selectedModules.includeLess;
@@ -674,7 +674,7 @@ const Less = require('less');
 	Blender.build = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Compile symbole files
@@ -687,14 +687,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function AssetsApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function AssetsInit() {
+	module.init = () => {
 		Blender.debugging( 'Assets: Initiating', 'report' );
 	};
 
@@ -702,7 +702,7 @@ const Less = require('less');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all assets files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function AssetsGet() {
+	module.get = () => {
 		Blender.debugging( 'Assets: Getting all files', 'report' );
 
 		var POST = Blender.POST;
@@ -712,7 +712,7 @@ const Less = require('less');
 
 
 		//////////////////////////////////////////////////| CORE
-		Blender.selectedModules.core.forEach(function AssetsIterateCore( module ) {
+		Blender.selectedModules.core.forEach(( module ) => {
 			if( module.font ) {
 				Blender.assets.getFonts( Blender.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] + '/font/' );
 			}
@@ -724,7 +724,7 @@ const Less = require('less');
 
 
 		//////////////////////////////////////////////////| MODULES
-		Blender.selectedModules.modules.forEach(function AssetsIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(( module ) => {
 
 			if( module.font ) {
 				Blender.assets.getFonts( Blender.GUIPATH + module.ID + '/' + module.version + '/_assets/' + POST['brand'] );
@@ -751,7 +751,7 @@ const Less = require('less');
 	//
 	// @param  [string]  Path to a folder of the font files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getFonts = function AssetsGetFonts( folder ) {
+	module.getFonts = ( folder ) => {
 		Blender.debugging( 'Assets: Getting font files', 'report' );
 
 		var files = [
@@ -772,7 +772,7 @@ const Less = require('less');
 	//
 	// @param  [string]  Path to a tests folder
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getSVG = function AssetsGetSvg( folder ) {
+	module.getSVG = ( folder ) => {
 		Blender.debugging( 'Assets: Getting svg files from ' + folder, 'report' );
 
 		//////////////////////////////////////////////////| ADDING PNGs
@@ -798,7 +798,7 @@ const Less = require('less');
 	Blender.assets = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Brand all content
@@ -811,14 +811,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BrandingApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function BrandingInit() {
+	module.init = () => {
 		Blender.debugging( 'Branding: Initiating', 'report' );
 	};
 
@@ -831,7 +831,7 @@ const Less = require('less');
 	//
 	// @return  [string]  Finished parsed content
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.replace = function BrandingReplace( content, replace ) {
+	module.replace = ( content, replace ) => {
 		Blender.debugging( 'Branding: Replacing "' + replace[0] + '" with "' + replace[1] + '"', 'report' );
 
 		var pattern = new RegExp('\\[(' + replace[0] + ')\\]', 'g');
@@ -843,7 +843,7 @@ const Less = require('less');
 	Blender.branding = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Get modules infos
@@ -856,14 +856,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function ModulesApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function ModulesInit() {
+	module.init = () => {
 		Blender.debugging( 'Modules: Initiating', 'report' );
 	};
 
@@ -875,16 +875,16 @@ const Less = require('less');
 	//
 	// @return  [object]  Json object of module.json
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getJson = function ModulesGetJson( module ) {
+	module.getJson = ( module ) => {
 		Blender.debugging( 'Modules: Getting JSON for ' + module, 'report' );
 
 
 		if( Blender.GUImodules === undefined ) { //flatten GUI json and assign to global
 
 			Blender.GUImodules = {};
-			Object.keys( Blender.GUI.modules ).forEach(function ModulesIterateCategory( category ) {
+			Object.keys( Blender.GUI.modules ).forEach(( category ) => {
 
-				Object.keys( Blender.GUI.modules[ category ] ).forEach(function ModulesIterateModules( mod ) {
+				Object.keys( Blender.GUI.modules[ category ] ).forEach(( mod ) => {
 					Blender.GUImodules[ mod ] = Blender.GUI.modules[ category ][ mod ];
 				});
 
@@ -900,7 +900,7 @@ const Less = require('less');
 	Blender.modules = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Get banner infos
@@ -913,14 +913,14 @@ const Less = require('less');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BannerApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function BannerInit() {
+	module.init = () => {
 		Blender.debugging( 'Banner: Initiating', 'report' );
 	};
 
@@ -930,7 +930,7 @@ const Less = require('less');
 	//
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function BannerGet() {
+	module.get = () => {
 		Blender.debugging( 'Banner: Generating banner', 'report' );
 
 		return '/* GUI blend ' + Blender.banner.getBlendURL( Blender.selectedModules.brand ) + ' */' + "\n";
@@ -945,7 +945,7 @@ const Less = require('less');
 	//
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.attach = function BannerAttach( content ) {
+	module.attach = ( content ) => {
 		Blender.debugging( 'Banner: Attaching banner', 'report' );
 
 		if( content.length > 0 ) {
@@ -965,16 +965,16 @@ const Less = require('less');
 	//
 	// @return  [string]  The URL string to this build
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getBlendURL = function BannerGetBlenderUrl( brand ) {
+	module.getBlendURL = ( brand ) => {
 		Blender.debugging( 'Banner: Generating blend link', 'report' );
 
 		var url = Blender.GUIRURL + brand + '/blender/#';
 
-		Blender.selectedModules.core.forEach(function BannerIterateCore( module ) { //adding core
+		Blender.selectedModules.core.forEach(( module ) => { //adding core
 			url += '/' + module.ID + ':' + module.version;
 		});
 
-		Blender.selectedModules.modules.forEach(function BannerIterateModules( module ) { //adding modules
+		Blender.selectedModules.modules.forEach(( module ) => { //adding modules
 			url += '/' + module.ID + ':' + module.version;
 		});
 
@@ -985,7 +985,7 @@ const Less = require('less');
 	Blender.banner = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Collect and zip all files
@@ -999,14 +999,14 @@ const Less = require('less');
 const Archiver = require('archiver');
 
 
-(function ZipApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function ZipInit() {
+	module.init = () => {
 		Blender.debugging( 'Zip: Initiating', 'report' );
 	};
 
@@ -1014,7 +1014,7 @@ const Archiver = require('archiver');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Zip all files up and send to response
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getZip = function ZipGetZip() {
+	module.getZip = () => {
 		Blender.debugging( 'Zip: Compiling zip', 'report' );
 
 		Blender.response.writeHead(200, {
@@ -1050,12 +1050,12 @@ const Archiver = require('archiver');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Check if queue is clear
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.readyZip = function ZipReadyZip() {
+	module.readyZip = () => {
 		Blender.debugging( 'Zip: Readying zip', 'report' );
 
 		if( Blender.zip.isQueuingEmpty() ) { //if queue is clear, add all files to the archive
 
-			Blender.zip.files.forEach(function ZipIterateZipFiles( file ) {
+			Blender.zip.files.forEach(( file ) => {
 				Blender.zip.archive.append( file.content, { name: file.name } );
 			});
 
@@ -1071,7 +1071,7 @@ const Archiver = require('archiver');
 	// @param   content      [string]  The content of the file
 	// @param   archivePath  [string]  The path this file will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.addFile = function ZipAddFile( content, archivePath ) {
+	module.addFile = ( content, archivePath ) => {
 		Blender.debugging( 'Zip: Adding file: ' + archivePath, 'report' );
 
 		if(typeof content !== 'string') {
@@ -1096,7 +1096,7 @@ const Archiver = require('archiver');
 	// @param   path         [string]  The path to the file to be added
 	// @param   archivePath  [string]  The path this file will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.addPath = function ZipAddPath( path, archivePath ) {
+	module.addPath = ( path, archivePath ) => {
 		Blender.debugging( 'Zip: Adding file path: ' + path, 'report' );
 
 		if(typeof path !== 'string') {
@@ -1124,7 +1124,7 @@ const Archiver = require('archiver');
 	// @param  files        [array]   The file extensions of the files
 	// @param  archivePath  [string]  The path these files will have inside the archive
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.addBulk = function ZipAddBulk( cwd, files, archivePath ) {
+	module.addBulk = ( cwd, files, archivePath ) => {
 		Blender.debugging( 'Zip: Adding bluk: ' + cwd + files + ' to: ' + archivePath, 'report' );
 
 		if(typeof files !== 'object') {
@@ -1152,7 +1152,7 @@ const Archiver = require('archiver');
 	// @param   type           [string]   Identifier for a type of file we are waiting for
 	// @param   _isBeingAdded  [boolean]  Whether or not this type is added or removed from the queue
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.queuing = function ZipQueuing( type, _isBeingAdded ) {
+	module.queuing = ( type, _isBeingAdded ) => {
 		Blender.debugging( 'Zip: Queuing files', 'report' );
 
 		if( _isBeingAdded ) {
@@ -1176,7 +1176,7 @@ const Archiver = require('archiver');
 	//
 	// @return  [boolean]  Whether or not it is...
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.isQueuingEmpty = function ZipIsQueuingEmpty() {
+	module.isQueuingEmpty = () => {
 		Blender.debugging( 'Zip: Checking queue', 'report' );
 
 		for( let prop in Blender.zip.queue ) {
@@ -1203,7 +1203,7 @@ const Archiver = require('archiver');
 	Blender.zip = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Post to slack
@@ -1217,14 +1217,14 @@ const Archiver = require('archiver');
 const Slack = require('node-slack');
 
 
-(function SlackApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.post = function SlackPost() {
+	module.post = () => {
 		Blender.debugging( 'Slack: Posting', 'report' );
 
 		var slack = new Slack( Blender.SLACKURL );
@@ -1251,11 +1251,11 @@ const Slack = require('node-slack');
 			funky = '`none`';
 		}
 
-		Blender.selectedModules.core.forEach(function CssIterateCore( module ) {
+		Blender.selectedModules.core.forEach(( module ) => {
 			core += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
-		Blender.selectedModules.modules.forEach(function SlackIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(( module ) => {
 			modules += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
@@ -1307,7 +1307,7 @@ const Slack = require('node-slack');
 	Blender.slack = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Funky stuff
@@ -1320,14 +1320,14 @@ const Slack = require('node-slack');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function FunkyApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module get method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function funkyPost() {
+	module.get = () => {
 		Blender.debugging( 'funky: Getting funky stuff', 'report' );
 
 		var POST = Blender.POST;
@@ -1371,7 +1371,7 @@ const Slack = require('node-slack');
 	Blender.funky = module;
 
 
-}(Blender));
+})(Blender);
 /***************************************************************************************************************************************************************
  *
  * Counter
@@ -1384,19 +1384,19 @@ const Slack = require('node-slack');
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function CounterApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module add method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.add = function counterPost() {
+	module.add = () => {
 		Blender.debugging( 'counter: adding new instance', 'report' );
 
 		var counter = 0;
 
-		Fs.readFile( Blender.LOG , function(error, data) { //read the log file
+		Fs.readFile( Blender.LOG , (error, data) => { //read the log file
 			if( error ) {
 				throw error;
 			}
@@ -1404,7 +1404,7 @@ const Slack = require('node-slack');
 			counter = parseInt( data ) + 1; //add this blend
 
 			if(!isNaN( counter )) { //check if the number is a number
-				Fs.writeFile( Blender.LOG, counter, function(error) {
+				Fs.writeFile( Blender.LOG, counter, (error) => {
 					if( error ) {
 						throw error;
 					}
@@ -1422,4 +1422,4 @@ const Slack = require('node-slack');
 	Blender.counter = module;
 
 
-}(Blender));
+})(Blender);

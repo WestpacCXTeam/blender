@@ -10,14 +10,14 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function HtmlApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function HtmlInit() {
+	module.init = () => {
 		Blender.debugging( 'HTML: Initiating', 'report' );
 	};
 
@@ -25,7 +25,7 @@
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Get all html files
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function HtmlGet() {
+	module.get = () => {
 		Blender.debugging( 'HTML: Getting all HTML files', 'report' );
 
 		var POST = Blender.POST;
@@ -40,7 +40,7 @@
 			_hasBuild = true;
 		}
 
-		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for all other brands
+		guiconfig.brands.forEach(( brand ) => { //add URLs for all other brands
 			if( brand.ID !== Blender.selectedModules.brand ) {
 				brands[ brand.ID ] = {};
 				brands[ brand.ID ].url = Blender.banner.getBlendURL( brand.ID );
@@ -69,4 +69,4 @@
 	Blender.html = module;
 
 
-}(Blender));
+})(Blender);

@@ -22,7 +22,7 @@ const Express = require('express');
 const BodyParser = require('body-parser');
 
 
-let Blender = (function Application() {
+let Blender = (() => {
 
 	return {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ let Blender = (function Application() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Initiate blender
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		init: function Init() {
+		init: () => {
 			if( Blender.DEBUG ) Blender.debugging( ' DEBUGGING| INFORMATION', 'headline' );
 
 			Blender.GUI = JSON.parse( Fs.readFileSync( Blender.GUIPATH + 'GUI.json', 'utf8') );
@@ -75,18 +75,18 @@ let Blender = (function Application() {
 			blender
 				.use( BodyParser.urlencoded({ extended: false }) )
 
-				.listen(1337, function PortListener() {
+				.listen(1337, () => {
 					Blender.debugging( 'Server started on port 1337', 'report' );
 				});
 
 
-			blender.get('*', function GetListener(request, response) {
+			blender.get('*', (request, response) => {
 				response.redirect(301, Blender.GUIRURL);
 			});
 
 
 			//listening to post request
-			blender.post('/blender', function PostListener(request, response) {
+			blender.post('/blender', (request, response) => {
 				Blender.IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
 				Blender.log.info( 'New request: ' + request.headers['x-forwarded-for'] + ' / ' + request.connection.remoteAddress );
@@ -137,36 +137,36 @@ let Blender = (function Application() {
 		//
 		// @return  [output]  console.log output
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		debugging: function Debugging( text, code ) {
+		debugging: ( text, code ) => {
 
-			if( code === 'headline' ) {
-				if( Blender.DEBUG ) {
+			if( Blender.DEBUG ) {
+				if( code === 'headline' ) {
 					let fonts = new CFonts({
 						'text': text,
 						'colors': ['white', 'gray'],
 						'maxLength': 12,
 					});
 				}
-			}
 
-			if( code === 'report' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
-			}
+				if( code === 'report' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'error' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
-			}
+				else if( code === 'error' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'interaction' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
-			}
+				else if( code === 'interaction' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'send' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
-			}
+				else if( code === 'send' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
+				}
 
-			else if( code === 'receive' ) {
-				if( Blender.DEBUG ) console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
+				else if( code === 'receive' ) {
+					console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
+				}
 			}
 
 		},
@@ -185,11 +185,11 @@ let Blender = (function Application() {
 		//------------------------------------------------------------------------------------------------------------------------------------------------------------
 		log: {
 
-			info: function LogInfo( text ) {
+			info: ( text ) => {
 				console.log( Chalk.bold.black( 'Info  ' ) + new Date().toString() + '  ' + text );
 			},
 
-			error: function LogError( text ) {
+			error: ( text ) => {
 				console.log( Chalk.bold.red( 'ERROR ' ) + new Date().toString() + '  ' + text );
 			},
 
@@ -197,7 +197,7 @@ let Blender = (function Application() {
 
 	}
 
-}());
+})();
 
 
 //run blender

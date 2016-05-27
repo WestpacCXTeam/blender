@@ -10,14 +10,14 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BannerApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function BannerInit() {
+	module.init = () => {
 		Blender.debugging( 'Banner: Initiating', 'report' );
 	};
 
@@ -27,7 +27,7 @@
 	//
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function BannerGet() {
+	module.get = () => {
 		Blender.debugging( 'Banner: Generating banner', 'report' );
 
 		return '/* GUI blend ' + Blender.banner.getBlendURL( Blender.selectedModules.brand ) + ' */' + "\n";
@@ -42,7 +42,7 @@
 	//
 	// @return  [string]  Content with attached banner
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.attach = function BannerAttach( content ) {
+	module.attach = ( content ) => {
 		Blender.debugging( 'Banner: Attaching banner', 'report' );
 
 		if( content.length > 0 ) {
@@ -62,16 +62,16 @@
 	//
 	// @return  [string]  The URL string to this build
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getBlendURL = function BannerGetBlenderUrl( brand ) {
+	module.getBlendURL = ( brand ) => {
 		Blender.debugging( 'Banner: Generating blend link', 'report' );
 
 		var url = Blender.GUIRURL + brand + '/blender/#';
 
-		Blender.selectedModules.core.forEach(function BannerIterateCore( module ) { //adding core
+		Blender.selectedModules.core.forEach(( module ) => { //adding core
 			url += '/' + module.ID + ':' + module.version;
 		});
 
-		Blender.selectedModules.modules.forEach(function BannerIterateModules( module ) { //adding modules
+		Blender.selectedModules.modules.forEach(( module ) => { //adding modules
 			url += '/' + module.ID + ':' + module.version;
 		});
 
@@ -82,4 +82,4 @@
 	Blender.banner = module;
 
 
-}(Blender));
+})(Blender);

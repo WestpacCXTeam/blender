@@ -11,14 +11,14 @@
 const Slack = require('node-slack');
 
 
-(function SlackApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.post = function SlackPost() {
+	module.post = () => {
 		Blender.debugging( 'Slack: Posting', 'report' );
 
 		var slack = new Slack( Blender.SLACKURL );
@@ -45,11 +45,11 @@ const Slack = require('node-slack');
 			funky = '`none`';
 		}
 
-		Blender.selectedModules.core.forEach(function CssIterateCore( module ) {
+		Blender.selectedModules.core.forEach(( module ) => {
 			core += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
-		Blender.selectedModules.modules.forEach(function SlackIterateModules( module ) {
+		Blender.selectedModules.modules.forEach(( module ) => {
 			modules += ', `' + module.ID+ ':' + module.version + '`';
 		});
 
@@ -101,4 +101,4 @@ const Slack = require('node-slack');
 	Blender.slack = module;
 
 
-}(Blender));
+})(Blender);

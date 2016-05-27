@@ -14,14 +14,14 @@ const UglifyJS = require('uglify-js');
 const Less = require('less');
 
 
-(function FilesApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function FilesInit() {
+	module.init = () => {
 		Blender.debugging( 'Files: new query', 'report' );
 
 		//////////////////////////////////////////////////| PARSING POST
@@ -57,7 +57,7 @@ const Less = require('less');
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Saves an array of the selected modules globally so we don't work with the raw data that comes from the client... as that could be a mess ;)
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getPost = function FilesGetPost() {
+	module.getPost = () => {
 		Blender.debugging( 'Files: Parsing POST', 'report' );
 
 		var POST = Blender.POST;
@@ -73,7 +73,7 @@ const Less = require('less');
 
 
 		//////////////////////////////////////////////////| ADDING MODULES
-		Object.keys( POST ).forEach(function FilesIteratePost( moduleName ) {
+		Object.keys( POST ).forEach(( moduleName ) => {
 			var module = moduleName.substr(5);
 
 			if(
@@ -105,7 +105,7 @@ const Less = require('less');
 		//////////////////////////////////////////////////| ADDING CORE
 		fromPOST.core = [];
 
-		Object.keys( Blender.GUI.modules._core ).forEach(function FilesIterateCore( moduleName ) {
+		Object.keys( Blender.GUI.modules._core ).forEach(( moduleName ) => {
 			var module = Blender.GUI.modules._core[moduleName];
 			var version = POST[ 'module-' + module.ID ];
 
@@ -146,4 +146,4 @@ const Less = require('less');
 	Blender.files = module;
 
 
-}(Blender));
+})(Blender);

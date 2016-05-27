@@ -15,12 +15,13 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 const Request = require('request');
 const AdmZip = require('adm-zip');
+const Dirsum = require('dirsum');
 const Rimraf = require('rimraf');
 const Chalk = require('chalk');
 const Fs = require('fs');
 
 
-let Tester = (function Application() {
+let Tester = (() => {
 	return {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Settings
@@ -28,13 +29,15 @@ let Tester = (function Application() {
 		DEBUG: true,
 		ZIPS: 'zips/',
 		TIMING: Date.now(),
-		MAX: 25,
+		MAX: 10,
 
 
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Initiate tester
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		init: function Init() {
+		init: () => {
+			Tester.debugging( 'Running init', 'report' );
+
 			Tester.empty(); //delete all files in zip folder
 		},
 
@@ -42,7 +45,7 @@ let Tester = (function Application() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Delete all files in zip folder
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		empty: function Empty() {
+		empty: () => {
 			Tester.debugging( 'Running empty', 'report' );
 
 			let fileCount = 0;
@@ -58,7 +61,7 @@ let Tester = (function Application() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Delete all files in zip folder
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		set: function Set() {
+		set: () => {
 			Tester.debugging( 'Running set', 'report' );
 
 			//data
@@ -72,7 +75,7 @@ let Tester = (function Application() {
 				'includeUnminifiedJS': 'on',
 				'includeLess': 'on',
 				'brand': 'BOM',
-			};
+			}; //hash for this unzipped folder is: 073131bffb9e2a3bdc27d129fb1dc0b0ad1c74e743decba3a7a339ae2ffa9fc8
 
 			let call = 0;
 
@@ -94,7 +97,7 @@ let Tester = (function Application() {
 		//
 		// @param  data  [object]  Blender options
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		send: function Send( data ) {
+		send: ( data ) => {
 			Tester.debugging( 'Running send', 'report' );
 
 			Tester.call = 0;
@@ -141,7 +144,7 @@ let Tester = (function Application() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Unpack all zipfiles
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		unpack: function Unpack() {
+		unpack: () => {
 			Tester.debugging( 'Running unpack', 'report' );
 
 			Fs.readdir( Tester.ZIPS, function( error, files ) {
@@ -154,15 +157,47 @@ let Tester = (function Application() {
 					}
 				});
 
-				Tester.done();
+				Tester.check();
 			});
+		},
+
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// Check zip files against hash
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		check: () => {
+			Tester.debugging( 'Running check', 'report' );
+
+			let zipsum = '073131bffb9e2a3bdc27d129fb1dc0b0ad1c74e743decba3a7a339ae2ffa9fc8'; //the hash of the unzipped files
+
+			for(let i = 1; i <= Tester.MAX; i++) { //let's look at all zip files we have unpacked
+
+				Dirsum.digest( Tester.ZIPS + 'blend' + i, 'sha256', (error, hashes) => { //and get the has for each
+					if(error) {
+						Tester.debugging( 'Dirsum failed', 'error' );
+						console.log( JSON.stringify( error ) );
+					}
+					else {
+						if( hashes.hash === zipsum ) {
+							Tester.debugging( 'Zip (blend' + i + ') contents passes hash comparison', 'positive' );
+						}
+						else {
+							Tester.debugging( 'Zip (blend' + i + ') contents fails hash comparison', 'negative' );
+						}
+					}
+
+					if( i === Tester.MAX ) { //when we are through the loop call done()
+						Tester.done();
+					}
+				});
+			}
 		},
 
 
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// Wrapping things up
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		done: function Done() {
+		done: () => {
 			Tester.debugging( 'Running done', 'report' );
 
 			let now = Date.now();
@@ -180,7 +215,7 @@ let Tester = (function Application() {
 		//
 		// @return  [output]  console.log output
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		debugging: function Debugging( text, code ) {
+		debugging: ( text, code ) => {
 
 			if( code === 'headline' ) {
 				if( Tester.DEBUG ) {
@@ -212,13 +247,21 @@ let Tester = (function Application() {
 				console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
 			}
 
+			else if( code === 'positive' && Tester.DEBUG ) {
+				console.log(Chalk.bgGreen("\n" + Chalk.bold.white( '    ' + text + ' ' )));
+			}
+
+			else if( code === 'negative' && Tester.DEBUG ) {
+				console.log(Chalk.bgRed("\n" + Chalk.bold.white( '    ' + text + ' ' )));
+			}
+
 			else if( code === 'success' && Tester.DEBUG ) {
-				console.log(Chalk.bgGreen("\n" + Chalk.bold.white( '    ' + text + ' ' )) + "\n");
+				console.log(Chalk.bgBlue("\n") + "\n" + Chalk.black("\n" + Chalk.bold.green( '    ' + text + ' ' )) + "\n");
 			}
 
 		},
 	}
-}());
+})();
 
 //run tester
 Tester.init();

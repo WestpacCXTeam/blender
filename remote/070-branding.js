@@ -10,14 +10,14 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BrandingApp(Blender) {
+((Blender) => {
 
 	let module = {};
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Module init method
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function BrandingInit() {
+	module.init = () => {
 		Blender.debugging( 'Branding: Initiating', 'report' );
 	};
 
@@ -30,7 +30,7 @@
 	//
 	// @return  [string]  Finished parsed content
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.replace = function BrandingReplace( content, replace ) {
+	module.replace = ( content, replace ) => {
 		Blender.debugging( 'Branding: Replacing "' + replace[0] + '" with "' + replace[1] + '"', 'report' );
 
 		var pattern = new RegExp('\\[(' + replace[0] + ')\\]', 'g');
@@ -42,4 +42,4 @@
 	Blender.branding = module;
 
 
-}(Blender));
+})(Blender);
