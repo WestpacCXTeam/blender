@@ -10,42 +10,43 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function CounterApp(App) {
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Blender.counter = (() => {
 
-	var module = {};
+	return {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Module add method
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.add = function counterPost() {
-		App.debugging( 'counter: adding new instance', 'report' );
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module add method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		add: () => {
+			Blender.debugging.report(`counter: adding new instance`);
 
-		var counter = 0;
+			var counter = 0;
 
-		Fs.readFile( App.LOG , function(err, data) { //read the log file
-			if( err ) {
-				throw err;
-			}
+			Fs.readFile( Blender.LOG , (error, data) => { //read the log file
+				if( error ) {
+					throw error;
+				}
 
-			counter = parseInt( data ) + 1; //add this blend
+				counter = parseInt( data ) + 1; //add this blend
 
-			if(!isNaN( counter )) { //check if the number is a number
-				Fs.writeFile( App.LOG, counter, function(err) {
-					if( err ) {
-						throw err;
-					}
+				if(!isNaN( counter )) { //check if the number is a number
+					Fs.writeFile( Blender.LOG, counter, (error) => {
+						if( error ) {
+							throw error;
+						}
 
-					App.debugging( 'counter: added', 'report' );
-				});
-			}
-			else { //throw error
-				App.log.error('             Counter number not valid ("' + counter + '"). Leaving it alone for now!');
-			}
-		});
-	};
+						Blender.debugging.report(`counter: added`);
+					});
+				}
+				else { //throw error
+					Blender.log.error(`             Counter number not valid ("${counter}"). Leaving it alone for now!`);
+				}
+			});
+		},
 
+	}
 
-	App.counter = module;
-
-
-}(App));
+})();

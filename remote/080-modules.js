@@ -10,48 +10,49 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function ModulesApp(App) {
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Blender.modules = (() => {
 
-	var module = {};
+	return {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Module init method
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function ModulesInit() {
-		App.debugging( 'Modules: Initiating', 'report' );
-	};
-
-
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Returns json object of a specific module.json
-	//
-	// @param   module  [sting]  ID of module
-	//
-	// @return  [object]  Json object of module.json
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getJson = function ModulesGetJson( module ) {
-		App.debugging( 'Modules: Getting JSON for ' + module, 'report' );
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module init method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		init: () => {
+			Blender.debugging.report(`Modules: Initiating`);
+		},
 
 
-		if( App.GUImodules === undefined ) { //flatten GUI json and assign to global
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Returns json object of a specific module.json
+//
+// @param   module  [sting]  ID of module
+//
+// @return  [object]  Json object of module.json
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		getJson: ( module ) => {
+			Blender.debugging.report(`Modules: Getting JSON for ${module}`);
 
-			App.GUImodules = {};
-			Object.keys( App.GUI.modules ).forEach(function ModulesIterateCategory( category ) {
 
-				Object.keys( App.GUI.modules[ category ] ).forEach(function ModulesIterateModules( mod ) {
-					App.GUImodules[ mod ] = App.GUI.modules[ category ][ mod ];
+			if( Blender.GUImodules === undefined ) { //flatten GUI json and assign to global
+
+				Blender.GUImodules = {};
+				Object.keys( Blender.GUI.modules ).forEach(( category ) => {
+
+					Object.keys( Blender.GUI.modules[ category ] ).forEach(( mod ) => {
+						Blender.GUImodules[ mod ] = Blender.GUI.modules[ category ][ mod ];
+					});
+
 				});
+			}
 
-			});
-		}
+			return Blender.GUImodules[module];
+			//JSON.parse( Fs.readFileSync(`${Blender.GUIPATH}${module}/module.json`, 'utf8') ); //getting from module.json if we want to have a lot of I/O(we don't)
 
-		return App.GUImodules[module];
-		// JSON.parse( Fs.readFileSync( App.GUIPATH + module + '/module.json', 'utf8') ); //getting from module.json if we want to have a lot of I/O (we don't)
+		},
 
-	};
+	}
 
-
-	App.modules = module;
-
-
-}(App));
+})();

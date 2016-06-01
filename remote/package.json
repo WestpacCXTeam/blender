@@ -1,9 +1,9 @@
 {
-	"name": "GUI-server",
-	"version": "0.0.1",
+	"name": "blender",
+	"version": "0.0.4",
 	"private": true,
 	"dependencies": {
-		"archiver": "^0.14.3",
+		"archiver": "^1.0.0",
 		"body-parser": "^1.12.4",
 		"cfonts": "0.0.13",
 		"chalk": "^1.0.0",

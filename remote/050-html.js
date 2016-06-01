@@ -10,63 +10,64 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function HtmlApp(App) {
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Blender.html = (() => {
 
-	var module = {};
+	return {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Module init method
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function HtmlInit() {
-		App.debugging( 'HTML: Initiating', 'report' );
-	};
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module init method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		init: () => {
+			Blender.debugging.report(`HTML: Initiating`);
+		},
 
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Get all html files
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function HtmlGet() {
-		App.debugging( 'HTML: Getting all HTML files', 'report' );
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Get all html files
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		get: () => {
+			Blender.debugging.report(`HTML: Getting all HTML files`);
 
-		var POST = App.POST;
-		var index = Fs.readFileSync( App.TEMPPATH + 'index.html', 'utf8');
-		var _includeOriginalLess  = App.selectedModules.includeLess;
-		var _includeOriginalJS  = App.selectedModules.includeUnminifiedJS;
-		var _hasBuild = false;
-		var guiconfig = JSON.parse( Fs.readFileSync( '../.guiconfig', 'utf8') ); //getting guiconfig for brands
-		var brands = {};
+			var POST = Blender.POST;
+			var index = Fs.readFileSync(`${Blender.TEMPPATH}index.html`, `utf8`);
+			var _includeOriginalLess  = Blender.selectedModules.includeLess;
+			var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			var _hasBuild = false;
+			var guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
+			var brands = {};
 
-		if( _includeOriginalLess || _includeOriginalJS) {
-			_hasBuild = true;
-		}
-
-		guiconfig.brands.forEach(function HTMLIterateBrand( brand ) { //add URLs for all other brands
-			if( brand.ID !== App.selectedModules.brand ) {
-				brands[ brand.ID ] = {};
-				brands[ brand.ID ].url = App.banner.getBlendURL( brand.ID );
-				brands[ brand.ID ].name = brand.name;
+			if( _includeOriginalLess || _includeOriginalJS) {
+				_hasBuild = true;
 			}
-		});
 
-		var options = { //options for underscore template
-			_hasJS: App.selectedModules.js,
-			_hasSVG: App.selectedModules.svg,
-			_hasBuild: _hasBuild,
-			Brand: POST['brand'],
-			brands: brands,
-			blendURL: App.banner.getBlendURL( App.selectedModules.brand ),
-			GUIRURL: App.GUIRURL + App.selectedModules.brand + '/blender/',
-		}
+			guiconfig.brands.forEach(( brand ) => { //add URLs for all other brands
+				if( brand.ID !== Blender.selectedModules.brand ) {
+					brands[ brand.ID ] = {};
+					brands[ brand.ID ].url = Blender.banner.getBlendURL( brand.ID );
+					brands[ brand.ID ].name = brand.name;
+				}
+			});
 
-		index = _.template( index )( options ); //render the index template
+			var options = { //options for underscore template
+				_hasJS: Blender.selectedModules.js,
+				_hasSVG: Blender.selectedModules.svg,
+				_hasBuild: _hasBuild,
+				Brand: POST[`brand`],
+				brands: brands,
+				blendURL: Blender.banner.getBlendURL( Blender.selectedModules.brand ),
+				GUIRURL: `${Blender.GUIRURL}${Blender.selectedModules.brand}/blender/`,
+			}
 
-		App.zip.queuing('html', false); //html queue is done
-		App.zip.addFile( index, '/index.html' );
+			index = _.template( index )( options ); //render the index template
 
-	};
+			Blender.zip.queuing(`html`, false); //html queue is done
+			Blender.zip.addFile( index, `/index.html` );
 
+		},
 
-	App.html = module;
+	}
 
-
-}(App));
+})();

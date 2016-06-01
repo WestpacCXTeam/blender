@@ -10,55 +10,56 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function FunkyApp(App) {
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Blender.funky = (() => {
 
-	var module = {};
+	return {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Module get method
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function funkyPost() {
-		App.debugging( 'funky: Getting funky stuff', 'report' );
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module get method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		get: () => {
+			Blender.debugging.report(`funky: Getting funky stuff`);
 
-		var POST = App.POST;
-		var funkies = 0;
-		var funkyLog = '';
+			var POST = Blender.POST;
+			var funkies = 0;
+			var funkyLog = ``;
 
-		for(var i = App.FUNKY.length - 1; i >= 0; i--) {
-			if( POST[ App.FUNKY[i].var ] === 'on' ) {
-				funkies++; //how many funky bits have been requested?
-			}
-		}
-
-		if( funkies > 0 ) {
-			for(var i = App.FUNKY.length - 1; i >= 0; i--) {
-
-				if( POST[ App.FUNKY[i].var ] === 'on' ) {
-					App.debugging( 'funky: Getting ' + App.FUNKY[i].name + ' reference', 'report' );
-
-					funkies--; //counting down
-
-					if( funkies === 0 ) { //if this is the last one
-						App.zip.queuing('funky', false);
-					}
-
-					var file = App.FUNKY[i].file.replace( '[Brand]', POST['brand'] ); //brand path
-
-					App.zip.addPath( file, App.FUNKY[i].zip ); //add file to zip
-					funkyLog += ' ' + App.FUNKY[i].name
+			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
+				if( POST[ Blender.FUNKY[i].var ] === `on` ) {
+					funkies++; //how many funky bits have been requested?
 				}
 			}
 
-			App.log.info( '             include LESS:' + funkyLog );
-		}
-		else {
-			App.zip.queuing('funky', false);
-			App.zip.readyZip();
-		}
-	};
+			if( funkies > 0 ) {
+				for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
 
+					if( POST[ Blender.FUNKY[i].var ] === `on` ) {
+						Blender.debugging.report(`funky: Getting ${Blender.FUNKY[i].name} reference`);
 
-	App.funky = module;
+						funkies--; //counting down
 
+						if( funkies === 0 ) { //if this is the last one
+							Blender.zip.queuing(`funky`, false);
+						}
 
-}(App));
+						var file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
+
+						Blender.zip.addPath( file, Blender.FUNKY[i].zip ); //add file to zip
+						funkyLog += ` ${Blender.FUNKY[i].name}`;
+					}
+				}
+
+				Blender.log.info(`             include LESS: ${funkyLog}`);
+			}
+			else {
+				Blender.zip.queuing(`funky`, false);
+				Blender.zip.readyZip();
+			}
+		},
+
+	}
+
+})();

@@ -10,76 +10,77 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-(function BannerApp(App) {
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Blender.banner = (() => {
 
-	var module = {};
+	return {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Module init method
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = function BannerInit() {
-		App.debugging( 'Banner: Initiating', 'report' );
-	};
-
-
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Get the banner text
-	//
-	// @return  [string]  Content with attached banner
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = function BannerGet() {
-		App.debugging( 'Banner: Generating banner', 'report' );
-
-		return '/* GUI blend ' + App.banner.getBlendURL( App.selectedModules.brand ) + ' */' + "\n";
-
-	};
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module init method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		init: () => {
+			Blender.debugging.report(`Banner: Initiating`);
+		},
 
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Attach the banner to some content
-	//
-	// @param   content  [string]  Content the banner needs to be attached to
-	//
-	// @return  [string]  Content with attached banner
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.attach = function BannerAttach( content ) {
-		App.debugging( 'Banner: Attaching banner', 'report' );
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Get the banner text
+//
+// @return  [string]  Content with attached banner
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		get: () => {
+			Blender.debugging.report(`Banner: Generating banner`);
 
-		if( content.length > 0 ) {
-			return App.banner.get() + content;
-		}
-		else {
-			return '';
-		}
+			return `/* GUI blend ${Blender.banner.getBlendURL( Blender.selectedModules.brand )} */\n`;
 
-	};
+		},
 
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Get the blend url
-	//
-	// @param   brand  [string]  The brand for the URL
-	//
-	// @return  [string]  The URL string to this build
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.getBlendURL = function BannerGetBlenderUrl( brand ) {
-		App.debugging( 'Banner: Generating blend link', 'report' );
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Attach the banner to some content
+//
+// @param   content  [string]  Content the banner needs to be attached to
+//
+// @return  [string]  Content with attached banner
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		attach: ( content ) => {
+			Blender.debugging.report(`Banner: Attaching banner`);
 
-		var url = App.GUIRURL + brand + '/blender/#';
+			if( content.length > 0 ) {
+				return Blender.banner.get() + content;
+			}
+			else {
+				return ``;
+			}
 
-		App.selectedModules.core.forEach(function BannerIterateCore( module ) { //adding core
-			url += '/' + module.ID + ':' + module.version;
-		});
-
-		App.selectedModules.modules.forEach(function BannerIterateModules( module ) { //adding modules
-			url += '/' + module.ID + ':' + module.version;
-		});
-
-		return url;
-	};
+		},
 
 
-	App.banner = module;
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Get the blend url
+//
+// @param   brand  [string]  The brand for the URL
+//
+// @return  [string]  The URL string to this build
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		getBlendURL: ( brand ) => {
+			Blender.debugging.report(`Banner: Generating blend link`);
 
+			var url = `${Blender.GUIRURL}${brand}/blender/#`;
 
-}(App));
+			Blender.selectedModules.core.forEach(( module ) => { //adding core
+				url += `/${module.ID}:${module.version}`;
+			});
+
+			Blender.selectedModules.modules.forEach(( module ) => { //adding modules
+				url += `/${module.ID}:${module.version}`;
+			});
+
+			return url;
+		},
+
+	}
+
+})();

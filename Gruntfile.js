@@ -35,7 +35,7 @@ var SETTINGS = function() {
 			'fileserver': 'remote',
 			'serverProd': 'remote/server.js',
 			'serverDev': 'remote/server-dev.js',
-			'Packagejson': 'package.json',
+			'Packagejson': 'remote/package.json',
 		},
 	};
 };
