@@ -11,94 +11,95 @@
 const Slack = require('node-slack');
 
 
-((Blender) => {
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Blender.slack = (() => {
 
-	let module = {};
+	return {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Module init method
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.post = () => {
-		Blender.debugging( 'Slack: Posting', 'report' );
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module init method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		post: () => {
+			Blender.debugging.report(`Slack: Posting`);
 
-		var slack = new Slack( Blender.SLACKURL );
-		var funky = '';
-		var core = '';
-		var modules = '';
-		var POST = Blender.POST;
-		var jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
-		var unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
-		var less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
+			var slack = new Slack( Blender.SLACKURL );
+			var funky = ``;
+			var core = ``;
+			var modules = ``;
+			var POST = Blender.POST;
+			var jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
+			var unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
+			var less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
-		var channel = '#testing';
-		if( !Blender.DEBUG ) {
-			var channel = '#blender';
-		}
-
-		for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
-			if( POST[ Blender.FUNKY[i].var ] === 'on' ) {
-				funky += '`' + Blender.FUNKY[i].name + '` ';
+			var channel = `#testing`;
+			if( !Blender.DEBUG ) {
+				var channel = `#blender`;
 			}
-		}
 
-		if( funky === '' ) {
-			funky = '`none`';
-		}
+			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
+				if( POST[ Blender.FUNKY[i].var ] === `on` ) {
+					funky += `\`${Blender.FUNKY[i].name}\` `;
+				}
+			}
 
-		Blender.selectedModules.core.forEach(( module ) => {
-			core += ', `' + module.ID+ ':' + module.version + '`';
-		});
+			if( funky === `` ) {
+				funky = '`none`';
+			}
 
-		Blender.selectedModules.modules.forEach(( module ) => {
-			modules += ', `' + module.ID+ ':' + module.version + '`';
-		});
+			Blender.selectedModules.core.forEach(( module ) => {
+				core += `, \`${module.ID}:${module.version}\``;
+			});
 
-		slack.send({
-			'text': 'BOOM! ... another blend!',
-			'attachments': [{
-				'fallback': '_What\'s in it?_',
-				'pretext': '_What\'s in it?_',
-				'color': '#ffcdd2',
-				'mrkdwn_in': [
-					'text',
-					'pretext',
-					'fields',
-				],
-				'fields': [
-					{
-						'title': 'Modules',
-						'value': '' +
-							'_Selected_: `' + Blender.selectedModules.modules.length + '`\n' +
-							'_Core_:\n' + core.substr(2) + '\n' +
-							'_Modules_:\n' + modules.substr(2) + '\n\n\n',
-						'short': false,
-					},
-					{
-						'title': 'Options',
-						'value': '' +
-							'_Brand_: `' + Blender.selectedModules.brand + '`\n' +
-							'_jQuery_: ' + jquery + '\n' +
-							'_unmin JS_: ' + unminJS + '\n' +
-							'_Less_: ' + less + '\n' +
-							'_Funky_: ' + funky + '\n\n\n',
-						'short': false,
-					},
-					{
-						'title': 'Client',
-						'value': '' +
-							'_IP_: `' + Blender.IP + '`',
-						'short': false,
-					}
-				],
-			}],
-			'channel': channel,
-			'username': 'The Blender',
-			'icon_url': Blender.SLACKICON,
-		});
-	};
+			Blender.selectedModules.modules.forEach(( module ) => {
+				modules += `, \`${module.ID}:${module.version}\``;
+			});
 
+			slack.send({
+				'text': `BOOM! ... another blend!`,
+				'attachments': [{
+					'fallback': `_What's in it?_`,
+					'pretext': `_What's in it?_`,
+					'color': `#ffcdd2`,
+					'mrkdwn_in': [
+						`text`,
+						`pretext`,
+						`fields`,
+					],
+					'fields': [
+						{
+							'title': `Modules`,
+							'value': '' +
+								'_Selected_: `' + Blender.selectedModules.modules.length + '`\n' +
+								'_Core_:\n' + core.substr(2) + '\n' +
+								'_Modules_:\n' + modules.substr(2) + '\n\n\n',
+							'short': false,
+						},
+						{
+							'title': `Options`,
+							'value': '' +
+								'_Brand_: `' + Blender.selectedModules.brand + '`\n' +
+								'_jQuery_: ' + jquery + '\n' +
+								'_unmin JS_: ' + unminJS + '\n' +
+								'_Less_: ' + less + '\n' +
+								'_Funky_: ' + funky + '\n\n\n',
+							'short': false,
+						},
+						{
+							'title': `Client`,
+							'value': '' +
+								'_IP_: `' + Blender.IP + '`',
+							'short': false,
+						}
+					],
+				}],
+				'channel': channel,
+				'username': `The Blender`,
+				'icon_url': Blender.SLACKICON,
+			});
+		},
 
-	Blender.slack = module;
+	}
 
-
-})(Blender);
+})();

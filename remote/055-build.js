@@ -10,43 +10,44 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-((Blender) => {
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Blender.build = (() => {
 
-	let module = {};
+	return {
 
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Module init method
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.init = () => {
-		Blender.debugging( 'Build: Initiating', 'report' );
-	};
-
-
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// Returns json object of a specific module.json
-	//
-	// @param   module  [sting]  ID of module
-	//
-	// @return  [object]  Json object of module.json
-	//------------------------------------------------------------------------------------------------------------------------------------------------------------
-	module.get = () => {
-		Blender.debugging( 'Build: Getting build', 'report' );
-
-		var _includeOriginalLess  = Blender.selectedModules.includeLess;
-		var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
-
-		if( _includeOriginalLess || _includeOriginalJS) {
-			Blender.zip.queuing('build', false); //build queue is done
-
-			Blender.zip.addBulk( Blender.TEMPPATH, ['Gruntfile.js', 'package.json'], '/' );
-		}
-		else {
-			Blender.zip.queuing('build', false); //build queue is done
-		}
-	};
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module init method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		init: () => {
+			Blender.debugging.report(`Build: Initiating`);
+		},
 
 
-	Blender.build = module;
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Returns json object of a specific module.json
+//
+// @param   module  [sting]  ID of module
+//
+// @return  [object]  Json object of module.json
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		get: () => {
+			Blender.debugging.report(`Build: Getting build`);
 
+			var _includeOriginalLess  = Blender.selectedModules.includeLess;
+			var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 
-})(Blender);
+			if( _includeOriginalLess || _includeOriginalJS) {
+				Blender.zip.queuing(`build`, false); //build queue is done
+
+				Blender.zip.addBulk( Blender.TEMPPATH, [`Gruntfile.js`, `package.json`], `/` );
+			}
+			else {
+				Blender.zip.queuing(`build`, false); //build queue is done
+			}
+		},
+
+	}
+
+})();
