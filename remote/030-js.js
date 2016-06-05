@@ -31,13 +31,14 @@ Blender.js = (() => {
 		get: () => {
 			Blender.debugging.report(`JS: Generating js`);
 
-			var files = [];
-			var file = ``;
-			var core = ``;
-			var POST = Blender.POST;
-			var jquery = ``;
-			var _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
-			var _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
+			let files = [];
+			let file = ``;
+			let core = ``;
+			let POST = Blender.POST;
+			let jquery = ``;
+			let _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
+			let _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
+			let result = ``;
 
 
 			//////////////////////////////////////////////////| JQUERY
@@ -55,7 +56,7 @@ Blender.js = (() => {
 				core = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
 				core = Blender.branding.replace(core, [`Debug`, `false`]); //remove debugging infos
 
-				var core = UglifyJS.minify( core, { fromString: true });
+				core = UglifyJS.minify( core, { fromString: true });
 
 				if( _includeOriginal ) {
 					file = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
@@ -85,14 +86,14 @@ Blender.js = (() => {
 
 			//uglify js
 			if( files.length > 0 ) {
-				var result = UglifyJS.minify( files );
+				result = UglifyJS.minify( files );
 			}
 			else {
 				result = {};
 				result.code = ``;
 			}
 
-			var source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
+			let source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
 
 			Blender.zip.queuing(`js`, false); //js queue is done
 			Blender.zip.addFile( source, `/assets/js/gui.min.js` ); //add minified file to zip

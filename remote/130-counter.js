@@ -23,7 +23,7 @@ Blender.counter = (() => {
 		add: () => {
 			Blender.debugging.report(`counter: adding new instance`);
 
-			var counter = 0;
+			let counter = 0;
 
 			Fs.readFile( Blender.LOG , (error, data) => { //read the log file
 				if( error ) {

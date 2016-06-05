@@ -68,7 +68,7 @@ Blender.banner = (() => {
 		getBlendURL: ( brand ) => {
 			Blender.debugging.report(`Banner: Generating blend link`);
 
-			var url = `${Blender.GUIRURL}${brand}/blender/#`;
+			let url = `${Blender.GUIRURL}${brand}/blender/#`;
 
 			Blender.selectedModules.core.forEach(( module ) => { //adding core
 				url += `/${module.ID}:${module.version}`;
