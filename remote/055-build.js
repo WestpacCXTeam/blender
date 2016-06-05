@@ -35,8 +35,8 @@ Blender.build = (() => {
 		get: () => {
 			Blender.debugging.report(`Build: Getting build`);
 
-			var _includeOriginalLess  = Blender.selectedModules.includeLess;
-			var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			let _includeOriginalLess  = Blender.selectedModules.includeLess;
+			let _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 
 			if( _includeOriginalLess || _includeOriginalJS) {
 				Blender.zip.queuing(`build`, false); //build queue is done

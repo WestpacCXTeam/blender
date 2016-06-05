@@ -31,15 +31,15 @@ Blender.css = (() => {
 		get: () => {
 			Blender.debugging.report(`CSS: Generating css`);
 
-			var POST = Blender.POST;
-			var lessContents = ``;
-			var lessIndex = "\n\n" + `/* ---------------------------------------| MODULES |--------------------------------------- */` + "\n";
-			var _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
+			let POST = Blender.POST;
+			let lessContents = ``;
+			let lessIndex = "\n\n" + `/* ---------------------------------------| MODULES |--------------------------------------- */` + "\n";
+			let _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
 
 
 			//////////////////////////////////////////////////| CORE
 			Blender.selectedModules.core.forEach(( module ) => {
-				var lessContent = Blender.branding.replace(
+				let lessContent = Blender.branding.replace(
 					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
@@ -57,7 +57,7 @@ Blender.css = (() => {
 
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
-				var lessContent = Blender.branding.replace(
+				let lessContent = Blender.branding.replace(
 					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
@@ -83,7 +83,7 @@ Blender.css = (() => {
 			(e, output) => {
 				//TODO: error handling
 
-				var source = Blender.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
+				let source = Blender.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
 
 				Blender.zip.queuing(`css`, false); //css queue is done
 				Blender.zip.addFile( source, `/assets/css/gui.min.css` );

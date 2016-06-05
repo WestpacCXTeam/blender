@@ -31,7 +31,7 @@ Blender.assets = (() => {
 		get: () => {
 			Blender.debugging.report(`Assets: Getting all files`);
 
-			var POST = Blender.POST;
+			let POST = Blender.POST;
 			Blender.assets.svgfiles.svg = ``;
 			Blender.assets.svgfiles.png = ``;
 			Blender.assets.svgfiles.fallback = ``;
@@ -80,7 +80,7 @@ Blender.assets = (() => {
 		getFonts: ( folder ) => {
 			Blender.debugging.report(`Assets: Getting font files`);
 
-			var files = [
+			let files = [
 				`*.eot`,
 				`*.svg`,
 				`*.ttf`,

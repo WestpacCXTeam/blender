@@ -31,13 +31,13 @@ Blender.html = (() => {
 		get: () => {
 			Blender.debugging.report(`HTML: Getting all HTML files`);
 
-			var POST = Blender.POST;
-			var index = Fs.readFileSync(`${Blender.TEMPPATH}index.html`, `utf8`);
-			var _includeOriginalLess  = Blender.selectedModules.includeLess;
-			var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
-			var _hasBuild = false;
-			var guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
-			var brands = {};
+			let POST = Blender.POST;
+			let index = Fs.readFileSync(`${Blender.TEMPPATH}index.html`, `utf8`);
+			let _includeOriginalLess  = Blender.selectedModules.includeLess;
+			let _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			let _hasBuild = false;
+			let guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
+			let brands = {};
 
 			if( _includeOriginalLess || _includeOriginalJS) {
 				_hasBuild = true;
@@ -51,7 +51,7 @@ Blender.html = (() => {
 				}
 			});
 
-			var options = { //options for underscore template
+			let options = { //options for underscore template
 				_hasJS: Blender.selectedModules.js,
 				_hasSVG: Blender.selectedModules.svg,
 				_hasBuild: _hasBuild,

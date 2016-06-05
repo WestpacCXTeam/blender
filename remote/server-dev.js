@@ -257,31 +257,31 @@ Blender.files = (() => {
 		getPost: () => {
 			Blender.debugging.report(`Files: Parsing POST`);
 
-			var POST = Blender.POST;
-			var fromPOST = {};
+			let POST = Blender.POST;
+			let fromPOST = {};
 			fromPOST.modules = [];
-			var _hasJS = false;
-			var _hasSVG = false;
+			let _hasJS = false;
+			let _hasSVG = false;
 
-			var _includeJquery = POST.includeJquery === `on`;
-			var _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
-			var _includeLess = POST.includeLess === `on`;
-			var log = ``;
+			let _includeJquery = POST.includeJquery === `on`;
+			let _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
+			let _includeLess = POST.includeLess === `on`;
+			let log = ``;
 
 
 			//////////////////////////////////////////////////| ADDING MODULES
 			Object.keys( POST ).forEach(( moduleName ) => {
-				var module = moduleName.substr(5);
+				let module = moduleName.substr(5);
 
 				if(
 					moduleName.substr(0, 5) === `tick-` &&
 					POST[ moduleName ] === `on`
 				) { //only look at enabled checkboxes
 
-					var json = Blender.modules.getJson( module );
-					var version = POST[`module-${module}`];
+					let json = Blender.modules.getJson( module );
+					let version = POST[`module-${module}`];
 
-					var newObject = _.extend( json, json.versions[ version ] ); //merge version to the same level
+					let newObject = _.extend( json, json.versions[ version ] ); //merge version to the same level
 					newObject.version = version;
 
 					if( newObject.js ) {
@@ -303,10 +303,10 @@ Blender.files = (() => {
 			fromPOST.core = [];
 
 			Object.keys( Blender.GUI.modules._core ).forEach(( moduleName ) => {
-				var module = Blender.GUI.modules._core[moduleName];
-				var version = POST[`module-${module.ID}`];
+				let module = Blender.GUI.modules._core[moduleName];
+				let version = POST[`module-${module.ID}`];
 
-				var newObject = _.extend(module, module.versions[ version ]); //merge version to the same level
+				let newObject = _.extend(module, module.versions[ version ]); //merge version to the same level
 				newObject.version = POST[`module-${module.ID}`];
 
 				fromPOST.core.push(newObject);
@@ -375,13 +375,14 @@ Blender.js = (() => {
 		get: () => {
 			Blender.debugging.report(`JS: Generating js`);
 
-			var files = [];
-			var file = ``;
-			var core = ``;
-			var POST = Blender.POST;
-			var jquery = ``;
-			var _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
-			var _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
+			let files = [];
+			let file = ``;
+			let core = ``;
+			let POST = Blender.POST;
+			let jquery = ``;
+			let _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
+			let _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
+			let result = ``;
 
 
 			//////////////////////////////////////////////////| JQUERY
@@ -399,7 +400,7 @@ Blender.js = (() => {
 				core = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
 				core = Blender.branding.replace(core, [`Debug`, `false`]); //remove debugging infos
 
-				var core = UglifyJS.minify( core, { fromString: true });
+				core = UglifyJS.minify( core, { fromString: true });
 
 				if( _includeOriginal ) {
 					file = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
@@ -429,14 +430,14 @@ Blender.js = (() => {
 
 			//uglify js
 			if( files.length > 0 ) {
-				var result = UglifyJS.minify( files );
+				result = UglifyJS.minify( files );
 			}
 			else {
 				result = {};
 				result.code = ``;
 			}
 
-			var source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
+			let source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
 
 			Blender.zip.queuing(`js`, false); //js queue is done
 			Blender.zip.addFile( source, `/assets/js/gui.min.js` ); //add minified file to zip
@@ -479,15 +480,15 @@ Blender.css = (() => {
 		get: () => {
 			Blender.debugging.report(`CSS: Generating css`);
 
-			var POST = Blender.POST;
-			var lessContents = ``;
-			var lessIndex = "\n\n" + `/* ---------------------------------------| MODULES |--------------------------------------- */` + "\n";
-			var _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
+			let POST = Blender.POST;
+			let lessContents = ``;
+			let lessIndex = "\n\n" + `/* ---------------------------------------| MODULES |--------------------------------------- */` + "\n";
+			let _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
 
 
 			//////////////////////////////////////////////////| CORE
 			Blender.selectedModules.core.forEach(( module ) => {
-				var lessContent = Blender.branding.replace(
+				let lessContent = Blender.branding.replace(
 					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
@@ -505,7 +506,7 @@ Blender.css = (() => {
 
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
-				var lessContent = Blender.branding.replace(
+				let lessContent = Blender.branding.replace(
 					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
@@ -531,7 +532,7 @@ Blender.css = (() => {
 			(e, output) => {
 				//TODO: error handling
 
-				var source = Blender.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
+				let source = Blender.banner.attach( output.css ); //attach a banner to the top of the file with a URL of this build
 
 				Blender.zip.queuing(`css`, false); //css queue is done
 				Blender.zip.addFile( source, `/assets/css/gui.min.css` );
@@ -576,13 +577,13 @@ Blender.html = (() => {
 		get: () => {
 			Blender.debugging.report(`HTML: Getting all HTML files`);
 
-			var POST = Blender.POST;
-			var index = Fs.readFileSync(`${Blender.TEMPPATH}index.html`, `utf8`);
-			var _includeOriginalLess  = Blender.selectedModules.includeLess;
-			var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
-			var _hasBuild = false;
-			var guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
-			var brands = {};
+			let POST = Blender.POST;
+			let index = Fs.readFileSync(`${Blender.TEMPPATH}index.html`, `utf8`);
+			let _includeOriginalLess  = Blender.selectedModules.includeLess;
+			let _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			let _hasBuild = false;
+			let guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
+			let brands = {};
 
 			if( _includeOriginalLess || _includeOriginalJS) {
 				_hasBuild = true;
@@ -596,7 +597,7 @@ Blender.html = (() => {
 				}
 			});
 
-			var options = { //options for underscore template
+			let options = { //options for underscore template
 				_hasJS: Blender.selectedModules.js,
 				_hasSVG: Blender.selectedModules.svg,
 				_hasBuild: _hasBuild,
@@ -653,8 +654,8 @@ Blender.build = (() => {
 		get: () => {
 			Blender.debugging.report(`Build: Getting build`);
 
-			var _includeOriginalLess  = Blender.selectedModules.includeLess;
-			var _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			let _includeOriginalLess  = Blender.selectedModules.includeLess;
+			let _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 
 			if( _includeOriginalLess || _includeOriginalJS) {
 				Blender.zip.queuing(`build`, false); //build queue is done
@@ -702,7 +703,7 @@ Blender.assets = (() => {
 		get: () => {
 			Blender.debugging.report(`Assets: Getting all files`);
 
-			var POST = Blender.POST;
+			let POST = Blender.POST;
 			Blender.assets.svgfiles.svg = ``;
 			Blender.assets.svgfiles.png = ``;
 			Blender.assets.svgfiles.fallback = ``;
@@ -751,7 +752,7 @@ Blender.assets = (() => {
 		getFonts: ( folder ) => {
 			Blender.debugging.report(`Assets: Getting font files`);
 
-			var files = [
+			let files = [
 				`*.eot`,
 				`*.svg`,
 				`*.ttf`,
@@ -833,7 +834,7 @@ Blender.branding = (() => {
 		replace: ( content, replace ) => {
 			Blender.debugging.report(`Branding: Replacing "${replace[0]}" with "${replace[1]}"`);
 
-			var pattern = new RegExp(`\\[(${replace[0]})\\]`, `g`);
+			let pattern = new RegExp(`\\[(${replace[0]})\\]`, `g`);
 			return content.replace(pattern, replace[1]);
 
 		},
@@ -969,7 +970,7 @@ Blender.banner = (() => {
 		getBlendURL: ( brand ) => {
 			Blender.debugging.report(`Banner: Generating blend link`);
 
-			var url = `${Blender.GUIRURL}${brand}/blender/#`;
+			let url = `${Blender.GUIRURL}${brand}/blender/#`;
 
 			Blender.selectedModules.core.forEach(( module ) => { //adding core
 				url += `/${module.ID}:${module.version}`;
@@ -1230,18 +1231,18 @@ Blender.slack = (() => {
 		post: () => {
 			Blender.debugging.report(`Slack: Posting`);
 
-			var slack = new Slack( Blender.SLACKURL );
-			var funky = ``;
-			var core = ``;
-			var modules = ``;
-			var POST = Blender.POST;
-			var jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
-			var unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
-			var less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
+			let slack = new Slack( Blender.SLACKURL );
+			let funky = ``;
+			let core = ``;
+			let modules = ``;
+			let POST = Blender.POST;
+			let jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
+			let unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
+			let less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
-			var channel = `#testing`;
+			let channel = `#testing`;
 			if( !Blender.DEBUG ) {
-				var channel = `#blender`;
+				let channel = `#blender`;
 			}
 
 			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
@@ -1334,9 +1335,9 @@ Blender.funky = (() => {
 		get: () => {
 			Blender.debugging.report(`funky: Getting funky stuff`);
 
-			var POST = Blender.POST;
-			var funkies = 0;
-			var funkyLog = ``;
+			let POST = Blender.POST;
+			let funkies = 0;
+			let funkyLog = ``;
 
 			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
 				if( POST[ Blender.FUNKY[i].var ] === `on` ) {
@@ -1356,7 +1357,7 @@ Blender.funky = (() => {
 							Blender.zip.queuing(`funky`, false);
 						}
 
-						var file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
+						let file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
 
 						Blender.zip.addPath( file, Blender.FUNKY[i].zip ); //add file to zip
 						funkyLog += ` ${Blender.FUNKY[i].name}`;
@@ -1399,7 +1400,7 @@ Blender.counter = (() => {
 		add: () => {
 			Blender.debugging.report(`counter: adding new instance`);
 
-			var counter = 0;
+			let counter = 0;
 
 			Fs.readFile( Blender.LOG , (error, data) => { //read the log file
 				if( error ) {

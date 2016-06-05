@@ -36,7 +36,7 @@ Blender.branding = (() => {
 		replace: ( content, replace ) => {
 			Blender.debugging.report(`Branding: Replacing "${replace[0]}" with "${replace[1]}"`);
 
-			var pattern = new RegExp(`\\[(${replace[0]})\\]`, `g`);
+			let pattern = new RegExp(`\\[(${replace[0]})\\]`, `g`);
 			return content.replace(pattern, replace[1]);
 
 		},

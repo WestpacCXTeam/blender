@@ -23,9 +23,9 @@ Blender.funky = (() => {
 		get: () => {
 			Blender.debugging.report(`funky: Getting funky stuff`);
 
-			var POST = Blender.POST;
-			var funkies = 0;
-			var funkyLog = ``;
+			let POST = Blender.POST;
+			let funkies = 0;
+			let funkyLog = ``;
 
 			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
 				if( POST[ Blender.FUNKY[i].var ] === `on` ) {
@@ -45,7 +45,7 @@ Blender.funky = (() => {
 							Blender.zip.queuing(`funky`, false);
 						}
 
-						var file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
+						let file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
 
 						Blender.zip.addPath( file, Blender.FUNKY[i].zip ); //add file to zip
 						funkyLog += ` ${Blender.FUNKY[i].name}`;

@@ -24,18 +24,18 @@ Blender.slack = (() => {
 		post: () => {
 			Blender.debugging.report(`Slack: Posting`);
 
-			var slack = new Slack( Blender.SLACKURL );
-			var funky = ``;
-			var core = ``;
-			var modules = ``;
-			var POST = Blender.POST;
-			var jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
-			var unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
-			var less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
+			let slack = new Slack( Blender.SLACKURL );
+			let funky = ``;
+			let core = ``;
+			let modules = ``;
+			let POST = Blender.POST;
+			let jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
+			let unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
+			let less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
-			var channel = `#testing`;
+			let channel = `#testing`;
 			if( !Blender.DEBUG ) {
-				var channel = `#blender`;
+				let channel = `#blender`;
 			}
 
 			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {

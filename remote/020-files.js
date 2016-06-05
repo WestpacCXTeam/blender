@@ -63,31 +63,31 @@ Blender.files = (() => {
 		getPost: () => {
 			Blender.debugging.report(`Files: Parsing POST`);
 
-			var POST = Blender.POST;
-			var fromPOST = {};
+			let POST = Blender.POST;
+			let fromPOST = {};
 			fromPOST.modules = [];
-			var _hasJS = false;
-			var _hasSVG = false;
+			let _hasJS = false;
+			let _hasSVG = false;
 
-			var _includeJquery = POST.includeJquery === `on`;
-			var _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
-			var _includeLess = POST.includeLess === `on`;
-			var log = ``;
+			let _includeJquery = POST.includeJquery === `on`;
+			let _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
+			let _includeLess = POST.includeLess === `on`;
+			let log = ``;
 
 
 			//////////////////////////////////////////////////| ADDING MODULES
 			Object.keys( POST ).forEach(( moduleName ) => {
-				var module = moduleName.substr(5);
+				let module = moduleName.substr(5);
 
 				if(
 					moduleName.substr(0, 5) === `tick-` &&
 					POST[ moduleName ] === `on`
 				) { //only look at enabled checkboxes
 
-					var json = Blender.modules.getJson( module );
-					var version = POST[`module-${module}`];
+					let json = Blender.modules.getJson( module );
+					let version = POST[`module-${module}`];
 
-					var newObject = _.extend( json, json.versions[ version ] ); //merge version to the same level
+					let newObject = _.extend( json, json.versions[ version ] ); //merge version to the same level
 					newObject.version = version;
 
 					if( newObject.js ) {
@@ -109,10 +109,10 @@ Blender.files = (() => {
 			fromPOST.core = [];
 
 			Object.keys( Blender.GUI.modules._core ).forEach(( moduleName ) => {
-				var module = Blender.GUI.modules._core[moduleName];
-				var version = POST[`module-${module.ID}`];
+				let module = Blender.GUI.modules._core[moduleName];
+				let version = POST[`module-${module.ID}`];
 
-				var newObject = _.extend(module, module.versions[ version ]); //merge version to the same level
+				let newObject = _.extend(module, module.versions[ version ]); //merge version to the same level
 				newObject.version = POST[`module-${module.ID}`];
 
 				fromPOST.core.push(newObject);
