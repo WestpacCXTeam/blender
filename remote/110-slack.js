@@ -33,9 +33,9 @@ Blender.slack = (() => {
 			let unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
 			let less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
-			let channel = `#testing`;
+			var channel = `#testing`;
 			if( !Blender.DEBUG ) {
-				let channel = `#blender`;
+				var channel = `#blender`;
 			}
 
 			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
