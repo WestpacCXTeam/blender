@@ -1240,9 +1240,9 @@ Blender.slack = (() => {
 			let unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
 			let less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
-			var channel = `#testing`;
+			let channel = `#testing`;
 			if( !Blender.DEBUG ) {
-				var channel = `#blender`;
+				channel = `#blender`;
 			}
 
 			for(let i = Blender.FUNKY.length - 1; i >= 0; i--) {
