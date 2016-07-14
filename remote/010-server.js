@@ -39,8 +39,8 @@ const Blender = (() => { //constructor factory
 		DEBUG: [Debug], //debugging infos
 		GELRURL: `http://gel.westpacgroup.com.au/`,
 		GUIRURL: `http://gel.westpacgroup.com.au/GUI/`,
-		// GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
-		GUIPATH: Path.normalize(`${__dirname}/../../GUI-source-master/`),
+		GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
+		// GUIPATH: Path.normalize(`${__dirname}/../../GUI-source-master/`),
 		TEMPPATH: Path.normalize(`${__dirname}/._template/`),
 		GELPATH: Path.normalize(`${__dirname}/../../../`),
 		GUICONFIG: Path.normalize(`${__dirname}/../.guiconfig`),
@@ -112,10 +112,9 @@ const Blender = (() => { //constructor factory
 
 			headline: ( text ) => {
 				if( Blender.DEBUG ) {
-					const fonts = new CFonts({
-						'text': text,
+					CFonts.say(text, {
+						'align': 'center',
 						'colors': [`white`, `gray`],
-						'maxLength': 12,
 					});
 				}
 			},

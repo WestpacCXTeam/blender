@@ -15,6 +15,7 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 const Request = require('request');
 const AdmZip = require('adm-zip');
+const CFonts = require(`cfonts`);
 const Dirsum = require('dirsum');
 const Rimraf = require('rimraf');
 const Chalk = require('chalk');
@@ -168,7 +169,7 @@ let Tester = (() => {
 		check: () => {
 			Tester.debugging( 'Running check', 'report' );
 
-			let zipsum = '073131bffb9e2a3bdc27d129fb1dc0b0ad1c74e743decba3a7a339ae2ffa9fc8'; //the hash of the unzipped files
+			let zipsum = '40b3d12a61cd662a17d1f958b59add501687745cda63a16a0ab7b0411411825a'; //the hash of the unzipped files
 
 			for(let i = 1; i <= Tester.MAX; i++) { //let's look at all zip files we have unpacked
 
@@ -179,10 +180,10 @@ let Tester = (() => {
 					}
 					else {
 						if( hashes.hash === zipsum ) {
-							Tester.debugging( 'Zip (blend' + i + ') contents passes hash comparison', 'positive' );
+							Tester.debugging( `Zip (blend ${i}) contents passes hash comparison`, 'positive' );
 						}
 						else {
-							Tester.debugging( 'Zip (blend' + i + ') contents fails hash comparison', 'negative' );
+							Tester.debugging( `Zip (blend ${i}) contents fails hash comparison (${hashes.hash})`, 'negative' );
 						}
 					}
 
@@ -219,10 +220,9 @@ let Tester = (() => {
 
 			if( code === 'headline' ) {
 				if( Tester.DEBUG ) {
-					let fonts = new CFonts({
-						'text': text,
-						'colors': ['white', 'gray'],
-						'maxLength': 12,
+					CFonts.say(text, {
+						'align': 'center',
+						'colors': [`white`, `gray`],
 					});
 				}
 			}

@@ -39,8 +39,8 @@ const Blender = (() => { //constructor factory
 		DEBUG: false, //debugging infos
 		GELRURL: `http://gel.westpacgroup.com.au/`,
 		GUIRURL: `http://gel.westpacgroup.com.au/GUI/`,
-		// GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
-		GUIPATH: Path.normalize(`${__dirname}/../../GUI-source-master/`),
+		GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
+		// GUIPATH: Path.normalize(`${__dirname}/../../GUI-source-master/`),
 		TEMPPATH: Path.normalize(`${__dirname}/._template/`),
 		GELPATH: Path.normalize(`${__dirname}/../../../`),
 		GUICONFIG: Path.normalize(`${__dirname}/../.guiconfig`),
@@ -112,10 +112,9 @@ const Blender = (() => { //constructor factory
 
 			headline: ( text ) => {
 				if( Blender.DEBUG ) {
-					const fonts = new CFonts({
-						'text': text,
+					CFonts.say(text, {
+						'align': 'center',
 						'colors': [`white`, `gray`],
-						'maxLength': 12,
 					});
 				}
 			},
@@ -1041,7 +1040,7 @@ Blender.zip = (() => {
 			}
 
 			//add new blend to log
-			Blender.counter.add();
+			Blender.counter.init();
 
 			//clearning up
 			Blender.zip.archive = Archiver(`zip`); //new archive
@@ -1385,6 +1384,7 @@ Blender.funky = (() => {
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+const Custard = require('custardjs');
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1393,6 +1393,21 @@ Blender.funky = (() => {
 Blender.counter = (() => {
 
 	return {
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Module init method
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		init: () => {
+			Blender.debugging.report(`counter: init`);
+
+			Custard.run([
+				{
+					'run': Blender.counter.add,
+					'maxCalls': 3,
+				}
+			]);
+		},
+
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Module add method

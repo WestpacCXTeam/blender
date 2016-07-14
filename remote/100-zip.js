@@ -53,7 +53,7 @@ Blender.zip = (() => {
 			}
 
 			//add new blend to log
-			Blender.counter.add();
+			Blender.counter.init();
 
 			//clearning up
 			Blender.zip.archive = Archiver(`zip`); //new archive

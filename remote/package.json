@@ -4,13 +4,14 @@
 	"private": true,
 	"dependencies": {
 		"archiver": "^1.0.0",
-		"body-parser": "^1.12.4",
-		"cfonts": "0.0.13",
+		"body-parser": "^1.15.2",
+		"cfonts": "1.0.1",
 		"chalk": "^1.0.0",
-		"express": "^4.12.3",
+		"custardjs": "^0.1.1",
+		"express": "^4.14.0",
 		"less": "^2.5.0",
-		"uglify-js": "^2.4.21",
-		"underscore": "^1.8.3",
-		"node-slack": "0.0.7"
+		"node-slack": "0.0.7",
+		"uglify-js": "^2.7.0",
+		"underscore": "^1.8.3"
 	}
 }
