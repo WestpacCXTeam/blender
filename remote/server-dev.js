@@ -47,6 +47,7 @@ const Blender = (() => { //constructor factory
 		JQUERYPATH: `_javascript-helpers/1.0.1/_core/js/010-jquery.js`,
 		SLACKURL: `https://hooks.slack.com/services/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`,
 		SLACKICON: `http://gel.westpacgroup.com.au/GUI/blender/remote/assets/img/blender-icon.png`,
+		WEBFONTSROOT: `https://sites.thewestpacgroup.com.au/sites/TS1206/Shared%20Documents/webfonts/`,
 		LOG: Path.normalize(`${__dirname}/blender.log`),
 		FUNKY: [
 			{
@@ -256,15 +257,15 @@ Blender.files = (() => {
 		getPost: () => {
 			Blender.debugging.report(`Files: Parsing POST`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
 			let fromPOST = {};
 			fromPOST.modules = [];
 			let _hasJS = false;
 			let _hasSVG = false;
 
-			let _includeJquery = POST.includeJquery === `on`;
-			let _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
-			let _includeLess = POST.includeLess === `on`;
+			const _includeJquery = POST.includeJquery === `on`;
+			const _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
+			const _includeLess = POST.includeLess === `on`;
 			let log = ``;
 
 
@@ -374,13 +375,13 @@ Blender.js = (() => {
 		get: () => {
 			Blender.debugging.report(`JS: Generating js`);
 
+			const POST = Blender.POST;
+			const _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
+			const _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
 			let files = [];
 			let file = ``;
 			let core = ``;
-			let POST = Blender.POST;
 			let jquery = ``;
-			let _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
-			let _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
 			let result = ``;
 
 
@@ -412,7 +413,7 @@ Blender.js = (() => {
 
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
-				let _hasJS = module.js; //look if this module has js
+				const _hasJS = module.js; //look if this module has js
 
 				if( _hasJS ) {
 					files.push(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`); //add js to uglify
@@ -436,7 +437,7 @@ Blender.js = (() => {
 				result.code = ``;
 			}
 
-			let source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
+			const source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
 
 			Blender.zip.queuing(`js`, false); //js queue is done
 			Blender.zip.addFile( source, `/assets/js/gui.min.js` ); //add minified file to zip
@@ -479,10 +480,10 @@ Blender.css = (() => {
 		get: () => {
 			Blender.debugging.report(`CSS: Generating css`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
+			const _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
 			let lessContents = ``;
 			let lessIndex = "\n\n" + `/* ---------------------------------------| MODULES |--------------------------------------- */` + "\n";
-			let _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
 
 
 			//////////////////////////////////////////////////| CORE
@@ -576,35 +577,58 @@ Blender.html = (() => {
 		get: () => {
 			Blender.debugging.report(`HTML: Getting all HTML files`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
+			const _includeOriginalLess  = Blender.selectedModules.includeLess;
+			const _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			const guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
+			const fontVersion = POST[`module-_fonts`];
 			let index = Fs.readFileSync(`${Blender.TEMPPATH}index.html`, `utf8`);
-			let _includeOriginalLess  = Blender.selectedModules.includeLess;
-			let _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 			let _hasBuild = false;
-			let guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
 			let brands = {};
+			let options = {};
+			options.webfonts = '';
 
 			if( _includeOriginalLess || _includeOriginalJS) {
 				_hasBuild = true;
 			}
 
-			guiconfig.brands.forEach(( brand ) => { //add URLs for all other brands
-				if( brand.ID !== Blender.selectedModules.brand ) {
+			guiconfig.brands.forEach(( brand ) => { //iterate over brands
+				let fontFiles = [];
+
+				if( brand.ID !== Blender.selectedModules.brand ) { //add URLs for all other brands
 					brands[ brand.ID ] = {};
 					brands[ brand.ID ].url = Blender.banner.getBlendURL( brand.ID );
 					brands[ brand.ID ].name = brand.name;
+					brands[ brand.ID ].webfonts = '';
+				}
+
+				try { //are there any font files in the font folder?
+					fontFiles = Fs.readdirSync(`${Blender.GUIPATH}_fonts/${fontVersion}/_assets/${brand.ID}/font/`);
+				}
+				catch( error ) {
+					//we know there are some folders that don't have fonts. All good.
+				}
+
+				if( fontFiles.length > 0 ) {
+					let webfontPath = `${Blender.WEBFONTSROOT}_fonts-${fontVersion}-${brand.ID}.zip`;
+
+					if( brand.ID === Blender.selectedModules.brand ) { //add webfont for this brand
+						options.webfonts = webfontPath;
+					}
+					else {
+						brands[ brand.ID ].webfonts = webfontPath; //add webfont for all other brands
+					}
 				}
 			});
 
-			let options = { //options for underscore template
-				_hasJS: Blender.selectedModules.js,
-				_hasSVG: Blender.selectedModules.svg,
-				_hasBuild: _hasBuild,
-				Brand: POST[`brand`],
-				brands: brands,
-				blendURL: Blender.banner.getBlendURL( Blender.selectedModules.brand ),
-				GUIRURL: `${Blender.GUIRURL}${Blender.selectedModules.brand}/blender/`,
-			}
+			//options for underscore template
+			options._hasJS = Blender.selectedModules.js;
+			options._hasSVG = Blender.selectedModules.svg;
+			options._hasBuild = _hasBuild;
+			options.Brand = POST[`brand`];
+			options.brands = brands;
+			options.blendURL = Blender.banner.getBlendURL( Blender.selectedModules.brand );
+			options.GUIRURL = `${Blender.GUIRURL}${Blender.selectedModules.brand}/blender/`;
 
 			index = _.template( index )( options ); //render the index template
 
@@ -653,8 +677,8 @@ Blender.build = (() => {
 		get: () => {
 			Blender.debugging.report(`Build: Getting build`);
 
-			let _includeOriginalLess  = Blender.selectedModules.includeLess;
-			let _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			const _includeOriginalLess  = Blender.selectedModules.includeLess;
+			const _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
 
 			if( _includeOriginalLess || _includeOriginalJS) {
 				Blender.zip.queuing(`build`, false); //build queue is done
@@ -702,7 +726,7 @@ Blender.assets = (() => {
 		get: () => {
 			Blender.debugging.report(`Assets: Getting all files`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
 			Blender.assets.svgfiles.svg = ``;
 			Blender.assets.svgfiles.png = ``;
 			Blender.assets.svgfiles.fallback = ``;
@@ -710,9 +734,9 @@ Blender.assets = (() => {
 
 			//////////////////////////////////////////////////| CORE
 			Blender.selectedModules.core.forEach(( module ) => {
-				if( module.font ) {
-					Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}/font/`);
-				}
+				// if( module.font ) {
+				// 	Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}/font/`);
+				// }
 
 				if( module.svg ) {
 					Blender.assets.getSVG(`${Blender.GUIPATH}${module.ID}/${module.version}/tests/${POST[`brand`]}/assets/`);
@@ -723,9 +747,9 @@ Blender.assets = (() => {
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
 
-				if( module.font ) {
-					Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}`);
-				}
+				// if( module.font ) {
+				// 	Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}`);
+				// }
 
 				if( module.svg ) {
 					Blender.assets.getSVG(`${Blender.GUIPATH}${module.ID}/${module.version}/tests/${POST[`brand`]}/assets/`);
@@ -1230,14 +1254,14 @@ Blender.slack = (() => {
 		post: () => {
 			Blender.debugging.report(`Slack: Posting`);
 
-			let slack = new Slack( Blender.SLACKURL );
+			const slack = new Slack( Blender.SLACKURL );
+			const POST = Blender.POST;
+			const jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
+			const unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
+			const less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 			let funky = ``;
 			let core = ``;
 			let modules = ``;
-			let POST = Blender.POST;
-			let jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
-			let unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
-			let less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
 			let channel = `#testing`;
 			if( !Blender.DEBUG ) {
@@ -1334,7 +1358,7 @@ Blender.funky = (() => {
 		get: () => {
 			Blender.debugging.report(`funky: Getting funky stuff`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
 			let funkies = 0;
 			let funkyLog = ``;
 
@@ -1356,7 +1380,7 @@ Blender.funky = (() => {
 							Blender.zip.queuing(`funky`, false);
 						}
 
-						let file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
+						const file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
 
 						Blender.zip.addPath( file, Blender.FUNKY[i].zip ); //add file to zip
 						funkyLog += ` ${Blender.FUNKY[i].name}`;
@@ -1400,12 +1424,15 @@ Blender.counter = (() => {
 		init: () => {
 			Blender.debugging.report(`counter: init`);
 
-			Custard.run([
-				{
+			Custard.run( //run this only when no more than 3 blends are currently blending
+				[{
 					'run': Blender.counter.add,
 					'maxCalls': 3,
+				}],
+				() => {
+					Blender.debugging.report(`counter: adding not counting as too many blends are blending`);
 				}
-			]);
+			);
 		},
 
 
@@ -1431,6 +1458,7 @@ Blender.counter = (() => {
 						}
 
 						Blender.debugging.report(`counter: added`);
+						Custard.finished();
 					});
 				}
 				else { //throw error
@@ -1458,7 +1486,7 @@ Blender.init = () => {
 	Blender.debugging.headline(` DEBUG| INFO`);
 
 	Blender.GUI = JSON.parse( Fs.readFileSync(`${Blender.GUIPATH}GUI.json`, `utf8`) );
-	let blender = Express();
+	const blender = Express();
 
 	//starting server
 	blender

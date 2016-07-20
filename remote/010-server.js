@@ -47,6 +47,7 @@ const Blender = (() => { //constructor factory
 		JQUERYPATH: `_javascript-helpers/1.0.1/_core/js/010-jquery.js`,
 		SLACKURL: `https://hooks.slack.com/services/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`,
 		SLACKICON: `http://gel.westpacgroup.com.au/GUI/blender/remote/assets/img/blender-icon.png`,
+		WEBFONTSROOT: `https://sites.thewestpacgroup.com.au/sites/TS1206/Shared%20Documents/webfonts/`,
 		LOG: Path.normalize(`${__dirname}/blender.log`),
 		FUNKY: [
 			{

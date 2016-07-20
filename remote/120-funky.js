@@ -23,7 +23,7 @@ Blender.funky = (() => {
 		get: () => {
 			Blender.debugging.report(`funky: Getting funky stuff`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
 			let funkies = 0;
 			let funkyLog = ``;
 
@@ -45,7 +45,7 @@ Blender.funky = (() => {
 							Blender.zip.queuing(`funky`, false);
 						}
 
-						let file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
+						const file = Blender.FUNKY[i].file.replace( `[Brand]`, POST[`brand`] ); //brand path
 
 						Blender.zip.addPath( file, Blender.FUNKY[i].zip ); //add file to zip
 						funkyLog += ` ${Blender.FUNKY[i].name}`;

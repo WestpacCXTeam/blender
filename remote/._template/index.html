@@ -79,6 +79,15 @@
 						<a href="<%= blendURL %>" target="_blank"><%= blendURL %></a>
 					</p>
 
+<% if( webfonts.length > 0 ) { %>
+					<hr>
+
+					<h2 class="body-font">Your web fonts</h2>
+					<p>
+						<a href="<%= webfonts %>" target="_blank">Download the web fonts for this blend</a>
+					</p>
+<% } %>
+
 					<hr>
 
 					<div class="row">
@@ -158,7 +167,12 @@
 							</p>
 							<ul>
 <% _.each(brands, function( brand ) { %>
-							<li><a href="<%= brand.url %>" target="_blank"><%= brand.name %></a></li>
+							<li>
+								<a href="<%= brand.url %>" target="_blank"><%= brand.name %></a>
+<% if( brand.webfonts.length > 0 ) { %>
+								<br>[<a href="<%= brand.webfonts %>" target="_blank">web fonts download</a>]
+<% } %>
+							</li>
 <% }); %>
 							</ul>
 						</div>

@@ -31,10 +31,10 @@ Blender.css = (() => {
 		get: () => {
 			Blender.debugging.report(`CSS: Generating css`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
+			const _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
 			let lessContents = ``;
 			let lessIndex = "\n\n" + `/* ---------------------------------------| MODULES |--------------------------------------- */` + "\n";
-			let _includeOriginal  = Blender.selectedModules.includeLess; //POST.hasOwnProperty(`includeless`);
 
 
 			//////////////////////////////////////////////////| CORE

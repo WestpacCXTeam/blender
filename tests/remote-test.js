@@ -22,7 +22,7 @@ const Chalk = require('chalk');
 const Fs = require('fs');
 
 
-let Tester = (() => {
+const Tester = (() => {
 	return {
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Settings
@@ -66,7 +66,7 @@ let Tester = (() => {
 			Tester.debugging( 'Running set', 'report' );
 
 			//data
-			let data = {
+			const data = {
 				'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '2.0.1', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 				'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
 				'module-icons-group03': '2.0.0', 'tick-icons-group03': 'on',
@@ -76,11 +76,11 @@ let Tester = (() => {
 				'includeUnminifiedJS': 'on',
 				'includeLess': 'on',
 				'brand': 'BOM',
-			}; //hash for this unzipped folder is: 073131bffb9e2a3bdc27d129fb1dc0b0ad1c74e743decba3a7a339ae2ffa9fc8
+			}; //hash for this unzipped folder is: 6a10692227e77fbd992de35ab4191cdd2ae664501f0d043adabe1a99892e0573
 
 			let call = 0;
 
-			let timer = setInterval(function() {
+			const timer = setInterval(function() {
 				call ++;
 
 				if( call >= Tester.MAX ) {
@@ -151,8 +151,8 @@ let Tester = (() => {
 			Fs.readdir( Tester.ZIPS, function( error, files ) {
 				files.forEach( function( file, index ) {
 					if( file.substring(0, 5) === 'blend' ) {
-						let zip = new AdmZip( Tester.ZIPS + file );
-						let name = file.split('.'); //pack them all in a folder called the same as the zip file
+						const zip = new AdmZip( Tester.ZIPS + file );
+						const name = file.split('.'); //pack them all in a folder called the same as the zip file
 
 						zip.extractAllTo( Tester.ZIPS + name[0] + '/', true );
 					}
@@ -169,7 +169,7 @@ let Tester = (() => {
 		check: () => {
 			Tester.debugging( 'Running check', 'report' );
 
-			let zipsum = '40b3d12a61cd662a17d1f958b59add501687745cda63a16a0ab7b0411411825a'; //the hash of the unzipped files
+			const zipsum = '6a10692227e77fbd992de35ab4191cdd2ae664501f0d043adabe1a99892e0573'; //the hash of the unzipped files
 
 			for(let i = 1; i <= Tester.MAX; i++) { //let's look at all zip files we have unpacked
 
@@ -201,8 +201,8 @@ let Tester = (() => {
 		done: () => {
 			Tester.debugging( 'Running done', 'report' );
 
-			let now = Date.now();
-			let diff = now - Tester.TIMING;
+			const now = Date.now();
+			const diff = now - Tester.TIMING;
 
 			Tester.debugging( 'TEST TOOK: ' + diff + 'ms', 'success' );
 		},

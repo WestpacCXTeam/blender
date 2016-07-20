@@ -63,15 +63,15 @@ Blender.files = (() => {
 		getPost: () => {
 			Blender.debugging.report(`Files: Parsing POST`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
 			let fromPOST = {};
 			fromPOST.modules = [];
 			let _hasJS = false;
 			let _hasSVG = false;
 
-			let _includeJquery = POST.includeJquery === `on`;
-			let _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
-			let _includeLess = POST.includeLess === `on`;
+			const _includeJquery = POST.includeJquery === `on`;
+			const _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
+			const _includeLess = POST.includeLess === `on`;
 			let log = ``;
 
 

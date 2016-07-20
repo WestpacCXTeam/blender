@@ -24,12 +24,15 @@ Blender.counter = (() => {
 		init: () => {
 			Blender.debugging.report(`counter: init`);
 
-			Custard.run([
-				{
+			Custard.run( //run this only when no more than 3 blends are currently blending
+				[{
 					'run': Blender.counter.add,
 					'maxCalls': 3,
+				}],
+				() => {
+					Blender.debugging.report(`counter: adding not counting as too many blends are blending`);
 				}
-			]);
+			);
 		},
 
 
@@ -55,6 +58,7 @@ Blender.counter = (() => {
 						}
 
 						Blender.debugging.report(`counter: added`);
+						Custard.finished();
 					});
 				}
 				else { //throw error
