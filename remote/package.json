@@ -7,7 +7,7 @@
 		"body-parser": "^1.15.2",
 		"cfonts": "1.0.1",
 		"chalk": "^1.0.0",
-		"custardjs": "^0.2.1",
+		"custardjs": "^0.2.2",
 		"express": "^4.14.0",
 		"less": "^2.5.0",
 		"node-slack": "0.0.7",

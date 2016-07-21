@@ -67,14 +67,14 @@
 				</header>
 
 				<main>
-					<h1 class="body-font">Your GUI Blend</h1>
+					<h1 class="h1 body-font">Your GUI Blend</h1>
 					<p>
 						This page contains everything you need to know about your GUI blend and how to implement GUI assets.
 					</p>
 
 					<hr>
 
-					<h2 class="body-font">Your GUI blend URL</h2>
+					<h2 class="h2 body-font">Your GUI blend URL</h2>
 					<p>
 						<a href="<%= blendURL %>" target="_blank"><%= blendURL %></a>
 					</p>
@@ -82,7 +82,12 @@
 <% if( webfonts.length > 0 ) { %>
 					<hr>
 
-					<h2 class="body-font">Your web fonts</h2>
+					<h2 class="h2 body-font">Your web fonts</h2>
+					<p>
+						The license agreements for web fonts don&rsquo;t allow us to distribute them in the blender. However, for those who work at Westpac we provide
+						an internal link to the web font package for each blend within our internal network. Please click the link below to download the webfont and
+						install the files into the <code>assets/font/</code> folder of your blend.
+					</p>
 					<p>
 						<a href="<%= webfonts %>" target="_blank">Download the web fonts for this blend</a>
 					</p>
@@ -92,7 +97,7 @@
 
 					<div class="row">
 						<div class="col-sm-6">
-							<h2 class="body-font">Installing your Blend</h2>
+							<h2 class="h2 body-font">Installing your Blend</h2>
 
 
 							<ol>
@@ -156,22 +161,25 @@
 						</div>
 
 						<div class="col-sm-4 col-sm-offset-1">
-							<h2 class="body-font">Changing your Blend</h2>
+							<h2 class="h2 body-font">Changing your Blend</h2>
 							<p>
 								You can change your blend any time you like. Just go to the Blender, add or remove elements and re-blend another selection.
 							</p>
 
-							<h2 class="body-font">Other brands</h2>
+							<h2 class="h2 body-font">Other brands</h2>
 							<p>
 								You can find the other brands version of your GUI Blend here:
 							</p>
 							<ul>
 <% _.each(brands, function( brand ) { %>
 							<li>
-								<a href="<%= brand.url %>" target="_blank"><%= brand.name %></a>
+								<h3 class="h5"><%= brand.name %></h3>
+								<ul>
+									<li><a href="<%= brand.url %>" target="_blank">Go to <%= brand.name %> blend</a></li>
 <% if( brand.webfonts.length > 0 ) { %>
-								<br>[<a href="<%= brand.webfonts %>" target="_blank">web fonts download</a>]
+									<li><a href="<%= brand.webfonts %>" target="_blank">download web fonts</a></li>
 <% } %>
+								</ul>
 							</li>
 <% }); %>
 							</ul>
@@ -182,7 +190,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<hr>
-							<h2 class="body-font">Running the build</h2>
+							<h2 class="h2 body-font">Running the build</h2>
 						</div>
 
 						<div class="col-sm-6">

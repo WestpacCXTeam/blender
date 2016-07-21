@@ -1430,7 +1430,7 @@ Blender.counter = (() => {
 					'maxCalls': 3,
 				}],
 				() => {
-					Blender.debugging.report(`counter: adding not counting as too many blends are blending`);
+					Blender.debugging.error(`counter: adding not counting as too many blends are blending (${Custard.get()})`);
 				}
 			);
 		},
@@ -1446,6 +1446,8 @@ Blender.counter = (() => {
 
 			Fs.readFile( Blender.LOG , (error, data) => { //read the log file
 				if( error ) {
+					Custard.finished();
+
 					throw error;
 				}
 
@@ -1454,6 +1456,8 @@ Blender.counter = (() => {
 				if(!isNaN( counter )) { //check if the number is a number
 					Fs.writeFile( Blender.LOG, counter, (error) => {
 						if( error ) {
+							Custard.finished();
+
 							throw error;
 						}
 
@@ -1463,6 +1467,7 @@ Blender.counter = (() => {
 				}
 				else { //throw error
 					Blender.log.error(`             Counter number not valid ("${counter}"). Leaving it alone for now!`);
+					Custard.finished();
 				}
 			});
 		},
