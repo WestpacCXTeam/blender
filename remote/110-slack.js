@@ -24,14 +24,14 @@ Blender.slack = (() => {
 		post: () => {
 			Blender.debugging.report(`Slack: Posting`);
 
-			let slack = new Slack( Blender.SLACKURL );
+			const slack = new Slack( Blender.SLACKURL );
+			const POST = Blender.POST;
+			const jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
+			const unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
+			const less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 			let funky = ``;
 			let core = ``;
 			let modules = ``;
-			let POST = Blender.POST;
-			let jquery = Blender.selectedModules.includeJquery ? '`Yes`' : '`No`';
-			let unminJS  = Blender.selectedModules.includeUnminifiedJS ? '`Yes`' : '`No`';
-			let less  = Blender.selectedModules.includeLess ? '`Yes`' : '`No`';
 
 			let channel = `#testing`;
 			if( !Blender.DEBUG ) {

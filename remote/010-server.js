@@ -37,16 +37,18 @@ const Blender = (() => { //constructor factory
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: [Debug], //debugging infos
+		DEBUGLEVEL: 2,
 		GELRURL: `http://gel.westpacgroup.com.au/`,
 		GUIRURL: `http://gel.westpacgroup.com.au/GUI/`,
-		// GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
-		GUIPATH: Path.normalize(`${__dirname}/../../GUI-source-master/`),
+		GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
+		// GUIPATH: Path.normalize(`${__dirname}/../../GUI-source-master/`),
 		TEMPPATH: Path.normalize(`${__dirname}/._template/`),
 		GELPATH: Path.normalize(`${__dirname}/../../../`),
 		GUICONFIG: Path.normalize(`${__dirname}/../.guiconfig`),
 		JQUERYPATH: `_javascript-helpers/1.0.1/_core/js/010-jquery.js`,
 		SLACKURL: `https://hooks.slack.com/services/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`,
 		SLACKICON: `http://gel.westpacgroup.com.au/GUI/blender/remote/assets/img/blender-icon.png`,
+		WEBFONTSROOT: `https://sites.thewestpacgroup.com.au/sites/TS1206/Shared%20Documents/webfonts/`,
 		LOG: Path.normalize(`${__dirname}/blender.log`),
 		FUNKY: [
 			{
@@ -112,16 +114,15 @@ const Blender = (() => { //constructor factory
 
 			headline: ( text ) => {
 				if( Blender.DEBUG ) {
-					const fonts = new CFonts({
-						'text': text,
+					CFonts.say(text, {
+						'align': 'center',
 						'colors': [`white`, `gray`],
-						'maxLength': 12,
 					});
 				}
 			},
 
 			report: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 2 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.green(` \u2611  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -129,7 +130,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			error: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 3 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.red(` \u2612  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -137,7 +138,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			interaction: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.blue(` \u261C  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -145,7 +146,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			send: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.cyan(` \u219D  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -153,7 +154,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			received: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.cyan(` \u219C  `)} ${Chalk.black(`${text} `)}`)
 					);

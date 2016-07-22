@@ -31,13 +31,13 @@ Blender.js = (() => {
 		get: () => {
 			Blender.debugging.report(`JS: Generating js`);
 
+			const POST = Blender.POST;
+			const _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
+			const _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
 			let files = [];
 			let file = ``;
 			let core = ``;
-			let POST = Blender.POST;
 			let jquery = ``;
-			let _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
-			let _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
 			let result = ``;
 
 
@@ -69,7 +69,7 @@ Blender.js = (() => {
 
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
-				let _hasJS = module.js; //look if this module has js
+				const _hasJS = module.js; //look if this module has js
 
 				if( _hasJS ) {
 					files.push(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`); //add js to uglify
@@ -93,7 +93,7 @@ Blender.js = (() => {
 				result.code = ``;
 			}
 
-			let source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
+			const source = Blender.banner.attach( jquery + core.code + result.code ); //attach a banner to the top of the file with a URL of this build
 
 			Blender.zip.queuing(`js`, false); //js queue is done
 			Blender.zip.addFile( source, `/assets/js/gui.min.js` ); //add minified file to zip

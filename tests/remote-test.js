@@ -15,21 +15,52 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 const Request = require('request');
 const AdmZip = require('adm-zip');
+const CFonts = require(`cfonts`);
 const Dirsum = require('dirsum');
 const Rimraf = require('rimraf');
 const Chalk = require('chalk');
 const Fs = require('fs');
 
 
-let Tester = (() => {
+const Tester = (() => {
 	return {
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-		DEBUG: true,
+		DEBUG: false,
 		ZIPS: 'zips/',
 		TIMING: Date.now(),
 		MAX: 10,
+		TIMEOUT: 5,
+		PACKS: [
+			{
+				hash: '42b6f04220cb3bb1e1e6566c1c020f6c25e00c5f02a1316b013b0f1dd0d9ef80',
+				pack: {
+					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
+					'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
+					'module-icons-group03': '2.0.0', 'tick-icons-group03': 'on',
+					'module-icons-group17': '2.0.0', 'tick-icons-group17': 'on',
+					'module-tabcordions': '2.0.1', 'tick-tabcordions': 'on',
+					'includeJquery': 'on',
+					'includeUnminifiedJS': 'on',
+					'includeLess': 'on',
+					'brand': 'BOM',
+				},
+			},
+			{
+				hash: '70bdb69b6367129355e6d21440891d7e2514c22e94cdab687b54c44717eaf120',
+				pack: {
+					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
+					'module-switches': '1.0.1', 'tick-switches': 'on',
+					'module-lists': '1.0.0', 'tick-lists': 'on',
+					'module-tables': '2.0.0', 'tick-tables': 'on',
+					'includeJquery': 'on',
+					'includeUnminifiedJS': 'on',
+					'includeLess': 'on',
+					'brand': 'STG',
+				},
+			},
+		],
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -38,7 +69,9 @@ let Tester = (() => {
 		init: () => {
 			Tester.debugging( 'Running init', 'report' );
 
-			Tester.empty(); //delete all files in zip folder
+			Tester
+				.empty() //delete all files in zip folder
+				.then( Tester.pack ); //setup the queries;
 		},
 
 
@@ -50,45 +83,63 @@ let Tester = (() => {
 
 			let fileCount = 0;
 
-			Rimraf( Tester.ZIPS + '*', function(error) {
-				Tester.debugging( 'Zip folder emptied', 'report' );
+			return new Promise(function( resolve, reject ) {
+				Rimraf( Tester.ZIPS + '*', function( error ) {
+					Tester.debugging( 'Zip folder emptied', 'report' );
 
-				Tester.set(); //setup the queries
+					resolve();
+				});
 			});
 		},
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Delete all files in zip folder
+// todo
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-		set: () => {
-			Tester.debugging( 'Running set', 'report' );
+		pack: ( loop = 0 ) => {
+			Tester.debugging( `Running pack with loop: ${loop}`, 'report' );
 
-			//data
-			let data = {
-				'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '2.0.1', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
-				'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
-				'module-icons-group03': '2.0.0', 'tick-icons-group03': 'on',
-				'module-icons-group17': '2.0.0', 'tick-icons-group17': 'on',
-				'module-tabcordions': '2.0.1', 'tick-tabcordions': 'on',
-				'includeJquery': 'on',
-				'includeUnminifiedJS': 'on',
-				'includeLess': 'on',
-				'brand': 'BOM',
-			}; //hash for this unzipped folder is: 073131bffb9e2a3bdc27d129fb1dc0b0ad1c74e743decba3a7a339ae2ffa9fc8
+			Tester.LOOP = loop;
+
+			if( loop < Tester.PACKS.length ) {
+				Tester
+					.set( Tester.PACKS[ loop ] )
+					.then( function() {
+						Tester.pack( loop + 1 );
+				});
+			}
+			else {
+				Tester
+					.unpack() //unpack all downloaded zip files
+					.then( function() {
+						Tester.check() //test the hash for each folder
+					});
+			}
+		},
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Set a group of packs for the queue
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		set: ( data ) => {
+			Tester.debugging( 'Running set', 'report' );
 
 			let call = 0;
 
-			let timer = setInterval(function() {
-				call ++;
+			return new Promise(function( resolve, reject ) {
+				const timer = setInterval(function() {
+					call ++;
 
-				if( call >= Tester.MAX ) {
-					clearTimeout( timer );
-				}
+					if( call >= Tester.MAX ) {
+						clearTimeout( timer );
+					}
 
-				Tester.debugging( 'Sending request', 'send' );
-				Tester.send( data );
-			}, 5);
+					Tester.debugging( 'Sending request', 'send' );
+					Tester
+						.send( data )
+						.then( resolve );
+				}, Tester.TIMEOUT);
+			});
 		},
 
 
@@ -101,43 +152,46 @@ let Tester = (() => {
 			Tester.debugging( 'Running send', 'report' );
 
 			Tester.call = 0;
-			Tester.name = 0;
+			Tester.name = ( Tester.MAX * Tester.LOOP );
 
-			Request.post(
-				{
-					url: 'http://127.0.0.1:1337/blender',
-					form: data,
-					encoding: 'binary',
-					headers: {
-						'User-Agent': 'stress-tester',
+			return new Promise(function( resolve, reject ) {
+				Request.post(
+					{
+						url: 'http://127.0.0.1:1337/blender',
+						form: data.pack,
+						encoding: 'binary',
+						headers: {
+							'User-Agent': 'stress-tester',
+						},
 					},
-				},
-				function responseCallback(error, response, body) {
-					if(!error && response.statusCode == 200) {
-						Tester.debugging( 'Request successfull', 'receive' );
+					( error, response, body ) => {
+						if(!error && response.statusCode == 200) {
+							Tester.debugging( 'Request successfull', 'receive' );
 
-						Tester.name ++;
+							Tester.name ++;
 
-						Tester.debugging( 'Saving file to: "zips/blend' + Tester.name + '.zip"', 'receive' );
-						Fs.writeFile( Tester.ZIPS + 'blend' + Tester.name + '.zip', body, 'binary', function(error) {
-							Tester.call ++;
+							Tester.debugging( `Saving file to: "zips/blend${Tester.name}.zip"`, `receive` );
 
-							if(error) {
-								Tester.debugging( 'Unable to save zip file', 'error' );
-							}
-							else {
-								if( Tester.call >= Tester.MAX ) {
-									Tester.unpack(); //unpack all downloaded zip files
+							Fs.writeFile( Tester.ZIPS + 'blend' + Tester.name + '.zip', body, 'binary', function( error ) {
+								Tester.call ++;
+
+								if( error ) {
+									Tester.debugging( 'Unable to save zip file', 'error' );
 								}
-							}
-						});
+								else {
+									if( Tester.call >= Tester.MAX ) {
+										resolve();
+									}
+								}
+							});
+						}
+						else {
+							Tester.debugging( 'Request unsuccessfull', 'error' );
+							console.log( JSON.stringify( error ) );
+						}
 					}
-					else {
-						Tester.debugging( 'Request unsuccessfull', 'error' );
-						console.log( JSON.stringify( error ) );
-					}
-				}
-			);
+				);
+			});
 		},
 
 
@@ -147,17 +201,19 @@ let Tester = (() => {
 		unpack: () => {
 			Tester.debugging( 'Running unpack', 'report' );
 
-			Fs.readdir( Tester.ZIPS, function( error, files ) {
-				files.forEach( function( file, index ) {
-					if( file.substring(0, 5) === 'blend' ) {
-						let zip = new AdmZip( Tester.ZIPS + file );
-						let name = file.split('.'); //pack them all in a folder called the same as the zip file
+			return new Promise(function( resolve, reject ) {
+				Fs.readdir( Tester.ZIPS, function( error, files ) {
+					files.forEach( function( file, index ) {
+						if( file.substring(0, 5) === 'blend' ) {
+							const zip = new AdmZip( Tester.ZIPS + file );
+							const name = file.split('.'); //pack them all in a folder called the same as the zip file
 
-						zip.extractAllTo( Tester.ZIPS + name[0] + '/', true );
-					}
+							zip.extractAllTo( Tester.ZIPS + name[0] + '/', true );
+						}
+					});
+
+					resolve();
 				});
-
-				Tester.check();
 			});
 		},
 
@@ -166,27 +222,31 @@ let Tester = (() => {
 // Check zip files against hash
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		check: () => {
-			Tester.debugging( 'Running check', 'report' );
+			Tester.debugging( `Running check`, 'report' );
 
-			let zipsum = '073131bffb9e2a3bdc27d129fb1dc0b0ad1c74e743decba3a7a339ae2ffa9fc8'; //the hash of the unzipped files
+			let done = 0;
 
-			for(let i = 1; i <= Tester.MAX; i++) { //let's look at all zip files we have unpacked
+			for(let i = 1; i <= ( Tester.MAX * Tester.LOOP ); i++) { //let's look at all zip files we have unpacked
 
-				Dirsum.digest( Tester.ZIPS + 'blend' + i, 'sha256', (error, hashes) => { //and get the has for each
-					if(error) {
-						Tester.debugging( 'Dirsum failed', 'error' );
+				let zipsum = Tester.PACKS[ Math.floor(i / ( Tester.MAX + 1 )) ].hash; //find the hash we compare against
+
+				Dirsum.digest( `${Tester.ZIPS}blend${i}`, 'sha256', ( error, hashes ) => { //and get the has for each
+					done ++;
+
+					if( error ) {
+						Tester.debugging( `Dirsum failed for folder: "${Tester.ZIPS}blend${i}"`, 'error' );
 						console.log( JSON.stringify( error ) );
 					}
 					else {
 						if( hashes.hash === zipsum ) {
-							Tester.debugging( 'Zip (blend' + i + ') contents passes hash comparison', 'positive' );
+							Tester.debugging( `Zip (blend${i}) contents passes hash comparison`, 'positive' );
 						}
 						else {
-							Tester.debugging( 'Zip (blend' + i + ') contents fails hash comparison', 'negative' );
+							Tester.debugging( `Zip (blend${i}) contents fails hash comparison (${hashes.hash} != ${zipsum})`, 'negative' );
 						}
 					}
 
-					if( i === Tester.MAX ) { //when we are through the loop call done()
+					if( done === ( Tester.MAX * Tester.LOOP ) ) { //when we are through the loop call done()
 						Tester.done();
 					}
 				});
@@ -200,10 +260,10 @@ let Tester = (() => {
 		done: () => {
 			Tester.debugging( 'Running done', 'report' );
 
-			let now = Date.now();
-			let diff = now - Tester.TIMING;
+			const now = Date.now();
+			const diff = now - Tester.TIMING;
 
-			Tester.debugging( 'TEST TOOK: ' + diff + 'ms', 'success' );
+			Tester.debugging( `TEST TOOK: ${diff}ms`, `success` );
 		},
 
 
@@ -219,10 +279,9 @@ let Tester = (() => {
 
 			if( code === 'headline' ) {
 				if( Tester.DEBUG ) {
-					let fonts = new CFonts({
-						'text': text,
-						'colors': ['white', 'gray'],
-						'maxLength': 12,
+					CFonts.say(text, {
+						'align': 'center',
+						'colors': [`white`, `gray`],
 					});
 				}
 			}
@@ -231,31 +290,31 @@ let Tester = (() => {
 				console.log(Chalk.bgWhite("\n" + Chalk.bold.green(' \u2611  ') + Chalk.black(text + ' ')));
 			}
 
-			else if( code === 'error' && Tester.DEBUG ) {
+			if( code === 'error' && Tester.DEBUG ) {
 				console.log(Chalk.bgWhite("\n" + Chalk.red(' \u2612  ') + Chalk.black(text + ' ')));
 			}
 
-			else if( code === 'interaction' && Tester.DEBUG ) {
+			if( code === 'interaction' && Tester.DEBUG ) {
 				console.log(Chalk.bgWhite("\n" + Chalk.blue(' \u261C  ') + Chalk.black(text + ' ')));
 			}
 
-			else if( code === 'send' && Tester.DEBUG ) {
+			if( code === 'send' && Tester.DEBUG ) {
 				console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219D  ') + Chalk.black(text + ' ')));
 			}
 
-			else if( code === 'receive' && Tester.DEBUG ) {
+			if( code === 'receive' && Tester.DEBUG ) {
 				console.log(Chalk.bgWhite("\n" + Chalk.bold.cyan(' \u219C  ') + Chalk.black(text + ' ')));
 			}
 
-			else if( code === 'positive' && Tester.DEBUG ) {
+			if( code === 'positive' ) {
 				console.log(Chalk.bgGreen("\n" + Chalk.bold.white( '    ' + text + ' ' )));
 			}
 
-			else if( code === 'negative' && Tester.DEBUG ) {
+			if( code === 'negative' ) {
 				console.log(Chalk.bgRed("\n" + Chalk.bold.white( '    ' + text + ' ' )));
 			}
 
-			else if( code === 'success' && Tester.DEBUG ) {
+			if( code === 'success' ) {
 				console.log(Chalk.bgBlue("\n") + "\n" + Chalk.black("\n" + Chalk.bold.green( '    ' + text + ' ' )) + "\n");
 			}
 

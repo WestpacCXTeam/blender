@@ -14,7 +14,7 @@ Blender.init = () => {
 	Blender.debugging.headline(` DEBUG| INFO`);
 
 	Blender.GUI = JSON.parse( Fs.readFileSync(`${Blender.GUIPATH}GUI.json`, `utf8`) );
-	let blender = Express();
+	const blender = Express();
 
 	//starting server
 	blender

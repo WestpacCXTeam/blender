@@ -8,6 +8,7 @@
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+const Custard = require('custardjs');
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -27,6 +28,8 @@ Blender.counter = (() => {
 
 			Fs.readFile( Blender.LOG , (error, data) => { //read the log file
 				if( error ) {
+					Custard.finished();
+
 					throw error;
 				}
 
@@ -35,14 +38,18 @@ Blender.counter = (() => {
 				if(!isNaN( counter )) { //check if the number is a number
 					Fs.writeFile( Blender.LOG, counter, (error) => {
 						if( error ) {
+							Custard.finished();
+
 							throw error;
 						}
 
 						Blender.debugging.report(`counter: added`);
+						Custard.finished();
 					});
 				}
 				else { //throw error
 					Blender.log.error(`             Counter number not valid ("${counter}"). Leaving it alone for now!`);
+					Custard.finished();
 				}
 			});
 		},

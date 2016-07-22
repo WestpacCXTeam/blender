@@ -31,7 +31,7 @@ Blender.assets = (() => {
 		get: () => {
 			Blender.debugging.report(`Assets: Getting all files`);
 
-			let POST = Blender.POST;
+			const POST = Blender.POST;
 			Blender.assets.svgfiles.svg = ``;
 			Blender.assets.svgfiles.png = ``;
 			Blender.assets.svgfiles.fallback = ``;
@@ -39,9 +39,9 @@ Blender.assets = (() => {
 
 			//////////////////////////////////////////////////| CORE
 			Blender.selectedModules.core.forEach(( module ) => {
-				if( module.font ) {
-					Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}/font/`);
-				}
+				// if( module.font ) {
+				// 	Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}/font/`);
+				// }
 
 				if( module.svg ) {
 					Blender.assets.getSVG(`${Blender.GUIPATH}${module.ID}/${module.version}/tests/${POST[`brand`]}/assets/`);
@@ -52,9 +52,9 @@ Blender.assets = (() => {
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
 
-				if( module.font ) {
-					Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}`);
-				}
+				// if( module.font ) {
+				// 	Blender.assets.getFonts(`${Blender.GUIPATH}${module.ID}/${module.version}/_assets/${POST[`brand`]}`);
+				// }
 
 				if( module.svg ) {
 					Blender.assets.getSVG(`${Blender.GUIPATH}${module.ID}/${module.version}/tests/${POST[`brand`]}/assets/`);

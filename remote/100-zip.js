@@ -53,7 +53,25 @@ Blender.zip = (() => {
 			}
 
 			//add new blend to log
-			Blender.counter.add();
+			Custard.run([ //run this only when no more than 3 blends are currently blending
+				{
+					run: Blender.counter.add,
+					maxCalls: 2,
+					fallback: () => {
+						Blender.debugging.error(`Custard: Counter not counting as too many blends are blending (${Custard.getQueue()})`);
+					},
+				},
+				/*{
+					run: Blender.statistic.init,
+					maxCalls: 50,
+					fallback: () => {
+						Blender.debugging.error(``);
+					},
+				}*/],
+				() => {
+					Blender.debugging.error(`Custard: All normal again!`);
+				}
+			);
 
 			//clearning up
 			Blender.zip.archive = Archiver(`zip`); //new archive
