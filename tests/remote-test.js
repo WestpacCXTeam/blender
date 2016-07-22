@@ -34,7 +34,7 @@ const Tester = (() => {
 		TIMEOUT: 5,
 		PACKS: [
 			{
-				hash: '008ac8fdabe0373a7b425911d6065750d6b2d429d4dff4e74bd5d3af7f6dc8f6',
+				hash: '42b6f04220cb3bb1e1e6566c1c020f6c25e00c5f02a1316b013b0f1dd0d9ef80',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
@@ -48,9 +48,12 @@ const Tester = (() => {
 				},
 			},
 			{
-				hash: 'a6ac760a5d6d622d63c21b019aef8541f2508fa608f6bed3f96a19bd3aa417f0',
+				hash: '70bdb69b6367129355e6d21440891d7e2514c22e94cdab687b54c44717eaf120',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
+					'module-switches': '1.0.1', 'tick-switches': 'on',
+					'module-lists': '1.0.0', 'tick-lists': 'on',
+					'module-tables': '2.0.0', 'tick-tables': 'on',
 					'includeJquery': 'on',
 					'includeUnminifiedJS': 'on',
 					'includeLess': 'on',
