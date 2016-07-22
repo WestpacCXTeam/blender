@@ -37,6 +37,7 @@ const Blender = (() => { //constructor factory
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: [Debug], //debugging infos
+		DEBUGLEVEL: 2,
 		GELRURL: `http://gel.westpacgroup.com.au/`,
 		GUIRURL: `http://gel.westpacgroup.com.au/GUI/`,
 		GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
@@ -121,7 +122,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			report: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 2 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.green(` \u2611  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -129,7 +130,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			error: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 3 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.red(` \u2612  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -137,7 +138,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			interaction: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.blue(` \u261C  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -145,7 +146,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			send: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.cyan(` \u219D  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -153,7 +154,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			received: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.cyan(` \u219C  `)} ${Chalk.black(`${text} `)}`)
 					);
