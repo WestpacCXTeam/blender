@@ -37,6 +37,7 @@ const Blender = (() => { //constructor factory
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: true, //debugging infos
+		DEBUGLEVEL: 2,
 		GELRURL: `http://gel.westpacgroup.com.au/`,
 		GUIRURL: `http://gel.westpacgroup.com.au/GUI/`,
 		GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
@@ -121,7 +122,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			report: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 2 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.green(` \u2611  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -129,7 +130,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			error: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 3 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.red(` \u2612  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -137,7 +138,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			interaction: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.blue(` \u261C  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -145,7 +146,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			send: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.cyan(` \u219D  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -153,7 +154,7 @@ const Blender = (() => { //constructor factory
 			},
 
 			received: ( text ) => {
-				if( Blender.DEBUG ) {
+				if( Blender.DEBUG && Blender.DEBUGLEVEL < 1 ) {
 					console.log(
 						Chalk.bgWhite(`\n${Chalk.bold.cyan(` \u219C  `)} ${Chalk.black(`${text} `)}`)
 					);
@@ -586,37 +587,58 @@ Blender.html = (() => {
 			let _hasBuild = false;
 			let brands = {};
 			let options = {};
+			let allBrands = {};
+			let brandIntersection = [];
 			options.webfonts = '';
 
 			if( _includeOriginalLess || _includeOriginalJS) {
 				_hasBuild = true;
 			}
 
+			//first we check what brands actually support the current blend
+			Blender.selectedModules.core.forEach(( module ) => {
+				module.brands.forEach( ( brand ) => {
+					allBrands[ brand ] = allBrands[ brand ] + 1 || 1; //we count up each brand for each module
+				});
+			});
+
+			Blender.selectedModules.modules.forEach(( module ) => {
+				module.brands.forEach( ( brand ) => {
+					allBrands[ brand ] = allBrands[ brand ] + 1 || 1; //we count up each brand for each module
+				});
+			});
+
+			let allModules = Blender.selectedModules.core.length + Blender.selectedModules.modules.length; //how many modules we have
+
+			//next we go over each brand and add URL, name and webfonts link
 			guiconfig.brands.forEach(( brand ) => { //iterate over brands
-				let fontFiles = [];
+				if( allBrands[ brand.ID ]  === allModules ) { //only if a brand has as many iterations as modules
 
-				if( brand.ID !== Blender.selectedModules.brand ) { //add URLs for all other brands
-					brands[ brand.ID ] = {};
-					brands[ brand.ID ].url = Blender.banner.getBlendURL( brand.ID );
-					brands[ brand.ID ].name = brand.name;
-					brands[ brand.ID ].webfonts = '';
-				}
+					let fontFiles = [];
 
-				try { //are there any font files in the font folder?
-					fontFiles = Fs.readdirSync(`${Blender.GUIPATH}_fonts/${fontVersion}/_assets/${brand.ID}/font/`);
-				}
-				catch( error ) {
-					//we know there are some folders that don't have fonts. All good.
-				}
-
-				if( fontFiles.length > 0 ) {
-					let webfontPath = `${Blender.WEBFONTSROOT}_fonts-${fontVersion}-${brand.ID}.zip`;
-
-					if( brand.ID === Blender.selectedModules.brand ) { //add webfont for this brand
-						options.webfonts = webfontPath;
+					if( brand.ID !== Blender.selectedModules.brand ) { //add URLs for all other brands
+						brands[ brand.ID ] = {};
+						brands[ brand.ID ].url = Blender.banner.getBlendURL( brand.ID );
+						brands[ brand.ID ].name = brand.name;
+						brands[ brand.ID ].webfonts = '';
 					}
-					else {
-						brands[ brand.ID ].webfonts = webfontPath; //add webfont for all other brands
+
+					try { //are there any font files in the font folder?
+						fontFiles = Fs.readdirSync(`${Blender.GUIPATH}_fonts/${fontVersion}/_assets/${brand.ID}/font/`);
+					}
+					catch( error ) {
+						//we know there are some folders that don't have fonts. All good.
+					}
+
+					if( fontFiles.length > 0 ) {
+						let webfontPath = `${Blender.WEBFONTSROOT}_fonts-${fontVersion}-${brand.ID}.zip`;
+
+						if( brand.ID === Blender.selectedModules.brand ) { //add webfont for this brand
+							options.webfonts = webfontPath;
+						}
+						else {
+							brands[ brand.ID ].webfonts = webfontPath; //add webfont for all other brands
+						}
 					}
 				}
 			});
@@ -1064,7 +1086,25 @@ Blender.zip = (() => {
 			}
 
 			//add new blend to log
-			Blender.counter.init();
+			Custard.run([ //run this only when no more than 3 blends are currently blending
+				{
+					run: Blender.counter.add,
+					maxCalls: 2,
+					fallback: () => {
+						Blender.debugging.error(`Custard: Counter not counting as too many blends are blending (${Custard.getQueue()})`);
+					},
+				},
+				/*{
+					run: Blender.statistic.init,
+					maxCalls: 50,
+					fallback: () => {
+						Blender.debugging.error(``);
+					},
+				}*/],
+				() => {
+					Blender.debugging.error(`Custard: All normal again!`);
+				}
+			);
 
 			//clearning up
 			Blender.zip.archive = Archiver(`zip`); //new archive
@@ -1417,24 +1457,6 @@ const Custard = require('custardjs');
 Blender.counter = (() => {
 
 	return {
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Module init method
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------
-		init: () => {
-			Blender.debugging.report(`counter: init`);
-
-			Custard.run( //run this only when no more than 3 blends are currently blending
-				[{
-					'run': Blender.counter.add,
-					'maxCalls': 3,
-				}],
-				() => {
-					Blender.debugging.error(`counter: adding not counting as too many blends are blending (${Custard.get()})`);
-				}
-			);
-		},
-
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Module add method
