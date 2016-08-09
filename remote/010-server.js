@@ -55,20 +55,26 @@ const Blender = (() => { //constructor factory
 				name: `James Bond`,
 				var: `includeBond`,
 				file: Path.normalize(`${__dirname}/assets/img/bond.png`),
-				zip: `/bond.png`
+				zip: `/bond.png`,
 			},
 			{
 				name: `Star Wars`,
 				var: `includeStarWars`,
 				file: Path.normalize(`${__dirname}/assets/img/starwars[Brand].jpg`),
-				zip: `/starwars.png`
+				zip: `/starwars.png`,
 			},
 			{
 				name: `David Bowie`,
 				var: `includeBowie`,
 				file: Path.normalize(`${__dirname}/assets/img/bowie.png`),
-				zip: `/bowie.png`
-			}
+				zip: `/bowie.png`,
+			},
+			{
+				name: `Catch ’em all`,
+				var: `includePokemon`,
+				file: Path.normalize(`${__dirname}/assets/pokemon.zip`),
+				zip: `/pokemon.zip`,
+			},
 		],
 
 
