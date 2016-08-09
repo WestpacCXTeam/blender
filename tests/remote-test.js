@@ -60,6 +60,65 @@ const Tester = (() => {
 					'brand': 'STG',
 				},
 			},
+			{
+				hash: 'b819618416cfdda4208660e77024bdb4b8b344fa610f59a59328d85a85453c7d',
+				pack: {
+					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
+					'module-text-extensions': '2.0.1', 'tick-text-extensions': 'on',
+					'module-responsive-margins': '2.0.1', 'tick-responsive-margins': 'on',
+					'module-responsive-toggles': '2.0.1', 'tick-responsive-toggles': 'on',
+					'module-accessibility-helpers': '2.0.1', 'tick-accessibility-helpers': 'on',
+					'module-alerts': '2.0.1', 'tick-alerts': 'on',
+					'module-badges': '2.0.1', 'tick-badges': 'on',
+					'module-labels': '2.0.2', 'tick-labels': 'on',
+					'module-progress-bars': '2.0.1', 'tick-progress-bars': 'on',
+					'module-breadcrumbs': '2.0.1', 'tick-breadcrumbs': 'on',
+					'module-paginations': '2.0.2', 'tick-paginations': 'on',
+					'module-buttons': '3.0.0', 'tick-buttons': 'on',
+					'module-checkboxes': '2.0.1', 'tick-checkboxes': 'on',
+					'module-input-addons': '2.0.2', 'tick-input-addons': 'on',
+					'module-input-fields': '2.0.1', 'tick-input-fields': 'on',
+					'module-input-groups': '2.0.2', 'tick-input-groups': 'on',
+					'module-radios': '2.0.1', 'tick-radios': 'on',
+					'module-switches': '2.0.1', 'tick-switches': 'on',
+					'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
+					'module-icons-group01': '2.0.1', 'tick-icons-group01': 'on',
+					'module-icons-group02': '3.0.0', 'tick-icons-group02': 'on',
+					'module-icons-group03': '2.0.0', 'tick-icons-group03': 'on',
+					'module-icons-group04': '2.0.0', 'tick-icons-group04': 'on',
+					'module-icons-group05': '2.0.0', 'tick-icons-group05': 'on',
+					'module-icons-group06': '2.0.0', 'tick-icons-group06': 'on',
+					'module-icons-group07': '2.0.0', 'tick-icons-group07': 'on',
+					'module-icons-group08': '2.0.0', 'tick-icons-group08': 'on',
+					'module-icons-group09': '2.0.0', 'tick-icons-group09': 'on',
+					'module-icons-group10': '2.0.0', 'tick-icons-group10': 'on',
+					'module-icons-group11': '2.0.0', 'tick-icons-group11': 'on',
+					'module-icons-group12': '2.0.0', 'tick-icons-group12': 'on',
+					'module-icons-group13': '2.0.0', 'tick-icons-group13': 'on',
+					'module-icons-group14': '2.0.0', 'tick-icons-group14': 'on',
+					'module-icons-group15': '2.0.0', 'tick-icons-group15': 'on',
+					'module-icons-group16': '2.0.1', 'tick-icons-group16': 'on',
+					'module-icons-group17': '2.0.0', 'tick-icons-group17': 'on',
+					'module-images': '2.0.1', 'tick-images': 'on',
+					'module-responsive-embeds': '2.0.1', 'tick-responsive-embeds': 'on',
+					'module-list-groups': '3.0.0', 'tick-list-groups': 'on',
+					'module-lists': '2.0.2', 'tick-lists': 'on',
+					'module-logos': '2.0.2', 'tick-logos': 'on',
+					'module-symbols': '2.0.2', 'tick-symbols': 'on',
+					'module-modals': '2.0.2', 'tick-modals': 'on',
+					'module-popovers': '2.0.1', 'tick-popovers': 'on',
+					'module-tooltips': '2.0.1', 'tick-tooltips': 'on',
+					'module-panels': '2.0.1', 'tick-panels': 'on',
+					'module-tabcordions': '3.0.0', 'tick-tabcordions': 'on',
+					'module-wells': '2.0.1', 'tick-wells': 'on',
+					'module-tables': '2.0.1', 'tick-tables': 'on',
+					'includeJquery': 'on',
+					'includeUnminifiedJS': 'on',
+					'includeLess': 'on',
+					'includePokemon': 'on',
+					'brand': 'BT',
+				},
+			},
 		],
 
 
@@ -228,10 +287,11 @@ const Tester = (() => {
 
 			for(let i = 1; i <= ( Tester.MAX * Tester.LOOP ); i++) { //let's look at all zip files we have unpacked
 
-				let zipsum = Tester.PACKS[ Math.floor(i / ( Tester.MAX + 1 )) ].hash; //find the hash we compare against
+				let base = Math.ceil( i / ( Tester.MAX )) - 1; //to find the loop we are in we devide by max and some other funky math
+				let zipsum = Tester.PACKS[ base ].hash; //find the hash we compare against
 
 				Dirsum.digest( `${Tester.ZIPS}blend${i}`, 'sha256', ( error, hashes ) => { //and get the has for each
-					done ++;
+					done ++; //increment this so we can check if you've done ’em all
 
 					if( error ) {
 						Tester.debugging( `Dirsum failed for folder: "${Tester.ZIPS}blend${i}"`, 'error' );
