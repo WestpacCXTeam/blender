@@ -81,6 +81,14 @@ module.exports = function(grunt) {
 				overwrite: true,
 				replacements: [
 					{
+						from: '[debugcomment]',
+						to: '',
+					},
+					{
+						from: '[prodcomment]',
+						to: '// ',
+					},
+					{
 						from: '[Debug]',
 						to: 'true',
 					},
@@ -105,6 +113,14 @@ module.exports = function(grunt) {
 				],
 				overwrite: true,
 				replacements: [
+					{
+						from: '[debugcomment]',
+						to: '// ',
+					},
+					{
+						from: '[prodcomment]',
+						to: '',
+					},
 					{
 						from: '[Debug]',
 						to: 'false',
