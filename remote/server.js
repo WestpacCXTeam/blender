@@ -1560,10 +1560,22 @@ Blender.init = () => {
 			}
 			else {
 				Blender.log.info(`Discarded for invalid user-agent (${request.headers[`user-agent`]})`);
+
+				response.status(500).send(`Discarded for invalid user-agent (${request.headers[`user-agent`]})`);
 			}
 		}
 		else {
 			Blender.log.info(`Discarded for invalid request (core not complete or user-agent empty)`);
+
+			response.status(500).send(
+				`Discarded for invalid request (core not complete or user-agent empty)
+				${typeof request.body[`module-_colors`]}
+				${typeof request.body[`module-_fonts`]}
+				${typeof request.body[`module-_text-styling`]}
+				${typeof request.body[`module-_grid`]}
+				${typeof request.body[`module-_javascript-helpers`]}
+				${typeof request.headers[`user-agent`]}`
+			);
 		}
 	});
 };

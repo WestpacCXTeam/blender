@@ -34,7 +34,7 @@ const Tester = (() => {
 		TIMEOUT: 5,
 		PACKS: [
 			{
-				hash: '42b6f04220cb3bb1e1e6566c1c020f6c25e00c5f02a1316b013b0f1dd0d9ef80',
+				hash: '78753230f729b80d849d29296af16e09d45b8c7ace869c05971920ab03586d34',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
@@ -48,7 +48,7 @@ const Tester = (() => {
 				},
 			},
 			{
-				hash: '70bdb69b6367129355e6d21440891d7e2514c22e94cdab687b54c44717eaf120',
+				hash: 'c18c7ad026d4fd6f24b46112c796757da10161c0309888cacadbe82bbbb149aa',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-switches': '1.0.1', 'tick-switches': 'on',
@@ -61,7 +61,7 @@ const Tester = (() => {
 				},
 			},
 			{
-				hash: 'b819618416cfdda4208660e77024bdb4b8b344fa610f59a59328d85a85453c7d',
+				hash: 'ab716ea65d0046c49a70edef72922a862dc3d5dcf87a502171581e666ec0086a',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-text-extensions': '2.0.1', 'tick-text-extensions': 'on',
