@@ -28,6 +28,8 @@ const Tester = (() => {
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: false,
+		PORT: 1337,
+		SERVERPATH: '/api/blender',
 		ZIPS: 'zips/',
 		TIMING: Date.now(),
 		MAX: 10,
@@ -216,7 +218,7 @@ const Tester = (() => {
 			return new Promise(function( resolve, reject ) {
 				Request.post(
 					{
-						url: 'http://127.0.0.1:1337/blender',
+						url: `http://127.0.0.1:${Tester.PORT}${Tester.SERVERPATH}`,
 						form: data.pack,
 						encoding: 'binary',
 						headers: {

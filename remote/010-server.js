@@ -37,7 +37,9 @@ const Blender = (() => { //constructor factory
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: [Debug], //debugging infos
-		DEBUGLEVEL: 2,
+		DEBUGLEVEL: 1,
+		PORT: 1337,
+		SERVERPATH: '/api/blender',
 		GELRURL: `http://gel.westpacgroup.com.au/`,
 		GUIRURL: `http://gel.westpacgroup.com.au/GUI/`,
 		[debugcomment]GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
