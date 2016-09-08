@@ -20,8 +20,8 @@ Blender.init = () => {
 	blender
 		.use( BodyParser.urlencoded({ extended: false }) )
 
-		.listen(1337, () => {
-			Blender.debugging.report(`Server started on port 1337`);
+		.listen(Blender.PORT, () => {
+			Blender.debugging.report(`Server started on port ${Blender.PORT}`);
 		});
 
 
@@ -31,7 +31,7 @@ Blender.init = () => {
 
 
 	//listening to post request
-	blender.post(`/blender`, (request, response) => {
+	blender.post(Blender.SERVERPATH, (request, response) => {
 		Blender.IP = request.headers[`x-forwarded-for`] || request.connection.remoteAddress;
 
 		Blender.log.info(`New request: ${request.headers[`x-forwarded-for`]} / ${request.connection.remoteAddress}`);
@@ -46,7 +46,7 @@ Blender.init = () => {
 			&& typeof request.headers[`user-agent`] !== `undefined`
 		) {
 
-			//when debug mode is off disgard "stress-tester"
+			//when debug mode is off discard "stress-tester"
 			if( !Blender.DEBUG && request.headers[`user-agent`] !== `stress-tester` || Blender.DEBUG ) {
 				Blender.response = response;
 				Blender.POST = request.body;
