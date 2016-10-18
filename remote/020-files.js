@@ -72,6 +72,7 @@ Blender.files = (() => {
 			const _includeJquery = POST.includeJquery === `on`;
 			const _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
 			const _includeLess = POST.includeLess === `on`;
+			const _includeSVG = POST.includeSVG === `on`;
 			let log = ``;
 
 
@@ -134,11 +135,13 @@ Blender.files = (() => {
 			fromPOST.includeJquery = _includeJquery;
 			fromPOST.includeUnminifiedJS = _includeUnminifiedJS;
 			fromPOST.includeLess = _includeLess;
+			fromPOST.includeSVG = _includeSVG;
 
 			Blender.log.info(`             brand: ${POST.brand}`);
 			Blender.log.info(`             jquery: ${_includeJquery}`);
 			Blender.log.info(`             minify JS: ${_includeUnminifiedJS}`);
 			Blender.log.info(`             include LESS: ${_includeLess}`);
+			Blender.log.info(`             include SVG: ${_includeSVG}`);
 
 
 			//////////////////////////////////////////////////| SAVIG GLOBALLY

@@ -32,9 +32,11 @@ Blender.assets = (() => {
 			Blender.debugging.report(`Assets: Getting all files`);
 
 			const POST = Blender.POST;
+			const _includeSVG = Blender.selectedModules.includeSVG;
 			Blender.assets.svgfiles.svg = ``;
 			Blender.assets.svgfiles.png = ``;
 			Blender.assets.svgfiles.fallback = ``;
+			Blender.assets.svgfiles.grunticon = {};
 
 
 			//////////////////////////////////////////////////| CORE
@@ -66,8 +68,12 @@ Blender.assets = (() => {
 			//adding files to zip
 			Blender.zip.addFile( Blender.assets.svgfiles.svg, `/assets/css/symbols.data.svg.css` );
 			Blender.zip.addFile( Blender.assets.svgfiles.png, `/assets/css/symbols.data.png.css` );
-			Blender.zip.queuing(`assets`, false); //assets queue is done
 			Blender.zip.addFile( Blender.assets.svgfiles.fallback, `/assets/css/symbols.fallback.css` );
+			Blender.zip.queuing(`assets`, false); //assets queue is done
+
+			if( _includeSVG ) { //optional include SVG files
+				Blender.zip.addFile( JSON.stringify( Blender.assets.svgfiles.grunticon, null, `\t` ), `/source/svgs/grunticon.json` );
+			}
 
 		},
 
@@ -109,6 +115,22 @@ Blender.assets = (() => {
 			Blender.assets.svgfiles.png += Fs.readFileSync(`${folder}css/symbols.data.png.css`, `utf8`); //png
 			Blender.assets.svgfiles.fallback += Fs.readFileSync(`${folder}css/symbols.fallback.css`, `utf8`); //fallack
 
+			//////////////////////////////////////////////////| ADDING SOURCE SVG FILES
+			const _includeSVG = Blender.selectedModules.includeSVG;
+
+			if( _includeSVG ) { //optional include SVG files
+				const guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
+				let rootFolder = Path.normalize(`${folder}../../../`);
+
+				guiconfig.brands.forEach(( brand ) => { //iterate over brands
+					Blender.zip.addBulk( `${rootFolder}_assets/${brand.ID}/svg/`, [`*.svg`], `/source/svgs/` ); //old SVG location
+					Blender.zip.addBulk( `${rootFolder}tests/${brand.ID}/assets/svg/`, [`*.svg`], `/source/svgs/` ); //new SVG location
+				});
+
+				let grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
+				Blender.assets.svgfiles.grunticon = _.extend( Blender.assets.svgfiles.grunticon, grunticon ); //merge new grunticon keys into this object
+			}
+
 		},
 
 
@@ -119,6 +141,7 @@ Blender.assets = (() => {
 			svg: ``,
 			png: ``,
 			fallback: ``,
+			grunticon: {},
 		},
 
 	}

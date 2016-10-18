@@ -14,3 +14,4 @@ validation-status.json
 jekyll/
 blender.log
 tests/zips/
+yarn.lock

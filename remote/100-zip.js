@@ -151,7 +151,7 @@ Blender.zip = (() => {
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Add a file to the zip archive
+// Add multiple file to the zip archive
 //
 // @param  cwd          [string]  The current working directory to flatten the paths in the archive
 // @param  files        [array]   The file extensions of the files

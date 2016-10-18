@@ -27,23 +27,18 @@ NGINX config:
 
 ```shell
 server {
-	listen       8080;
-	server_name  [localhost];
-	access_log   /var/log/nginx/blender.log;
-	error_page   400 401 402 403 404 405 500 501 502 503 504  @error_page;
-
-	# fallback page when blender is off
-	#
-	location     @error_page {
-		root       /var/www/html/;
-		internal;
-		rewrite ^  https://gel.westpacgroup.com.au/blender-error.html;
-		break;
-	}
+	listen       443 ssl http2;
+	# the main server stuff etc...
 
 	# Node proxy
 	#
-	location / {
+	# blender server
+	#
+	location /api/blender/ {
+		root   /var/www/html/;
+		proxy_pass              http://localhost:1337;
+		proxy_redirect          http://localhost:1337/  /api/blender/;
+
 		proxy_redirect          off;
 		proxy_pass_header       Server;
 		proxy_set_header        X-Real-IP $remote_addr;
@@ -55,7 +50,19 @@ server {
 		proxy_read_timeout      240;
 		proxy_intercept_errors  on;
 
-		proxy_pass              http://127.0.0.1:1337;
+		# Put server in maintenance mode if page exists
+		if (-f $document_root/construction.html) {
+			return 503;
+		}
+
+		# error pages
+		error_page  400          /blender-error.html;
+		error_page  401          /blender-error.html;
+		error_page  402          /blender-error.html;
+		error_page  403          /blender-error.html;
+		error_page  404          /blender-error.html;
+		error_page  500 502 504  /blender-error.html;
+		error_page  503          @maintenance;
 	}
 }
 ```
@@ -129,6 +136,7 @@ node tests/remote-test.js
 
 ### Release History remote
 
+* v0.1.1 - Added includeSVG option, refreshed dependencies in blend package
 * v0.1.0 - Improved test, fixed unavailable brands in index, added webfont link and priority system
 * v0.0.4 - Added stress test
 * v0.0.3 - Added dynamic branding
