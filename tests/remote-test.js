@@ -51,12 +51,13 @@ const Tester = (() => {
 				},
 			},
 			{
-				hash: '4cae0eeb2a9a627b3f7c259423aff31cf36a29bf7dfc0e1b1fde4863a5ba3adb',
+				hash: 'a1132412130885d13038118243366c82f38fda33f2e09f24f8a26c7e8dbe621b',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.2', 'module-_text-styling': '4.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
 					'module-icons-group10': '2.0.0', 'tick-icons-group10': 'on',
 					'module-icons-group05': '1.0.0', 'tick-icons-group05': 'on',
+					'module-tabcordions': '4.0.0', 'tick-tabcordions': 'on',
 					'includeJquery': 'on',
 					'includeUnminifiedJS': 'on',
 					'includeLess': 'on',
