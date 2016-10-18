@@ -37,7 +37,7 @@ const Blender = (() => { //constructor factory
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: [Debug], //debugging infos
-		DEBUGLEVEL: 1,
+		DEBUGLEVEL: 3,
 		PORT: 1337,
 		SERVERPATH: '/api/blender',
 		GELRURL: `http://gel.westpacgroup.com.au/`,

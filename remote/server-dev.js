@@ -37,7 +37,7 @@ const Blender = (() => { //constructor factory
 // Settings
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		DEBUG: true, //debugging infos
-		DEBUGLEVEL: 1,
+		DEBUGLEVEL: 3,
 		PORT: 1337,
 		SERVERPATH: '/api/blender',
 		GELRURL: `http://gel.westpacgroup.com.au/`,
@@ -275,6 +275,7 @@ Blender.files = (() => {
 			const _includeJquery = POST.includeJquery === `on`;
 			const _includeUnminifiedJS = POST.includeUnminifiedJS === `on`;
 			const _includeLess = POST.includeLess === `on`;
+			const _includeSVG = POST.includeSVG === `on`;
 			let log = ``;
 
 
@@ -337,11 +338,13 @@ Blender.files = (() => {
 			fromPOST.includeJquery = _includeJquery;
 			fromPOST.includeUnminifiedJS = _includeUnminifiedJS;
 			fromPOST.includeLess = _includeLess;
+			fromPOST.includeSVG = _includeSVG;
 
 			Blender.log.info(`             brand: ${POST.brand}`);
 			Blender.log.info(`             jquery: ${_includeJquery}`);
 			Blender.log.info(`             minify JS: ${_includeUnminifiedJS}`);
 			Blender.log.info(`             include LESS: ${_includeLess}`);
+			Blender.log.info(`             include SVG: ${_includeSVG}`);
 
 
 			//////////////////////////////////////////////////| SAVIG GLOBALLY
@@ -757,9 +760,11 @@ Blender.assets = (() => {
 			Blender.debugging.report(`Assets: Getting all files`);
 
 			const POST = Blender.POST;
+			const _includeSVG = Blender.selectedModules.includeSVG;
 			Blender.assets.svgfiles.svg = ``;
 			Blender.assets.svgfiles.png = ``;
 			Blender.assets.svgfiles.fallback = ``;
+			Blender.assets.svgfiles.grunticon = {};
 
 
 			//////////////////////////////////////////////////| CORE
@@ -791,8 +796,12 @@ Blender.assets = (() => {
 			//adding files to zip
 			Blender.zip.addFile( Blender.assets.svgfiles.svg, `/assets/css/symbols.data.svg.css` );
 			Blender.zip.addFile( Blender.assets.svgfiles.png, `/assets/css/symbols.data.png.css` );
-			Blender.zip.queuing(`assets`, false); //assets queue is done
 			Blender.zip.addFile( Blender.assets.svgfiles.fallback, `/assets/css/symbols.fallback.css` );
+			Blender.zip.queuing(`assets`, false); //assets queue is done
+
+			if( _includeSVG ) { //optional include SVG files
+				Blender.zip.addFile( JSON.stringify( Blender.assets.svgfiles.grunticon, null, `\t` ), `/source/svgs/grunticon.json` );
+			}
 
 		},
 
@@ -834,6 +843,22 @@ Blender.assets = (() => {
 			Blender.assets.svgfiles.png += Fs.readFileSync(`${folder}css/symbols.data.png.css`, `utf8`); //png
 			Blender.assets.svgfiles.fallback += Fs.readFileSync(`${folder}css/symbols.fallback.css`, `utf8`); //fallack
 
+			//////////////////////////////////////////////////| ADDING SOURCE SVG FILES
+			const _includeSVG = Blender.selectedModules.includeSVG;
+
+			if( _includeSVG ) { //optional include SVG files
+				const guiconfig = JSON.parse( Fs.readFileSync( Blender.GUICONFIG, `utf8`) ); //getting guiconfig for brands
+				let rootFolder = Path.normalize(`${folder}../../../`);
+
+				guiconfig.brands.forEach(( brand ) => { //iterate over brands
+					Blender.zip.addBulk( `${rootFolder}_assets/${brand.ID}/svg/`, [`*.svg`], `/source/svgs/` ); //old SVG location
+					Blender.zip.addBulk( `${rootFolder}tests/${brand.ID}/assets/svg/`, [`*.svg`], `/source/svgs/` ); //new SVG location
+				});
+
+				let grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
+				Blender.assets.svgfiles.grunticon = _.extend( Blender.assets.svgfiles.grunticon, grunticon ); //merge new grunticon keys into this object
+			}
+
 		},
 
 
@@ -844,6 +869,7 @@ Blender.assets = (() => {
 			svg: ``,
 			png: ``,
 			fallback: ``,
+			grunticon: {},
 		},
 
 	}
@@ -1192,7 +1218,7 @@ Blender.zip = (() => {
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Add a file to the zip archive
+// Add multiple file to the zip archive
 //
 // @param  cwd          [string]  The current working directory to flatten the paths in the archive
 // @param  files        [array]   The file extensions of the files

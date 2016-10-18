@@ -36,7 +36,7 @@ const Tester = (() => {
 		TIMEOUT: 5,
 		PACKS: [
 			{
-				hash: '78753230f729b80d849d29296af16e09d45b8c7ace869c05971920ab03586d34',
+				hash: '76abf4f6b250fefdd5c7fdad9a70ef31bbc6a067659c6dbf3b89a1f0bc611828',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
@@ -46,11 +46,26 @@ const Tester = (() => {
 					'includeJquery': 'on',
 					'includeUnminifiedJS': 'on',
 					'includeLess': 'on',
+					'includeSVG': 'off',
 					'brand': 'BOM',
 				},
 			},
 			{
-				hash: 'c18c7ad026d4fd6f24b46112c796757da10161c0309888cacadbe82bbbb149aa',
+				hash: '4cae0eeb2a9a627b3f7c259423aff31cf36a29bf7dfc0e1b1fde4863a5ba3adb',
+				pack: {
+					'module-_colors': '2.0.1', 'module-_fonts': '2.0.2', 'module-_text-styling': '4.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
+					'module-icons-base': '2.0.1', 'tick-icons-base': 'on',
+					'module-icons-group10': '2.0.0', 'tick-icons-group10': 'on',
+					'module-icons-group05': '1.0.0', 'tick-icons-group05': 'on',
+					'includeJquery': 'on',
+					'includeUnminifiedJS': 'on',
+					'includeLess': 'on',
+					'includeSVG': 'on',
+					'brand': 'STG',
+				},
+			},
+			{
+				hash: '00dc92192b8fc02aa1d5c41e9ce443336873dcacd865ffd75fdc4205493dafc5',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-switches': '1.0.1', 'tick-switches': 'on',
@@ -59,11 +74,12 @@ const Tester = (() => {
 					'includeJquery': 'on',
 					'includeUnminifiedJS': 'on',
 					'includeLess': 'on',
+					'includeSVG': 'off',
 					'brand': 'STG',
 				},
 			},
 			{
-				hash: 'ab716ea65d0046c49a70edef72922a862dc3d5dcf87a502171581e666ec0086a',
+				hash: 'a814ba2e96eac838fa77926342bd2fe41aa1626610cf656500dc2e964a13065f',
 				pack: {
 					'module-_colors': '2.0.1', 'module-_fonts': '2.0.1', 'module-_text-styling': '3.0.0', 'module-_grid': '2.0.0', 'module-_javascript-helpers': '2.0.0',
 					'module-text-extensions': '2.0.1', 'tick-text-extensions': 'on',
@@ -117,6 +133,7 @@ const Tester = (() => {
 					'includeJquery': 'on',
 					'includeUnminifiedJS': 'on',
 					'includeLess': 'on',
+					'includeSVG': 'off',
 					'includePokemon': 'on',
 					'brand': 'BT',
 				},
@@ -238,6 +255,7 @@ const Tester = (() => {
 
 								if( error ) {
 									Tester.debugging( 'Unable to save zip file', 'error' );
+									console.log( error );
 								}
 								else {
 									if( Tester.call >= Tester.MAX ) {
@@ -289,7 +307,7 @@ const Tester = (() => {
 
 			for(let i = 1; i <= ( Tester.MAX * Tester.LOOP ); i++) { //let's look at all zip files we have unpacked
 
-				let base = Math.ceil( i / ( Tester.MAX )) - 1; //to find the loop we are in we devide by max and some other funky math
+				let base = Math.ceil( i / ( Tester.MAX )) - 1; //to find the loop we are in we divide by max and some other funky math
 				let zipsum = Tester.PACKS[ base ].hash; //find the hash we compare against
 
 				Dirsum.digest( `${Tester.ZIPS}blend${i}`, 'sha256', ( error, hashes ) => { //and get the has for each
