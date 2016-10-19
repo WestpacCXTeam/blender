@@ -37,8 +37,9 @@ Blender.build = (() => {
 
 			const _includeOriginalLess  = Blender.selectedModules.includeLess;
 			const _includeOriginalJS  = Blender.selectedModules.includeUnminifiedJS;
+			const _includeSVG  = Blender.selectedModules.includeSVG;
 
-			if( _includeOriginalLess || _includeOriginalJS) {
+			if( _includeOriginalLess || _includeOriginalJS || _includeSVG ) {
 				Blender.zip.queuing(`build`, false); //build queue is done
 
 				Blender.zip.addBulk( Blender.TEMPPATH, [`Gruntfile.js`, `package.json`], `/` );
