@@ -3,7 +3,7 @@ node_js:
   - "node"
 before_install: 
   - cd remote && npm install
-  - cat > blender.log
+  - touch blender.log
   - cd ../tests && npm install
   - mkdir zips
   - cd ..
