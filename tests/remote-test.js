@@ -19,6 +19,7 @@ const CFonts = require(`cfonts`);
 const Dirsum = require('dirsum');
 const Rimraf = require('rimraf');
 const Chalk = require('chalk');
+const Path = require("path");
 const Fs = require('fs');
 
 
@@ -30,9 +31,10 @@ const Tester = (() => {
 		DEBUG: false,
 		PORT: 1337,
 		SERVERPATH: '/api/blender',
-		ZIPS: 'zips/',
+		ZIPS: Path.join( __dirname, 'zips/' ),
 		TIMING: Date.now(),
 		MAX: 10,
+		RETURN: 1,
 		TIMEOUT: 5,
 		PACKS: [
 			{
@@ -317,6 +319,9 @@ const Tester = (() => {
 
 					if( error ) {
 						Tester.debugging( `Dirsum failed for folder: "${Tester.ZIPS}blend${i}"`, 'error' );
+
+						Tester.RETURN *= -1; //flag we got an error
+
 						console.log( JSON.stringify( error ) );
 					}
 					else {
@@ -325,6 +330,8 @@ const Tester = (() => {
 						}
 						else {
 							Tester.debugging( `Zip (blend${i}) contents fails hash comparison (${hashes.hash} != ${zipsum})`, 'negative' );
+
+							Tester.RETURN *= -1; //flag we got an error
 						}
 					}
 
@@ -346,6 +353,13 @@ const Tester = (() => {
 			const diff = now - Tester.TIMING;
 
 			Tester.debugging( `TEST TOOK: ${diff}ms`, `success` );
+
+			if( Tester.RETURN > 0 ) {
+				process.exit( 0 );
+			}
+			else {
+				process.exit( 1 );
+			}
 		},
 
 
