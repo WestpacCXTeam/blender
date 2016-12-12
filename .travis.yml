@@ -1,4 +1,4 @@
 language: node_js
 node_js:
   - "node"
-before_install: cd remote && npm install && cd ../tests && npm install
+before_install: cd remote && npm install && cd ../tests && npm install && cd ..
