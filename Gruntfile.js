@@ -94,6 +94,10 @@ module.exports = function(grunt) {
 						to: '//',
 					},
 					{
+						from: '[nottraviscomment]',
+						to: '',
+					},
+					{
 						from: '[Debug]',
 						to: 'true',
 					},
@@ -131,6 +135,10 @@ module.exports = function(grunt) {
 						to: '//',
 					},
 					{
+						from: '[nottraviscomment]',
+						to: '',
+					},
+					{
 						from: '[Debug]',
 						to: 'false',
 					},
@@ -166,6 +174,10 @@ module.exports = function(grunt) {
 					{
 						from: '[traviscomment]',
 						to: '',
+					},
+					{
+						from: '[nottraviscomment]',
+						to: '//',
 					},
 					{
 						from: '[Debug]',

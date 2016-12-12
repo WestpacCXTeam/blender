@@ -13,7 +13,19 @@
 Blender.init = () => {
 	Blender.debugging.headline(` DEBUG| INFO`);
 
-	Blender.GUI = JSON.parse( Fs.readFileSync(`${Blender.GUIPATH}GUI.json`, `utf8`) );
+	[nottraviscomment]Blender.GUI = JSON.parse( Fs.readFileSync(`${Blender.GUIPATH}GUI.json`, `utf8`) );
+	[traviscomment]Request({ 
+		[traviscomment]url: `${Blender.GUIPATH}GUI.json`, 
+		[traviscomment]json: true 
+	[traviscomment]}, function (error, response, body) {
+		[traviscomment]if (!error && response.statusCode === 200) {
+			[traviscomment]Blender.GUI = body;
+		[traviscomment]} else {
+			[traviscomment]Blender.log.error(`             ERROR loading GUI.json`);
+			[traviscomment]Blender.log.error( error );
+		[traviscomment]}
+	[traviscomment]});
+
 	const blender = Express();
 
 	//starting server

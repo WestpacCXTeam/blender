@@ -18,6 +18,7 @@
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 const Fs = require(`fs`);
+[traviscomment]const Request = require(`request`);
 const Http = require(`http`);
 const Path = require(`path`);
 const Chalk = require(`chalk`);

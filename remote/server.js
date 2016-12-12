@@ -18,6 +18,7 @@
 // Dependencies
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 const Fs = require(`fs`);
+//const Request = require(`request`);
 const Http = require(`http`);
 const Path = require(`path`);
 const Chalk = require(`chalk`);
@@ -1546,6 +1547,18 @@ Blender.init = () => {
 	Blender.debugging.headline(` DEBUG| INFO`);
 
 	Blender.GUI = JSON.parse( Fs.readFileSync(`${Blender.GUIPATH}GUI.json`, `utf8`) );
+	//Request({ 
+		//url: `${Blender.GUIPATH}GUI.json`, 
+		//json: true 
+	//}, function (error, response, body) {
+		//if (!error && response.statusCode === 200) {
+			//Blender.GUI = body;
+		//} else {
+			//Blender.log.error(`             ERROR loading GUI.json`);
+			//Blender.log.error( error );
+		//}
+	//});
+
 	const blender = Express();
 
 	//starting server
