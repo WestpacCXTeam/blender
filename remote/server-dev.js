@@ -44,7 +44,7 @@ const Blender = (() => { //constructor factory
 		GUIRURL: `http://gel.westpacgroup.com.au/GUI/`,
 		GUIPATH: Path.normalize(`${__dirname}/../../GUI-docs/GUI-source-master/`), //debug only
 		// GUIPATH: Path.normalize(`${__dirname}/../../GUI-source-master/`),
-		//GUIPATH: `http://westpaccxteam.github.io/GUI-source/GUI.json`, //travis only
+		//GUIPATH: `http://westpaccxteam.github.io/GUI-source/`, //travis only
 		TEMPPATH: Path.normalize(`${__dirname}/._template/`),
 		GELPATH: Path.normalize(`${__dirname}/../../../`),
 		GUICONFIG: Path.normalize(`${__dirname}/../.guiconfig`),
