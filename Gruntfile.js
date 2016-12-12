@@ -35,6 +35,7 @@ var SETTINGS = function() {
 			'fileserver': 'remote',
 			'serverProd': 'remote/server.js',
 			'serverDev': 'remote/server-dev.js',
+			'serverTravis': 'remote/server-travis.js',
 			'Packagejson': 'remote/package.json',
 		},
 	};
@@ -89,6 +90,10 @@ module.exports = function(grunt) {
 						to: '// ',
 					},
 					{
+						from: '[traviscomment]',
+						to: '//',
+					},
+					{
 						from: '[Debug]',
 						to: 'true',
 					},
@@ -122,8 +127,49 @@ module.exports = function(grunt) {
 						to: '',
 					},
 					{
+						from: '[traviscomment]',
+						to: '//',
+					},
+					{
 						from: '[Debug]',
 						to: 'false',
+					},
+					{
+						from: '[-Debug-]',
+						to: '[Debug]',
+					},
+					{
+						from: '[Name-Version]',
+						to: '<%= pkg.name %> - v<%= pkg.version %>',
+					},
+					{
+						from: '[Version]',
+						to: 'v<%= pkg.version %>',
+					},
+				],
+			},
+
+			debugTravis: {
+				src: [
+					'<%= SETTINGS.folder.serverTravis %>',
+				],
+				overwrite: true,
+				replacements: [
+					{
+						from: '[debugcomment]',
+						to: '// ',
+					},
+					{
+						from: '[prodcomment]',
+						to: '// ',
+					},
+					{
+						from: '[traviscomment]',
+						to: '',
+					},
+					{
+						from: '[Debug]',
+						to: 'true',
 					},
 					{
 						from: '[-Debug-]',
@@ -151,6 +197,7 @@ module.exports = function(grunt) {
 					'<%= SETTINGS.folder.fileserver %>/*.js',
 					'!<%= SETTINGS.folder.serverProd %>',
 					'!<%= SETTINGS.folder.serverDev %>',
+					'!<%= SETTINGS.folder.serverTravis %>',
 				],
 				dest: '<%= SETTINGS.folder.serverProd %>',
 			},
@@ -159,8 +206,18 @@ module.exports = function(grunt) {
 					'<%= SETTINGS.folder.fileserver %>/*.js',
 					'!<%= SETTINGS.folder.serverProd %>',
 					'!<%= SETTINGS.folder.serverDev %>',
+					'!<%= SETTINGS.folder.serverTravis %>',
 				],
 				dest: '<%= SETTINGS.folder.serverDev %>',
+			},
+			nodeTravis: {
+				src: [
+					'<%= SETTINGS.folder.fileserver %>/*.js',
+					'!<%= SETTINGS.folder.serverProd %>',
+					'!<%= SETTINGS.folder.serverDev %>',
+					'!<%= SETTINGS.folder.serverTravis %>',
+				],
+				dest: '<%= SETTINGS.folder.serverTravis %>',
 			},
 		},
 
@@ -203,6 +260,7 @@ module.exports = function(grunt) {
 					'<%= SETTINGS.folder.fileserver %>/*.js',
 					'!<%= SETTINGS.folder.fileserver %>/server.js',
 					'!<%= SETTINGS.folder.fileserver %>/server-dev.js',
+					'!<%= SETTINGS.folder.fileserver %>/server-travis.js',
 				],
 				tasks: [
 					'_buildNode',
