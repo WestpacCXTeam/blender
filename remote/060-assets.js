@@ -151,7 +151,8 @@ Blender.assets = (() => {
 			const _includeSVG = Blender.selectedModules.includeSVG;
 
 			if( _includeSVG ) { //optional include SVG files
-				let rootFolder = Path.normalize(`${folder}../../../`);
+				[nottraviscomment]let rootFolder = Path.normalize(`${folder}../../../`);
+				[traviscomment]let rootFolder = `${folder}../../../`;
 				let grunticon = ``;
 
 				Blender.zip.addBulk( `${rootFolder}_assets/${Blender.POST[`brand`]}/svg/`, [`*.svg`], `/source/svgs/` ); //old SVG location
