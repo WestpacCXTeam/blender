@@ -401,7 +401,17 @@ Blender.js = (() => {
 
 			//////////////////////////////////////////////////| JQUERY
 			if( _includeJquery ) { //optional include jquery
-				jquery = Fs.readFileSync( Blender.GUIPATH + Blender.JQUERYPATH, `utf8`);
+				//jquery = Fs.readFileSync( Blender.GUIPATH + Blender.JQUERYPATH, `utf8`);
+				Request({ 
+					url: Blender.GUIPATH + Blender.JQUERYPATH
+				}, function (error, response, body) {
+					if (!error && response.statusCode === 200) {
+						jquery = body;
+					} else {
+						Blender.log.error(`             ERROR loading jQuery`);
+						Blender.log.error( error );
+					}
+				});
 
 				if( _includeOriginal ) {
 					Blender.zip.addFile( jquery, `/source/js/010-jquery.js` );
@@ -411,13 +421,35 @@ Blender.js = (() => {
 
 			//////////////////////////////////////////////////| CORE
 			if( Blender.selectedModules.js ) {
-				core = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+				//core = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+				Request({ 
+					url: `${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`
+				}, function (error, response, body) {
+					if (!error && response.statusCode === 200) {
+						core = body;
+					} else {
+						Blender.log.error(`             ERROR loading ${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`);
+						Blender.log.error( error );
+					}
+				});
+
 				core = Blender.branding.replace(core, [`Debug`, `false`]); //remove debugging infos
 
 				core = UglifyJS.minify( core, { fromString: true });
 
 				if( _includeOriginal ) {
-					file = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+					//file = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+					Request({ 
+						url: `${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`
+					}, function (error, response, body) {
+						if (!error && response.statusCode === 200) {
+							file = body;
+						} else {
+							Blender.log.error(`             ERROR loading ${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`);
+							Blender.log.error( error );
+						}
+					});
+
 					file = Blender.branding.replace(file, [`Module-Version`, ` Core v${POST[`module-_javascript-helpers`]} `]); //name the current version
 					file = Blender.branding.replace(file, [`Debug`, `false`]); //remove debugging infos
 					Blender.zip.addFile( file, `/source/js/020-core.js` );
@@ -430,9 +462,19 @@ Blender.js = (() => {
 				const _hasJS = module.js; //look if this module has js
 
 				if( _hasJS ) {
-					files.push(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`); //add js to uglify
+					//file = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`, `utf8`);
+					Request({ 
+						url: `${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`
+					}, function (error, response, body) {
+						if (!error && response.statusCode === 200) {
+							file = body;
+						} else {
+							Blender.log.error(`             ERROR loading ${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`);
+							Blender.log.error( error );
+						}
+					});
 
-					file = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`, `utf8`);
+					files.push(file); //add js to uglify
 
 					if( _includeOriginal ) {
 						file = Blender.branding.replace(file, [`Module-Version`, ` ${module.name} v${module.version} `]); //name the current version
@@ -444,7 +486,7 @@ Blender.js = (() => {
 
 			//uglify js
 			if( files.length > 0 ) {
-				result = UglifyJS.minify( files );
+				result = UglifyJS.minify( files, { fromString: true } );
 			}
 			else {
 				result = {};
@@ -502,8 +544,22 @@ Blender.css = (() => {
 
 			//////////////////////////////////////////////////| CORE
 			Blender.selectedModules.core.forEach(( module ) => {
+				let lessFile = ``;
+
+				//lessFile = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`);
+				Request({ 
+					url: `${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`
+				}, function (error, response, body) {
+					if (!error && response.statusCode === 200) {
+						lessFile = body;
+					} else {
+						Blender.log.error(`             ERROR loading ${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`);
+						Blender.log.error( error );
+					}
+				});
+
 				let lessContent = Blender.branding.replace(
-					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
+					lessFile,
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
 
@@ -520,8 +576,22 @@ Blender.css = (() => {
 
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
+				let lessFile = ``;
+				
+				//lessFile = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`);
+				Request({ 
+					url: `${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`
+				}, function (error, response, body) {
+					if (!error && response.statusCode === 200) {
+						lessFile = body;
+					} else {
+						Blender.log.error(`             ERROR loading ${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`);
+						Blender.log.error( error );
+					}
+				});
+
 				let lessContent = Blender.branding.replace(
-					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
+					lessFile,
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
 
@@ -842,20 +912,65 @@ Blender.assets = (() => {
 			Blender.zip.addBulk(`${folder}img/`, [`*.png`], `/assets/img/`);
 
 			//////////////////////////////////////////////////| BUILDING CSS FILES
-			Blender.assets.svgfiles.svg += Fs.readFileSync(`${folder}css/symbols.data.svg.css`, `utf8`); //svg
-			Blender.assets.svgfiles.png += Fs.readFileSync(`${folder}css/symbols.data.png.css`, `utf8`); //png
-			Blender.assets.svgfiles.fallback += Fs.readFileSync(`${folder}css/symbols.fallback.css`, `utf8`); //fallack
+			//Blender.assets.svgfiles.svg += Fs.readFileSync(`${folder}css/symbols.data.svg.css`, `utf8`); //svg
+			Request({ 
+				url: `${folder}css/symbols.data.svg.css`
+			}, function (error, response, body) {
+				if (!error && response.statusCode === 200) {
+					Blender.assets.svgfiles.svg += body;
+				} else {
+					Blender.log.error(`             ERROR loading ${folder}css/symbols.data.svg.css`);
+					Blender.log.error( error );
+				}
+			});
+
+			//Blender.assets.svgfiles.png += Fs.readFileSync(`${folder}css/symbols.data.png.css`, `utf8`); //png
+			Request({ 
+				url: `${folder}css/symbols.data.png.css`
+			}, function (error, response, body) {
+				if (!error && response.statusCode === 200) {
+					Blender.assets.svgfiles.png += body;
+				} else {
+					Blender.log.error(`             ERROR loading ${folder}css/symbols.data.png.css`);
+					Blender.log.error( error );
+				}
+			});
+
+			//Blender.assets.svgfiles.fallback += Fs.readFileSync(`${folder}css/symbols.fallback.css`, `utf8`); //fallack
+			Request({ 
+				url: `${folder}css/symbols.fallback.css`
+			}, function (error, response, body) {
+				if (!error && response.statusCode === 200) {
+					Blender.assets.svgfiles.fallback += body;
+				} else {
+					Blender.log.error(`             ERROR loading ${folder}css/symbols.fallback.css`);
+					Blender.log.error( error );
+				}
+			});
 
 			//////////////////////////////////////////////////| ADDING SOURCE SVG FILES
 			const _includeSVG = Blender.selectedModules.includeSVG;
 
 			if( _includeSVG ) { //optional include SVG files
 				let rootFolder = Path.normalize(`${folder}../../../`);
+				let grunticon = ``;
 
 				Blender.zip.addBulk( `${rootFolder}_assets/${Blender.POST[`brand`]}/svg/`, [`*.svg`], `/source/svgs/` ); //old SVG location
 				Blender.zip.addBulk( `${rootFolder}tests/${Blender.POST[`brand`]}/assets/svg/`, [`*.svg`], `/source/svgs/` ); //new SVG location
 
-				let grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
+				//grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
+				Request({ 
+					url: `${rootFolder}_assets/grunticon.json`,
+					json: true
+				}, function (error, response, body) {
+					if (!error && response.statusCode === 200) {
+						grunticon = body;
+					} else {
+						Blender.log.error(`             ERROR loading ${rootFolder}_assets/grunticon.json`);
+						Blender.log.error( error );
+					}
+				});
+
 				Blender.assets.svgfiles.grunticon = _.extend( Blender.assets.svgfiles.grunticon, grunticon ); //merge new grunticon keys into this object
 			}
 

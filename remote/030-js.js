@@ -43,7 +43,17 @@ Blender.js = (() => {
 
 			//////////////////////////////////////////////////| JQUERY
 			if( _includeJquery ) { //optional include jquery
-				jquery = Fs.readFileSync( Blender.GUIPATH + Blender.JQUERYPATH, `utf8`);
+				[nottraviscomment]jquery = Fs.readFileSync( Blender.GUIPATH + Blender.JQUERYPATH, `utf8`);
+				[traviscomment]Request({ 
+					[traviscomment]url: Blender.GUIPATH + Blender.JQUERYPATH
+				[traviscomment]}, function (error, response, body) {
+					[traviscomment]if (!error && response.statusCode === 200) {
+						[traviscomment]jquery = body;
+					[traviscomment]} else {
+						[traviscomment]Blender.log.error(`             ERROR loading jQuery`);
+						[traviscomment]Blender.log.error( error );
+					[traviscomment]}
+				[traviscomment]});
 
 				if( _includeOriginal ) {
 					Blender.zip.addFile( jquery, `/source/js/010-jquery.js` );
@@ -53,13 +63,35 @@ Blender.js = (() => {
 
 			//////////////////////////////////////////////////| CORE
 			if( Blender.selectedModules.js ) {
-				core = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+				[nottraviscomment]core = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+				[traviscomment]Request({ 
+					[traviscomment]url: `${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`
+				[traviscomment]}, function (error, response, body) {
+					[traviscomment]if (!error && response.statusCode === 200) {
+						[traviscomment]core = body;
+					[traviscomment]} else {
+						[traviscomment]Blender.log.error(`             ERROR loading ${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`);
+						[traviscomment]Blender.log.error( error );
+					[traviscomment]}
+				[traviscomment]});
+
 				core = Blender.branding.replace(core, [`Debug`, `false`]); //remove debugging infos
 
 				core = UglifyJS.minify( core, { fromString: true });
 
 				if( _includeOriginal ) {
-					file = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+					[nottraviscomment]file = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
+					[traviscomment]Request({ 
+						[traviscomment]url: `${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`
+					[traviscomment]}, function (error, response, body) {
+						[traviscomment]if (!error && response.statusCode === 200) {
+							[traviscomment]file = body;
+						[traviscomment]} else {
+							[traviscomment]Blender.log.error(`             ERROR loading ${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`);
+							[traviscomment]Blender.log.error( error );
+						[traviscomment]}
+					[traviscomment]});
+
 					file = Blender.branding.replace(file, [`Module-Version`, ` Core v${POST[`module-_javascript-helpers`]} `]); //name the current version
 					file = Blender.branding.replace(file, [`Debug`, `false`]); //remove debugging infos
 					Blender.zip.addFile( file, `/source/js/020-core.js` );
@@ -72,9 +104,19 @@ Blender.js = (() => {
 				const _hasJS = module.js; //look if this module has js
 
 				if( _hasJS ) {
-					files.push(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`); //add js to uglify
+					[nottraviscomment]file = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`, `utf8`);
+					[traviscomment]Request({ 
+						[traviscomment]url: `${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`
+					[traviscomment]}, function (error, response, body) {
+						[traviscomment]if (!error && response.statusCode === 200) {
+							[traviscomment]file = body;
+						[traviscomment]} else {
+							[traviscomment]Blender.log.error(`             ERROR loading ${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`);
+							[traviscomment]Blender.log.error( error );
+						[traviscomment]}
+					[traviscomment]});
 
-					file = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`, `utf8`);
+					files.push(file); //add js to uglify
 
 					if( _includeOriginal ) {
 						file = Blender.branding.replace(file, [`Module-Version`, ` ${module.name} v${module.version} `]); //name the current version
@@ -86,7 +128,7 @@ Blender.js = (() => {
 
 			//uglify js
 			if( files.length > 0 ) {
-				result = UglifyJS.minify( files );
+				result = UglifyJS.minify( files, { fromString: true } );
 			}
 			else {
 				result = {};

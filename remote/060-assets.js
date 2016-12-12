@@ -111,20 +111,65 @@ Blender.assets = (() => {
 			Blender.zip.addBulk(`${folder}img/`, [`*.png`], `/assets/img/`);
 
 			//////////////////////////////////////////////////| BUILDING CSS FILES
-			Blender.assets.svgfiles.svg += Fs.readFileSync(`${folder}css/symbols.data.svg.css`, `utf8`); //svg
-			Blender.assets.svgfiles.png += Fs.readFileSync(`${folder}css/symbols.data.png.css`, `utf8`); //png
-			Blender.assets.svgfiles.fallback += Fs.readFileSync(`${folder}css/symbols.fallback.css`, `utf8`); //fallack
+			[nottraviscomment]Blender.assets.svgfiles.svg += Fs.readFileSync(`${folder}css/symbols.data.svg.css`, `utf8`); //svg
+			[traviscomment]Request({ 
+				[traviscomment]url: `${folder}css/symbols.data.svg.css`
+			[traviscomment]}, function (error, response, body) {
+				[traviscomment]if (!error && response.statusCode === 200) {
+					[traviscomment]Blender.assets.svgfiles.svg += body;
+				[traviscomment]} else {
+					[traviscomment]Blender.log.error(`             ERROR loading ${folder}css/symbols.data.svg.css`);
+					[traviscomment]Blender.log.error( error );
+				[traviscomment]}
+			[traviscomment]});
+
+			[nottraviscomment]Blender.assets.svgfiles.png += Fs.readFileSync(`${folder}css/symbols.data.png.css`, `utf8`); //png
+			[traviscomment]Request({ 
+				[traviscomment]url: `${folder}css/symbols.data.png.css`
+			[traviscomment]}, function (error, response, body) {
+				[traviscomment]if (!error && response.statusCode === 200) {
+					[traviscomment]Blender.assets.svgfiles.png += body;
+				[traviscomment]} else {
+					[traviscomment]Blender.log.error(`             ERROR loading ${folder}css/symbols.data.png.css`);
+					[traviscomment]Blender.log.error( error );
+				[traviscomment]}
+			[traviscomment]});
+
+			[nottraviscomment]Blender.assets.svgfiles.fallback += Fs.readFileSync(`${folder}css/symbols.fallback.css`, `utf8`); //fallack
+			[traviscomment]Request({ 
+				[traviscomment]url: `${folder}css/symbols.fallback.css`
+			[traviscomment]}, function (error, response, body) {
+				[traviscomment]if (!error && response.statusCode === 200) {
+					[traviscomment]Blender.assets.svgfiles.fallback += body;
+				[traviscomment]} else {
+					[traviscomment]Blender.log.error(`             ERROR loading ${folder}css/symbols.fallback.css`);
+					[traviscomment]Blender.log.error( error );
+				[traviscomment]}
+			[traviscomment]});
 
 			//////////////////////////////////////////////////| ADDING SOURCE SVG FILES
 			const _includeSVG = Blender.selectedModules.includeSVG;
 
 			if( _includeSVG ) { //optional include SVG files
 				let rootFolder = Path.normalize(`${folder}../../../`);
+				let grunticon = ``;
 
 				Blender.zip.addBulk( `${rootFolder}_assets/${Blender.POST[`brand`]}/svg/`, [`*.svg`], `/source/svgs/` ); //old SVG location
 				Blender.zip.addBulk( `${rootFolder}tests/${Blender.POST[`brand`]}/assets/svg/`, [`*.svg`], `/source/svgs/` ); //new SVG location
 
-				let grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
+				[nottraviscomment]grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
+				[traviscomment]Request({ 
+					[traviscomment]url: `${rootFolder}_assets/grunticon.json`,
+					[traviscomment]json: true
+				[traviscomment]}, function (error, response, body) {
+					[traviscomment]if (!error && response.statusCode === 200) {
+						[traviscomment]grunticon = body;
+					[traviscomment]} else {
+						[traviscomment]Blender.log.error(`             ERROR loading ${rootFolder}_assets/grunticon.json`);
+						[traviscomment]Blender.log.error( error );
+					[traviscomment]}
+				[traviscomment]});
+
 				Blender.assets.svgfiles.grunticon = _.extend( Blender.assets.svgfiles.grunticon, grunticon ); //merge new grunticon keys into this object
 			}
 

@@ -39,8 +39,22 @@ Blender.css = (() => {
 
 			//////////////////////////////////////////////////| CORE
 			Blender.selectedModules.core.forEach(( module ) => {
+				let lessFile = ``;
+
+				[nottraviscomment]lessFile = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`);
+				[traviscomment]Request({ 
+					[traviscomment]url: `${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`
+				[traviscomment]}, function (error, response, body) {
+					[traviscomment]if (!error && response.statusCode === 200) {
+						[traviscomment]lessFile = body;
+					[traviscomment]} else {
+						[traviscomment]Blender.log.error(`             ERROR loading ${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`);
+						[traviscomment]Blender.log.error( error );
+					[traviscomment]}
+				[traviscomment]});
+
 				let lessContent = Blender.branding.replace(
-					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
+					lessFile,
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
 
@@ -57,8 +71,22 @@ Blender.css = (() => {
 
 			//////////////////////////////////////////////////| MODULES
 			Blender.selectedModules.modules.forEach(( module ) => {
+				let lessFile = ``;
+				
+				[nottraviscomment]lessFile = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`);
+				[traviscomment]Request({ 
+					[traviscomment]url: `${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`
+				[traviscomment]}, function (error, response, body) {
+					[traviscomment]if (!error && response.statusCode === 200) {
+						[traviscomment]lessFile = body;
+					[traviscomment]} else {
+						[traviscomment]Blender.log.error(`             ERROR loading ${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`);
+						[traviscomment]Blender.log.error( error );
+					[traviscomment]}
+				[traviscomment]});
+
 				let lessContent = Blender.branding.replace(
-					Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/less/module-mixins.less`, `utf8`),
+					lessFile,
 					[`Module-Version-Brand`, ` ${module.name} v${module.version} ${POST[`brand`]} `]
 				);
 
