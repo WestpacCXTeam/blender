@@ -50,7 +50,7 @@ Blender.js = (() => {
 					[traviscomment]if (!error && response.statusCode === 200) {
 						[traviscomment]jquery = body;
 					[traviscomment]} else {
-						[traviscomment]Blender.log.error(`             ERROR loading jQuery`);
+						[traviscomment]Blender.log.error(`             ERROR loading ` + Blender.GUIPATH + Blender.JQUERYPATH);
 						[traviscomment]Blender.log.error( error );
 					[traviscomment]}
 				[traviscomment]});

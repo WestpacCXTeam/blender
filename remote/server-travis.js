@@ -408,7 +408,7 @@ Blender.js = (() => {
 					if (!error && response.statusCode === 200) {
 						jquery = body;
 					} else {
-						Blender.log.error(`             ERROR loading jQuery`);
+						Blender.log.error(`             ERROR loading ` + Blender.GUIPATH + Blender.JQUERYPATH);
 						Blender.log.error( error );
 					}
 				});
