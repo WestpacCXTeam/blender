@@ -26,7 +26,10 @@ Blender.counter = (() => {
 
 			let counter = 0;
 
-			Fs.readFile( Blender.LOG , (error, data) => { //read the log file
+			// Create a blender.log file if one doesn't already exist
+			Fs.writeFile( Blender.LOG, '0', { flag: 'wx' }, () => {});
+
+			Fs.readFile( Blender.LOG, (error, data) => { //read the log file
 				if( error ) {
 					Custard.finished();
 
