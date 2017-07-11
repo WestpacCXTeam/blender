@@ -852,11 +852,11 @@ Blender.assets = (() => {
 				const oldFolder = Path.normalize(`${rootFolder}_assets/${Blender.POST[`brand`]}/svg/`);
 				const newFolder = Path.normalize(`${rootFolder}tests/${Blender.POST[`brand`]}/assets/svg/`);
 
-				if( Fs.existsSync( oldFolder ) ) {
-					Blender.zip.addBulk( oldFolder, [`*.svg`], `/source/svgs/` ); //old SVG location
+				if( Fs.existsSync( newFolder ) ) {
+					Blender.zip.addBulk( newFolder, [`*.svg`], `/source/svgs/` ); //new SVG location
 				}
 				else {
-					Blender.zip.addBulk( newFolder, [`*.svg`], `/source/svgs/` ); //new SVG location
+					Blender.zip.addBulk( oldFolder, [`*.svg`], `/source/svgs/` ); //old SVG location
 				}
 
 				let grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
