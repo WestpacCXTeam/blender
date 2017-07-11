@@ -849,9 +849,15 @@ Blender.assets = (() => {
 
 			if( _includeSVG ) { //optional include SVG files
 				let rootFolder = Path.normalize(`${folder}../../../`);
+				const oldFolder = Path.normalize(`${rootFolder}_assets/${Blender.POST[`brand`]}/svg/`);
+				const newFolder = Path.normalize(`${rootFolder}tests/${Blender.POST[`brand`]}/assets/svg/`);
 
-				Blender.zip.addBulk( `${rootFolder}_assets/${Blender.POST[`brand`]}/svg/`, [`*.svg`], `/source/svgs/` ); //old SVG location
-				Blender.zip.addBulk( `${rootFolder}tests/${Blender.POST[`brand`]}/assets/svg/`, [`*.svg`], `/source/svgs/` ); //new SVG location
+				if( Fs.existsSync( oldFolder ) ) {
+					Blender.zip.addBulk( oldFolder, [`*.svg`], `/source/svgs/` ); //old SVG location
+				}
+				else {
+					Blender.zip.addBulk( newFolder, [`*.svg`], `/source/svgs/` ); //new SVG location
+				}
 
 				let grunticon = JSON.parse( Fs.readFileSync(`${rootFolder}_assets/grunticon.json`, `utf8`) );
 				Blender.assets.svgfiles.grunticon = _.extend( Blender.assets.svgfiles.grunticon, grunticon ); //merge new grunticon keys into this object
