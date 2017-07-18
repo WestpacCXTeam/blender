@@ -136,6 +136,7 @@ node tests/remote-test.js
 
 ### Release History remote
 
+* v0.1.4 - Updated dependencies and Grunticon cssprefix
 * v0.1.3 - Fixed silly SVG brand bug
 * v0.1.2 - Fixed build when only SVG was selected
 * v0.1.1 - Added includeSVG option, refreshed dependencies in blend package
