@@ -136,6 +136,7 @@ node tests/remote-test.js
 
 ### Release History remote
 
+* v0.2.0 - Updated dependencies and Grunticon cssprefix
 * v0.1.3 - Fixed silly SVG brand bug
 * v0.1.2 - Fixed build when only SVG was selected
 * v0.1.1 - Added includeSVG option, refreshed dependencies in blend package
@@ -153,7 +154,7 @@ node tests/remote-test.js
 
 ### License
 
-Copyright (c) Westpac. Licensed under the [GNU GPLv2](https://raw.githubusercontent.com/WestpacCXTeam/blender/master/LICENSE).
+Copyright (c) Westpac 2017. Licensed under the [GNU GPLv2](https://raw.githubusercontent.com/WestpacCXTeam/blender/master/LICENSE).
 
 **[⬆ back to top](#content)**
 
