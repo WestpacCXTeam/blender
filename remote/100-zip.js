@@ -158,7 +158,7 @@ Blender.zip = (() => {
 // @param  archivePath  [string]  The path these files will have inside the archive
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 		addBulk: ( cwd, files, archivePath ) => {
-			Blender.debugging.report(`Zip: Adding bluk: ${cwd}${files} to: ${archivePath}`);
+			Blender.debugging.report(`Zip: Adding bulk: ${cwd}${files} to: ${archivePath}`);
 
 			if(typeof files !== `object`) {
 				Blender.debugging.error(`Zip: Adding files: Path can only be array/object, is ${typeof files}`);
