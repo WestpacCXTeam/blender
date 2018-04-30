@@ -136,6 +136,8 @@ node tests/remote-test.js
 
 ### Release History remote
 
+* v0.2.3 - Updated grunt-font dependency to v1.0.0
+* v0.2.2 - Updated grunt-font dependency to v0.0.14
 * v0.2.1 - Updated index page background color (GUI’s body @color-Background mapping removed)
 * v0.2.0 - Updated dependencies and Grunticon cssprefix
 * v0.1.3 - Fixed silly SVG brand bug
