@@ -1,14 +1,14 @@
 {
 	"name": "blender-stack",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"private": true,
 	"devDependencies": {
-		"grunt": "^1.0.2",
+		"grunt": "^1.0.4",
 		"grunt-contrib-concat": "^1.0.1",
-		"grunt-contrib-watch": "^1.0.1",
-		"grunt-font": "^1.0.0",
+		"grunt-contrib-watch": "^1.1.0",
+		"grunt-font": "^1.0.1",
 		"grunt-text-replace": "^0.4.0",
-		"grunt-wakeup": "0.1.3",
-		"time-grunt": "^1.4.0"
+		"grunt-wakeup": "^0.1.3",
+		"time-grunt": "^2.0.0"
 	}
 }
