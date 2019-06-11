@@ -157,7 +157,7 @@ node tests/remote-test.js
 
 ### License
 
-Copyright (c) Westpac 2017. Licensed under the [GNU GPLv2](https://raw.githubusercontent.com/WestpacCXTeam/blender/master/LICENSE).
+Copyright (c) Westpac 2019. Licensed under the [GNU GPLv2](https://raw.githubusercontent.com/WestpacCXTeam/blender/master/LICENSE).
 
 **[⬆ back to top](#content)**
 
