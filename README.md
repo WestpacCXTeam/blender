@@ -112,6 +112,12 @@ node remote/server-dev.js
 
 This will spin up the blender in debug mode. You can set the debug level in `Blender.DEBUGLEVEL`.
 
+Production is run by:
+
+```shell
+node remote/server.js
+```
+
 
 **[⬆ back to top](#content)**
 
@@ -139,6 +145,7 @@ node tests/remote-test.js
 
 ### Release History remote
 
+- v1.0.0 - Updated dependencies, moved to env vars
 - v0.2.5 - Updated dependencies
 - v0.2.4 - Updated dependencies
 - v0.2.3 - Updated dependencies

@@ -26,6 +26,7 @@ Blender.init = () => {
 
 
 	blender.get(`*`, (request, response) => {
+		Blender.log.info(`GET request sent by ${request.headers[`x-forwarded-for`] || request.connection.remoteAddress}. Forwarding to ${Blender.GUIRURL}`);
 		response.redirect(301, Blender.GUIRURL);
 	});
 
