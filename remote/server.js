@@ -28,6 +28,11 @@ const BodyParser = require(`body-parser`);
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Env Vars
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
+require('dotenv').config()
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Constructor
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 const Blender = (() => { //constructor factory
@@ -48,7 +53,7 @@ const Blender = (() => { //constructor factory
 		GELPATH: Path.normalize(`${__dirname}/../../../`),
 		GUICONFIG: Path.normalize(`${__dirname}/../.guiconfig`),
 		JQUERYPATH: `_javascript-helpers/1.0.1/_core/js/010-jquery.js`,
-		SLACKURL: `https://hooks.slack.com/services/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`,
+		SLACKURL: process.env.SLACKURL,
 		SLACKICON: `http://gel.westpacgroup.com.au/GUI/blender/remote/assets/img/blender-icon.png`,
 		WEBFONTSROOT: `https://sites.thewestpacgroup.com.au/sites/TS1206/Shared%20Documents/webfonts/`,
 		LOG: Path.normalize(`${__dirname}/blender.log`),

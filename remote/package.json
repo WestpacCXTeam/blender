@@ -2,16 +2,20 @@
 	"name": "blender",
 	"version": "0.2.3",
 	"private": true,
+	"scripts": {
+		"nuke": "rm -rf node_modules && rm yarn.lock"
+	},
 	"dependencies": {
 		"archiver": "^1.1.0",
-		"body-parser": "^1.15.2",
+		"body-parser": "^1.19.0",
 		"cfonts": "1.0.2",
 		"chalk": "^1.0.0",
 		"custardjs": "^1.0.0",
-		"express": "^4.14.0",
+		"dotenv": "^8.0.0",
+		"express": "^4.17.1",
 		"less": "^2.5.0",
 		"node-slack": "0.0.7",
 		"uglify-js": "^2.7.3",
-		"underscore": "^1.8.3"
+		"underscore": "^1.9.1"
 	}
 }

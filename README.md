@@ -101,7 +101,10 @@ forever start -l blender.log --append -o blenderOut.log -e blenderError.log serv
 
 ### Build
 
-To build the blender make sure you got all dependencies installed via `npm i` and run:
+To build the blender make sure you got all dependencies installed via `yarn` and `grunt` to build the server files.
+You will need a `.env` file in your root directory with the env vars for your environment. There is a `.env-template` file that mentions all required variables without their values.
+
+To start the blender run:
 
 ```shell
 node remote/server-dev.js
@@ -136,20 +139,20 @@ node tests/remote-test.js
 
 ### Release History remote
 
-* v0.2.5 - Updated dependencies
-* v0.2.4 - Updated dependencies
-* v0.2.3 - Updated dependencies
-* v0.2.2 - Updated dependencies
-* v0.2.1 - Updated index page background color (GUI’s body @color-Background mapping removed)
-* v0.2.0 - Updated dependencies and Grunticon cssprefix
-* v0.1.3 - Fixed silly SVG brand bug
-* v0.1.2 - Fixed build when only SVG was selected
-* v0.1.1 - Added includeSVG option, refreshed dependencies in blend package
-* v0.1.0 - Improved test, fixed unavailable brands in index, added webfont link and priority system
-* v0.0.4 - Added stress test
-* v0.0.3 - Added dynamic branding
-* v0.0.2 - Added grunt build to download
-* v0.0.1 - Initial file server system setup
+- v0.2.5 - Updated dependencies
+- v0.2.4 - Updated dependencies
+- v0.2.3 - Updated dependencies
+- v0.2.2 - Updated dependencies
+- v0.2.1 - Updated index page background color (GUI’s body @color-Background mapping removed)
+- v0.2.0 - Updated dependencies and Grunticon cssprefix
+- v0.1.3 - Fixed silly SVG brand bug
+- v0.1.2 - Fixed build when only SVG was selected
+- v0.1.1 - Added includeSVG option, refreshed dependencies in blend package
+- v0.1.0 - Improved test, fixed unavailable brands in index, added webfont link and priority system
+- v0.0.4 - Added stress test
+- v0.0.3 - Added dynamic branding
+- v0.0.2 - Added grunt build to download
+- v0.0.1 - Initial file server system setup
 
 **[⬆ back to top](#content)**
 
