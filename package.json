@@ -2,6 +2,9 @@
 	"name": "blender-stack",
 	"version": "0.0.4",
 	"private": true,
+	"scripts": {
+		"nuke": "rm -rf node_modules && rm yarn.lock"
+	},
 	"devDependencies": {
 		"grunt": "^1.0.4",
 		"grunt-contrib-concat": "^1.0.1",
