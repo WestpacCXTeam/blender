@@ -34,7 +34,7 @@ Blender.js = (() => {
 			const POST = Blender.POST;
 			const _includeJquery = Blender.selectedModules.includeJquery; //POST.hasOwnProperty(`jquery`);
 			const _includeOriginal  = Blender.selectedModules.includeUnminifiedJS; //POST.hasOwnProperty(`jsunminified`);
-			let files = [];
+			let fileSource = ``;
 			let file = ``;
 			let core = ``;
 			let jquery = ``;
@@ -72,7 +72,7 @@ Blender.js = (() => {
 				const _hasJS = module.js; //look if this module has js
 
 				if( _hasJS ) {
-					files.push(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`); //add js to uglify
+					fileSource += Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`) + `\n`; //add js to uglify
 
 					file = Fs.readFileSync(`${Blender.GUIPATH}${module.ID}/${module.version}/js/${module.ID}.js`, `utf8`);
 
@@ -85,8 +85,8 @@ Blender.js = (() => {
 
 
 			//uglify js
-			if( files.length > 0 ) {
-				result = UglifyJS.minify( files );
+			if( fileSource !== '' ) {
+				result = UglifyJS.minify( fileSource );
 			}
 			else {
 				result = {};
