@@ -56,7 +56,7 @@ Blender.js = (() => {
 				core = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
 				core = Blender.branding.replace(core, [`Debug`, `false`]); //remove debugging infos
 
-				core = UglifyJS.minify( core, { fromString: true });
+				core = UglifyJS.minify( core );
 
 				if( _includeOriginal ) {
 					file = Fs.readFileSync(`${Blender.GUIPATH}_javascript-helpers/${POST[`module-_javascript-helpers`]}/js/020-core.js`, `utf8`);
