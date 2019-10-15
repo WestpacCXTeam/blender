@@ -145,6 +145,7 @@ node tests/remote-test.js
 
 ### Release History remote
 
+- v1.0.1 - Fixed uglifier bug
 - v1.0.0 - Updated dependencies, moved to env vars
 - v0.2.5 - Updated dependencies
 - v0.2.4 - Updated dependencies

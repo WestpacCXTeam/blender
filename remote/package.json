@@ -1,6 +1,6 @@
 {
 	"name": "blender",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"private": true,
 	"scripts": {
 		"nuke": "rm -rf node_modules && rm yarn.lock"
