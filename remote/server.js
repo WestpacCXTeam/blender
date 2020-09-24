@@ -1,4 +1,4 @@
-/*! blender - v1.0.0 */
+/*! blender - v1.0.2 */
 /***************************************************************************************************************************************************************
  *
  * Westpac GUI blender
@@ -55,7 +55,7 @@ const Blender = (() => { //constructor factory
 		JQUERYPATH: `_javascript-helpers/1.0.1/_core/js/010-jquery.js`,
 		SLACKURL: process.env.SLACKURL,
 		SLACKICON: `http://gel.westpacgroup.com.au/GUI/blender/remote/assets/img/blender-icon.png`,
-		WEBFONTSROOT: `https://sites.thewestpacgroup.com.au/sites/TS1206/Shared%20Documents/webfonts/`,
+		WEBFONTSROOT: `https://westpacgroup.sharepoint.com/sites/TS1206/Shared%20Documents/webfonts/`,
 		LOG: Path.normalize(`${__dirname}/blender.log`),
 		FUNKY: [
 			{
