@@ -12,7 +12,7 @@
 		"chalk": "^2.4.2",
 		"custardjs": "^1.0.0",
 		"dotenv": "^8.0.0",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"less": "^3.9.0",
 		"node-slack": "0.0.7",
 		"uglify-js": "^3.6.0",
